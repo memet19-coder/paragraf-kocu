@@ -29,6 +29,14 @@ button, select, input {
   font: inherit;
 }
 
+textarea {
+  font: inherit;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
 button {
   cursor: pointer;
 }
@@ -95,6 +103,22 @@ select, input {
   padding: 0 12px;
   background: #fff;
   color: var(--ink);
+}
+
+.inline-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+}
+
+.mini-button {
+  min-height: 42px;
+  border: 1px solid #36516a;
+  border-radius: 8px;
+  background: var(--yellow);
+  color: #102030;
+  font-weight: 800;
+  padding: 0 10px;
 }
 
 .profile-switch select {
@@ -326,7 +350,14 @@ h3 {
   margin-top: 16px;
 }
 
-.stat-card, .analysis-card, .report-card, .topic-card, .assignment-card {
+.strategy-grid, .mistake-book {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.stat-card, .analysis-card, .report-card, .topic-card, .assignment-card, .strategy-card, .mistake-entry {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -675,6 +706,52 @@ h3 {
   align-content: start;
 }
 
+.class-code-panel {
+  margin: 14px 0;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.question-form {
+  margin-top: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.question-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.timer-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  border-radius: 999px;
+  background: var(--soft-teal);
+  color: var(--teal-dark);
+  font-weight: 800;
+  padding: 0 10px;
+}
+
 .assignment-form label {
   display: grid;
   gap: 6px;
@@ -708,6 +785,10 @@ h3 {
   .stat-grid, .report-grid, .analysis-grid, .assignment-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .strategy-grid, .mistake-book, .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 620px) {
@@ -715,7 +796,7 @@ h3 {
     padding: 16px;
   }
 
-  .nav-list, .stat-grid, .report-grid, .analysis-grid, .lesson-grid, .assignment-list {
+  .nav-list, .stat-grid, .report-grid, .analysis-grid, .lesson-grid, .assignment-list, .strategy-grid, .mistake-book, .form-grid {
     grid-template-columns: 1fr;
   }
 

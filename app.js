@@ -535,6 +535,13 @@ function buildQuestion(question) {
   };
 }
 
+function makeQuestionId(question) {
+  const raw = `${question.grade}|${question.topic}|${question.text}|${question.stem}`;
+  let hash = 0;
+  for (let i = 0; i < raw.length; i += 1) hash = ((hash << 5) - hash + raw.charCodeAt(i)) | 0;
+  return `q${question.grade}_${Math.abs(hash)}`;
+}
+
 function balanceQuestionBank(baseQuestions) {
   const balanced = [];
   const targetPerGrade = 100;
@@ -557,9 +564,9 @@ function balanceQuestionBank(baseQuestions) {
   return balanced;
 }
 
-questionBank = balanceQuestionBank(questionBank);
+questionBank = balanceQuestionBank(questionBank).map((question) => ({ ...question, id: makeQuestionId(question) }));
 
-const CONTENT_VERSION = 4;
+const CONTENT_VERSION = 5;
 let state = loadState();
 let selectedCount = 5;
 let activeTopic = topics[0];
@@ -567,11 +574,154 @@ let quiz = null;
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+const remoteConfig = window.PARAGRAF_KOCU_SUPABASE || {};
+const remoteDb = remoteConfig.url && remoteConfig.key && window.supabase
+  ? window.supabase.createClient(remoteConfig.url, remoteConfig.key)
+  : null;
+
+function isRemoteReady() {
+  return Boolean(remoteDb);
+}
+
+async function remoteUpsertClass() {
+  if (!isRemoteReady()) return;
+  await remoteDb.from("classes").upsert({
+    class_code: state.teacherClassCode,
+    teacher_name: "Öğretmen"
+  }, { onConflict: "class_code" });
+}
+
+async function remoteUpsertStudent() {
+  if (!isRemoteReady() || !state.studentName?.trim()) return;
+  const code = state.classCode || state.teacherClassCode;
+  await remoteDb.from("students").upsert({
+    student_key: studentKey(state.studentName, code),
+    class_code: code,
+    name: state.studentName.trim(),
+    grade: Number(state.grade),
+    stats: state.stats,
+    topic_stats: state.topicStats,
+    mistake_book: state.mistakeBook || [],
+    question_times: state.questionTimes || [],
+    assignments: state.assignments || [],
+    updated_at: new Date().toISOString()
+  }, { onConflict: "student_key" });
+}
+
+async function remoteLoadStudent(name, code) {
+  if (!isRemoteReady()) return null;
+  const { data } = await remoteDb.from("students").select("*").eq("student_key", studentKey(name, code)).maybeSingle();
+  if (!data) return null;
+  return {
+    name: data.name,
+    grade: String(data.grade),
+    stats: data.stats || {},
+    topicStats: data.topic_stats || {},
+    mistakeBook: data.mistake_book || [],
+    questionTimes: data.question_times || [],
+    assignments: data.assignments || []
+  };
+}
+
+async function remoteSaveAttempt(record) {
+  if (!isRemoteReady() || !state.studentName?.trim()) return;
+  const code = state.classCode || state.teacherClassCode;
+  await remoteDb.from("attempts").insert({
+    student_key: studentKey(state.studentName, code),
+    class_code: code,
+    name: state.studentName.trim(),
+    grade: record.grade,
+    topic: record.topic,
+    question_id: record.id,
+    is_correct: record.correct,
+    is_blank: record.blank,
+    spent_seconds: record.spent
+  });
+}
+
+async function remoteUpsertMistake(item) {
+  if (!isRemoteReady() || !state.studentName?.trim()) return;
+  const code = state.classCode || state.teacherClassCode;
+  await remoteDb.from("mistakes").upsert({
+    student_key: studentKey(state.studentName, code),
+    class_code: code,
+    question_id: item.id,
+    grade: item.grade,
+    topic: item.topic,
+    status: item.status,
+    miss_count: item.missCount || 1,
+    question: item,
+    updated_at: new Date().toISOString()
+  }, { onConflict: "student_key,question_id" });
+}
+
+async function remoteLoadClassroom(code = state.teacherClassCode) {
+  if (!isRemoteReady()) return [];
+  const { data } = await remoteDb.from("students").select("*").eq("class_code", code).order("updated_at", { ascending: false });
+  return (data || []).map((student) => ({
+    name: student.name,
+    grade: String(student.grade),
+    stats: student.stats || {},
+    topicStats: student.topic_stats || {},
+    mistakeBook: student.mistake_book || [],
+    questionTimes: student.question_times || [],
+    assignments: student.assignments || []
+  }));
+}
+
+async function remoteSaveCustomQuestion(question) {
+  if (!isRemoteReady()) return;
+  await remoteDb.from("custom_questions").upsert({
+    id: question.id,
+    class_code: state.teacherClassCode,
+    grade: question.grade,
+    topic: question.topic,
+    difficulty: question.difficulty,
+    outcome: question.outcome,
+    text: question.text,
+    stem: question.stem,
+    options: question.options,
+    answer: question.answer,
+    solution: question.solution,
+    wrong: question.wrong,
+    strategy: question.strategy,
+    hint: question.hint
+  });
+}
+
+async function remoteLoadCustomQuestions() {
+  if (!isRemoteReady()) return;
+  const codes = [state.teacherClassCode, state.classCode].filter(Boolean);
+  if (!codes.length) return;
+  const { data } = await remoteDb.from("custom_questions").select("*").in("class_code", codes);
+  state.customQuestions = (data || []).map((item) => ({
+    id: item.id,
+    grade: item.grade,
+    topic: item.topic,
+    difficulty: item.difficulty,
+    outcome: item.outcome,
+    text: item.text,
+    stem: item.stem,
+    options: item.options,
+    answer: item.answer,
+    solution: item.solution,
+    wrong: item.wrong,
+    strategy: item.strategy,
+    hint: item.hint
+  }));
+}
 
 function loadState() {
   const fallback = {
     contentVersion: CONTENT_VERSION,
     grade: "5",
+    studentName: "",
+    classCode: "",
+    teacherClassCode: "PK2026",
+    classrooms: {},
+    customQuestions: [],
+    mistakeBook: [],
+    questionTimes: [],
     stats: { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 },
     topicStats: {},
     answers: [],
@@ -591,11 +741,13 @@ function loadState() {
 }
 
 function saveState() {
+  syncCurrentStudent();
   localStorage.setItem("paragrafKocuState", JSON.stringify(state));
+  remoteUpsertStudent();
 }
 
 function gradeQuestions(grade = state.grade) {
-  return questionBank.filter((question) => question.grade === Number(grade));
+  return [...questionBank, ...(state.customQuestions || [])].filter((question) => question.grade === Number(grade));
 }
 
 function pickQuestions({ count = 5, grade = state.grade, topic = null, difficulty = null } = {}) {
@@ -617,6 +769,57 @@ function availableTopicsForGrade(grade = state.grade) {
   return [...new Set(gradeQuestions(grade).map((question) => question.topic))];
 }
 
+function studentKey(name = state.studentName, code = state.classCode || state.teacherClassCode) {
+  return `${code || "SINIFSIZ"}::${(name || "").trim().toLocaleLowerCase("tr-TR")}`;
+}
+
+function ensureClassroom(code = state.teacherClassCode) {
+  if (!state.classrooms[code]) state.classrooms[code] = { code, students: {} };
+  return state.classrooms[code];
+}
+
+function syncCurrentStudent() {
+  if (!state.studentName?.trim()) return;
+  const code = state.classCode || state.teacherClassCode;
+  const room = ensureClassroom(code);
+  room.students[studentKey(state.studentName, code)] = {
+    name: state.studentName.trim(),
+    grade: state.grade,
+    stats: state.stats,
+    topicStats: state.topicStats,
+    mistakeBook: state.mistakeBook || [],
+    questionTimes: state.questionTimes || [],
+    assignments: state.assignments || [],
+    updatedAt: new Date().toLocaleString("tr-TR")
+  };
+}
+
+async function loadStudentProfile(name, code) {
+  const room = state.classrooms[code];
+  const profile = room?.students?.[studentKey(name, code)];
+  state.studentName = name.trim();
+  state.classCode = code.trim().toUpperCase();
+  const remoteProfile = await remoteLoadStudent(name, state.classCode);
+  const source = remoteProfile || profile;
+  if (source) {
+    state.grade = String(source.grade || state.grade);
+    state.stats = source.stats || state.stats;
+    state.topicStats = source.topicStats || {};
+    state.mistakeBook = source.mistakeBook || [];
+    state.questionTimes = source.questionTimes || [];
+    state.assignments = source.assignments || state.assignments;
+  }
+  syncCurrentStudent();
+  await remoteUpsertStudent();
+}
+
+function smartRecommendations() {
+  const weak = weakestTopic();
+  if (!weak) return [`Bugün ${gradePlan[state.grade].focus[0]} konusundan 10 soru çöz.`, "İlk yanlışlarından sonra özel çalışma planın oluşacak."];
+  const secondary = gradePlan[state.grade].focus.find((topic) => topic !== weak) || weak;
+  return [`Bugün 10 ${weak} sorusu + 5 ${secondary} tekrarı çöz.`, `${weak} için strateji kartını oku ve yanlış defterindeki soruları tekrar çöz.`];
+}
+
 function setView(view) {
   $$(".view").forEach((node) => node.classList.remove("is-visible"));
   $(`#${view}View`).classList.add("is-visible");
@@ -624,6 +827,7 @@ function setView(view) {
   const titles = {
     dashboard: "Bugünkü Görevin",
     topics: "Konu Çalış",
+    strategies: "Stratejiler",
     mistakes: "Yanlışlarım",
     report: "Gelişim Raporum",
     assignments: "Ödevlerim",
@@ -646,12 +850,7 @@ function renderDashboard() {
     ["Doğruluk", `${accuracy}%`]
   ].map(([label, value]) => `<div class="stat-card"><span>${label}</span><strong>${value}</strong></div>`).join("");
 
-  const weak = weakestTopic();
-  $("#weeklyRecommendations").innerHTML = [
-    `${plan.focus[0]} konusundan 10 soru çöz.`,
-    weak ? `${weak} sorularında çözüm stratejisini tekrar et.` : `${plan.focus[1]} için örnek çözümlü soru incele.`,
-    avgTime > 0 ? `Soru başına ortalama süren ${avgTime} saniye; zor sorularda önce soru kökünü oku.` : "İlk antrenmandan sonra süre önerisi oluşacak."
-  ].map((item) => `<li>${item}</li>`).join("");
+  $("#weeklyRecommendations").innerHTML = smartRecommendations().map((item) => `<li>${item}</li>`).join("");
 
   const badges = [];
   if (state.stats.streak >= 5) badges.push("5 Gün Üst Üste Paragraf Çözdün");
@@ -733,16 +932,63 @@ function renderMistakes() {
       <div class="meter"><span style="width:${wrongRate}%"></span></div>
     </div>`;
   }).join("");
+  renderMistakeBook();
+}
+
+function renderMistakeBook() {
+  const items = (state.mistakeBook || []).filter((item) => item.status !== "Öğrenildi");
+  $("#mistakeBook").innerHTML = items.length ? items.map((item, index) => `
+    <article class="mistake-entry">
+      <strong>${item.topic}</strong>
+      <p>${item.stem}</p>
+      <span>${item.grade}. sınıf · ${item.status}</span>
+      <button class="secondary-action retry-mistake" data-index="${index}"><i data-lucide="play"></i><span>Tekrar çöz</span></button>
+    </article>
+  `).join("") : `<article class="mistake-entry"><strong>Yanlış defterin boş</strong><p>Yanlış yaptığın sorular burada birikir.</p></article>`;
+}
+
+function renderStrategies() {
+  const strategies = {
+    "Konu bulma": "Metinde en çok neyin anlatıldığına bak; ayrıntıları değil ortak konuyu seç.",
+    "Ana düşünce": "Önce sonuç cümlesine ve yazarın vermek istediği mesaja odaklan.",
+    "Yardımcı düşünce": "Seçenekleri metindeki cümlelerle tek tek eşleştir.",
+    "Başlık bulma": "Başlık metnin tamamını kapsamalı, tek ayrıntıya sıkışmamalı.",
+    "Hikâye unsurları": "Kim, nerede, ne zaman, ne yaptı sorularını sırayla sor.",
+    "Çıkarım yapma": "Metinde açıkça yazmayan ama ipuçlarıyla desteklenen sonucu seç.",
+    "Metnin amacı": "Yazar okuru bilgilendirmek, uyarmak veya ikna etmek mi istiyor?",
+    "Neden-sonuç": "Çünkü, için, bu yüzden gibi bağlaçların iki tarafını kontrol et.",
+    "Karşılaştırma": "İki varlık ya da durumun hangi özelliklerle yan yana getirildiğini bul.",
+    "Paragraf tamamlama": "Boşluktan önceki düşünce yönünü ve son cümlenin tonunu koru.",
+    "Örtülü anlam": "Doğrudan söylenmeyen anlamı metindeki davranış ve sonuçlardan çıkar.",
+    "Yorumlama": "Metnin desteklemediği aşırı genellemeleri ele.",
+    "Cümle sıralama": "Giriş cümlesini, işlem basamaklarını ve sonuç cümlesini ayır.",
+    "Düşüncenin akışını bozan cümle": "Konu zincirinden kopan cümleyi bul.",
+    "Anlatım biçimleri": "Betimleme sahne çizer; açıklama bilgi verir; tartışma görüş savunur.",
+    "Düşünceyi geliştirme yolları": "Örneğin varsa örneklendirme, sayı varsa sayısal veri, uzman görüşü varsa tanık gösterme ara.",
+    "LGS tarzı yeni nesil paragraf soruları": "Soru kökünü önce oku, uzun metinde aradığın bilgiyi işaretle.",
+    "Metinler arası karşılaştırma": "Her metnin ana düşüncesini ayrı çıkar, sonra ortak/farklı yönü bul.",
+    "Tablo-grafik-görsel okuma": "Önce en yüksek, en düşük ve eşit olmayan verileri belirle.",
+    "Sözel mantık destekli paragraf soruları": "Kesin bilgileri yerleştir, sonra koşulları sırayla dene.",
+    "Zaman yönetimi": "Zorlandığın soru tipine ayırdığın süreyi fark et ve planını buna göre düzenle."
+  };
+  const gradeTopics = availableTopicsForGrade(state.grade);
+  $("#strategyGrid").innerHTML = gradeTopics.map((topic) => `
+    <article class="strategy-card">
+      <strong>${topic}</strong>
+      <p>${strategies[topic] || "Önce soru kökünü oku, metindeki anahtar ifadeleri işaretle, seçenekleri metne göre ele."}</p>
+    </article>
+  `).join("");
 }
 
 function renderReport() {
   const accuracy = state.stats.solved ? Math.round((state.stats.correct / state.stats.solved) * 100) : 0;
   const avgTime = state.stats.solved ? Math.round(state.stats.seconds / state.stats.solved) : 0;
+  const avgEightTime = (state.questionTimes || []).length ? Math.round(state.questionTimes.reduce((sum, item) => sum + item.spent, 0) / state.questionTimes.length) : 0;
   $("#reportGrid").innerHTML = [
     ["Toplam soru", state.stats.solved],
     ["Doğruluk oranı", `${accuracy}%`],
     ["Boş sayısı", state.stats.blank],
-    ["Ortalama süre", `${avgTime} sn`]
+    [state.grade === "8" ? "8. sınıf süre ort." : "Ortalama süre", `${state.grade === "8" ? avgEightTime || avgTime : avgTime} sn`]
   ].map(([label, value]) => `<div class="report-card"><span>${label}</span><strong>${value}</strong></div>`).join("");
 
   const bars = Object.entries(state.topicStats);
@@ -764,16 +1010,102 @@ function renderAssignments() {
   `).join("");
 }
 
+function mistakeToQuestion(item) {
+  return {
+    ...item,
+    outcome: `${item.topic} yanlış defteri tekrarı`,
+    id: item.id
+  };
+}
+
+function generateClassCode() {
+  return `PK${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+}
+
+function downloadStudentReport() {
+  const accuracy = state.stats.solved ? Math.round((state.stats.correct / state.stats.solved) * 100) : 0;
+  const weak = weakestTopic() || "Veri bekleniyor";
+  const suggestions = smartRecommendations().map((item) => `<li>${item}</li>`).join("");
+  const topicRows = Object.entries(state.topicStats || {}).map(([topic, stat]) => {
+    const total = (stat.correct || 0) + (stat.wrong || 0);
+    const percent = total ? Math.round(((stat.correct || 0) / total) * 100) : 0;
+    return `<tr><td>${topic}</td><td>${stat.correct || 0}</td><td>${stat.wrong || 0}</td><td>${percent}%</td></tr>`;
+  }).join("");
+  const timeRows = (state.questionTimes || []).slice(-20).map((item) => `<tr><td>${item.topic}</td><td>${item.spent} sn</td><td>${item.correct ? "Doğru" : "Yanlış"}</td></tr>`).join("");
+  const report = window.open("", "_blank");
+  report.document.write(`
+    <html lang="tr"><head><title>Paragraf Koçu Raporu</title>
+    <style>body{font-family:Arial,sans-serif;padding:24px;color:#182235} table{width:100%;border-collapse:collapse;margin-top:12px}td,th{border:1px solid #ddd;padding:8px;text-align:left} h1,h2{margin-bottom:6px}</style>
+    </head><body>
+      <h1>Paragraf Koçu Öğrenci Raporu</h1>
+      <p><strong>Öğrenci:</strong> ${state.studentName || "Adsız öğrenci"} · <strong>Sınıf:</strong> ${state.grade}. sınıf · <strong>Sınıf kodu:</strong> ${state.classCode || "-"}</p>
+      <p><strong>Toplam:</strong> ${state.stats.solved} · <strong>Doğru:</strong> ${state.stats.correct} · <strong>Yanlış:</strong> ${state.stats.wrong} · <strong>Boş:</strong> ${state.stats.blank} · <strong>Doğruluk:</strong> ${accuracy}%</p>
+      <p><strong>Zorlandığı konu:</strong> ${weak}</p>
+      <h2>Önerilen çalışma</h2><ul>${suggestions}</ul>
+      <h2>Konu bazlı başarı</h2><table><thead><tr><th>Konu</th><th>Doğru</th><th>Yanlış</th><th>Başarı</th></tr></thead><tbody>${topicRows || "<tr><td colspan='4'>Veri yok</td></tr>"}</tbody></table>
+      ${state.grade === "8" ? `<h2>8. sınıf süre takibi</h2><table><thead><tr><th>Konu</th><th>Süre</th><th>Sonuç</th></tr></thead><tbody>${timeRows || "<tr><td colspan='3'>Süre verisi yok</td></tr>"}</tbody></table>` : ""}
+      <script>window.print();</script>
+    </body></html>
+  `);
+  report.document.close();
+}
+
+function addCustomQuestion() {
+  const question = {
+    grade: Number($("#customGrade").value),
+    topic: $("#customTopic").value,
+    difficulty: $("#customDifficulty").value,
+    outcome: $("#customOutcome").value || "Öğretmen tarafından eklenen kazanım",
+    text: $("#customText").value.trim(),
+    stem: $("#customStem").value.trim(),
+    options: [$("#customA").value.trim(), $("#customB").value.trim(), $("#customC").value.trim(), $("#customD").value.trim()],
+    answer: $("#customAnswer").value,
+    solution: $("#customSolution").value.trim(),
+    wrong: "Öğretmen tarafından eklenen soruda çeldiriciler sınıf içi değerlendirmeye göre açıklanır.",
+    strategy: $("#customStrategy").value.trim(),
+    hint: "Soru kökünü dikkatle oku ve metindeki ipuçlarını işaretle."
+  };
+  question.id = makeQuestionId(question);
+  state.customQuestions.push(question);
+  remoteSaveCustomQuestion(question);
+  saveState();
+  $("#customQuestionForm").reset();
+  updateCustomTopics();
+  renderAll();
+}
+
 function renderTeacher() {
-  const students = [
-    ["Deniz Yılmaz", 5, 42, "31/11", weakestTopic() || "Ana düşünce"],
-    ["Ece Arslan", 6, 56, "44/12", "Paragraf tamamlama"],
-    ["Mert Kaya", 7, 38, "24/14", "Örtülü anlam"],
-    ["Zeynep Demir", 8, 71, "58/13", "Tablo-grafik-görsel okuma"]
-  ];
-  $("#studentRows").innerHTML = students.map((student) => `<tr>${student.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("");
-  $("#assignStudent").innerHTML = students.map((student) => `<option>${student[0]}</option>`).join("");
+  syncCurrentStudent();
+  const code = state.teacherClassCode;
+  const room = ensureClassroom(code);
+  const students = Object.values(room.students);
+  $("#teacherClassCode").textContent = code;
+  $("#studentRows").innerHTML = students.length ? students.map((student) => {
+    const weak = weakestTopicFor(student.topicStats || {});
+    const correct = student.stats?.correct || 0;
+    const wrong = student.stats?.wrong || 0;
+    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td></tr>`;
+  }).join("") : `<tr><td colspan="5">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
+  $("#assignStudent").innerHTML = students.length ? students.map((student) => `<option>${student.name}</option>`).join("") : `<option>Genel ödev</option>`;
   updateAssignmentTopics();
+  updateCustomTopics();
+  refreshRemoteTeacherPanel();
+}
+
+async function refreshRemoteTeacherPanel() {
+  const students = await remoteLoadClassroom(state.teacherClassCode);
+  if (!students.length) return;
+  const room = ensureClassroom(state.teacherClassCode);
+  students.forEach((student) => {
+    room.students[studentKey(student.name, state.teacherClassCode)] = student;
+  });
+  $("#studentRows").innerHTML = students.map((student) => {
+    const weak = weakestTopicFor(student.topicStats || {});
+    const correct = student.stats?.correct || 0;
+    const wrong = student.stats?.wrong || 0;
+    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td></tr>`;
+  }).join("");
+  $("#assignStudent").innerHTML = students.map((student) => `<option>${student.name}</option>`).join("");
 }
 
 function updateAssignmentTopics() {
@@ -782,18 +1114,49 @@ function updateAssignmentTopics() {
   $("#assignTopic").innerHTML = gradeTopics.map((topic) => `<option>${topic}</option>`).join("");
 }
 
+function updateCustomTopics() {
+  const grade = $("#customGrade")?.value || state.grade;
+  $("#customTopic").innerHTML = availableTopicsForGrade(grade).map((topic) => `<option>${topic}</option>`).join("");
+}
+
+function weakestTopicFor(topicStats) {
+  let weakest = null;
+  let score = Infinity;
+  Object.entries(topicStats || {}).forEach(([topic, stat]) => {
+    const total = (stat.correct || 0) + (stat.wrong || 0);
+    if (total > 0) {
+      const percent = (stat.correct || 0) / total;
+      if (percent < score) {
+        score = percent;
+        weakest = topic;
+      }
+    }
+  });
+  return weakest;
+}
+
 function renderAll() {
+  $("#studentNameInput").value = state.studentName || "";
+  $("#classCodeInput").value = state.classCode || "";
   $("#gradeSelect").value = state.grade;
   renderDashboard();
   renderTopics();
+  renderStrategies();
   renderMistakes();
   renderReport();
   renderAssignments();
   renderTeacher();
 }
 
+async function bootstrapRemoteData() {
+  if (!isRemoteReady()) return;
+  await remoteUpsertClass();
+  await remoteLoadCustomQuestions();
+  renderAll();
+}
+
 function startQuiz(questions, title, meta) {
-  quiz = { questions, index: 0, title, meta, correct: 0, wrong: 0, blank: 0, startedAt: Date.now(), locked: false };
+  quiz = { questions, index: 0, title, meta, correct: 0, wrong: 0, blank: 0, startedAt: Date.now(), questionStartedAt: Date.now(), locked: false };
   $("#quizDrawer").hidden = false;
   renderQuestion();
 }
@@ -807,6 +1170,7 @@ function renderQuestion() {
     <div class="question-field"><small>Sınıf seviyesi</small><span>${question.grade}. sınıf</span></div>
     <div class="question-field"><small>Konu</small><span>${question.topic}</span></div>
     <div class="question-field"><small>Zorluk düzeyi</small><span>${question.difficulty}</span></div>
+    ${question.grade === 8 ? `<div class="question-field"><small>Süre takibi</small><span class="timer-chip">8. sınıf için süre kaydediliyor</span></div>` : ""}
     <div class="question-field"><small>Kazanım</small><span>${question.outcome}</span></div>
     <div class="question-field"><small>Paragraf metni</small><div class="paragraph-text">${question.text}</div></div>
     <div class="question-field"><small>Soru kökü</small><strong>${question.stem}</strong></div>
@@ -822,6 +1186,7 @@ function renderQuestion() {
     </div>
     <div class="solution-box" id="hintBox" hidden><strong>Öğrenciye ipucu:</strong> ${question.hint}</div>
   `;
+  quiz.questionStartedAt = Date.now();
   quiz.locked = false;
 }
 
@@ -831,9 +1196,25 @@ function answerQuestion(answer) {
   const question = quiz.questions[quiz.index];
   const isBlank = answer === null;
   const isCorrect = answer === question.answer;
+  const spent = Math.max(1, Math.round((Date.now() - quiz.questionStartedAt) / 1000));
   if (isBlank) quiz.blank += 1;
   else if (isCorrect) quiz.correct += 1;
   else quiz.wrong += 1;
+
+  const record = {
+    id: question.id || makeQuestionId(question),
+    grade: question.grade,
+    topic: question.topic,
+    correct: isCorrect,
+    blank: isBlank,
+    answer,
+    spent,
+    at: new Date().toISOString()
+  };
+  state.answers.push(record);
+  if (question.grade === 8) state.questionTimes.push({ id: record.id, topic: question.topic, spent, correct: isCorrect, at: record.at });
+  updateMistakeBook(question, isCorrect, isBlank);
+  remoteSaveAttempt(record);
 
   $$(".option-button").forEach((button) => {
     if (button.dataset.answer === question.answer) button.classList.add("is-correct");
@@ -852,6 +1233,43 @@ function answerQuestion(answer) {
       <button class="primary-action" id="nextQuestion"><i data-lucide="arrow-right"></i><span>${quiz.index + 1 === quiz.questions.length ? "Değerlendirmeyi gör" : "Sonraki soru"}</span></button>
     </div>
   `);
+}
+
+function updateMistakeBook(question, isCorrect, isBlank) {
+  const id = question.id || makeQuestionId(question);
+  const existing = (state.mistakeBook || []).find((item) => item.id === id);
+  if (isCorrect && existing) {
+    existing.status = "Öğrenildi";
+    existing.learnedAt = new Date().toISOString();
+    remoteUpsertMistake(existing);
+    return;
+  }
+  if (!isCorrect || isBlank) {
+    if (existing) {
+      existing.status = "Bekliyor";
+      existing.missCount = (existing.missCount || 1) + 1;
+      remoteUpsertMistake(existing);
+      return;
+    }
+    const item = {
+      id,
+      grade: question.grade,
+      topic: question.topic,
+      difficulty: question.difficulty,
+      text: question.text,
+      stem: question.stem,
+      options: question.options,
+      answer: question.answer,
+      solution: question.solution,
+      wrong: question.wrong,
+      strategy: question.strategy,
+      hint: question.hint,
+      status: "Bekliyor",
+      missCount: 1
+    };
+    state.mistakeBook.unshift(item);
+    remoteUpsertMistake(item);
+  }
 }
 
 function finishQuiz() {
@@ -887,6 +1305,25 @@ function finishQuiz() {
 
 function bindEvents() {
   $$(".nav-item").forEach((button) => button.addEventListener("click", () => setView(button.dataset.view)));
+  $("#studentNameInput").addEventListener("change", async (event) => {
+    const name = event.target.value.trim();
+    if (!name) return;
+    await loadStudentProfile(name, state.classCode || state.teacherClassCode);
+    saveState();
+    renderAll();
+  });
+  $("#joinClass").addEventListener("click", async () => {
+    const name = $("#studentNameInput").value.trim();
+    const code = ($("#classCodeInput").value.trim() || state.teacherClassCode).toUpperCase();
+    if (!name) {
+      alert("Önce öğrenci adını yaz.");
+      return;
+    }
+    await loadStudentProfile(name, code);
+    await remoteLoadCustomQuestions();
+    saveState();
+    renderAll();
+  });
   $("#gradeSelect").addEventListener("change", (event) => {
     state.grade = event.target.value;
     activeTopic = gradePlan[state.grade].focus[0];
@@ -922,14 +1359,10 @@ function bindEvents() {
   $("#questionCard").addEventListener("click", (event) => {
     const option = event.target.closest(".option-button");
     if (option) {
-      const question = quiz.questions[quiz.index];
-      state.answers.push({ topic: question.topic, correct: option.dataset.answer === question.answer });
       answerQuestion(option.dataset.answer);
     }
     if (event.target.closest("#showHint")) $("#hintBox").hidden = false;
     if (event.target.closest("#blankQuestion")) {
-      const question = quiz.questions[quiz.index];
-      state.answers.push({ topic: question.topic, correct: false });
       answerQuestion(null);
     }
     if (event.target.closest("#nextQuestion")) {
@@ -947,7 +1380,30 @@ function bindEvents() {
     setView("topics");
     renderTopics();
   });
+  $("#practiceMistakes").addEventListener("click", () => {
+    const pending = (state.mistakeBook || []).filter((item) => item.status !== "Öğrenildi").map(mistakeToQuestion);
+    if (!pending.length) {
+      alert("Yanlış defterinde bekleyen soru yok.");
+      return;
+    }
+    startQuiz(pending.slice(0, 10), "Yanlış Defteri", `${state.grade}. sınıf tekrar`);
+  });
+  $("#mistakeBook").addEventListener("click", (event) => {
+    const button = event.target.closest(".retry-mistake");
+    if (!button) return;
+    const pending = (state.mistakeBook || []).filter((item) => item.status !== "Öğrenildi");
+    const item = pending[Number(button.dataset.index)];
+    if (item) startQuiz([mistakeToQuestion(item)], "Yanlış Tekrarı", item.topic);
+  });
+  $("#downloadPdf").addEventListener("click", downloadStudentReport);
+  $("#newClassCode").addEventListener("click", () => {
+    state.teacherClassCode = generateClassCode();
+    ensureClassroom(state.teacherClassCode);
+    saveState();
+    renderTeacher();
+  });
   $("#assignGrade").addEventListener("change", updateAssignmentTopics);
+  $("#customGrade").addEventListener("change", updateCustomTopics);
   $("#assignmentList").addEventListener("click", (event) => {
     const button = event.target.closest(".start-assignment");
     if (!button) return;
@@ -971,6 +1427,10 @@ function bindEvents() {
     renderAssignments();
     setView("assignments");
   });
+  $("#customQuestionForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    addCustomQuestion();
+  });
   $("#addStudent").addEventListener("click", () => {
     alert("Yeni öğrenci ekleme akışı prototipte hazır durum olarak temsil edilir.");
   });
@@ -978,3 +1438,4 @@ function bindEvents() {
 
 bindEvents();
 renderAll();
+bootstrapRemoteData();
