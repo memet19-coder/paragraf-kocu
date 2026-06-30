@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paragraf Koçu</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Ana gezinme">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">PK</div>
+        <div>
+          <strong>Paragraf Koçu</strong>
+          <span>5-8. sınıf paragraf çalışması</span>
+        </div>
+      </div>
+
+      <div class="profile-switch">
+        <label for="gradeSelect">Sınıf seviyesi</label>
+        <select id="gradeSelect">
+          <option value="5">5. sınıf</option>
+          <option value="6">6. sınıf</option>
+          <option value="7">7. sınıf</option>
+          <option value="8">8. sınıf</option>
+        </select>
+      </div>
+
+      <nav class="nav-list">
+        <button class="nav-item is-active" data-view="dashboard"><i data-lucide="home"></i><span>Bugünkü Görevin</span></button>
+        <button class="nav-item" data-view="topics"><i data-lucide="book-open-check"></i><span>Konu Çalış</span></button>
+        <button class="nav-item" data-view="mistakes"><i data-lucide="scan-search"></i><span>Yanlışlarım</span></button>
+        <button class="nav-item" data-view="report"><i data-lucide="chart-no-axes-combined"></i><span>Gelişim Raporum</span></button>
+        <button class="nav-item" data-view="assignments"><i data-lucide="clipboard-list"></i><span>Ödevlerim</span></button>
+        <button class="nav-item" data-view="teacher"><i data-lucide="users-round"></i><span>Öğretmen Paneli</span></button>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Türkçe dersi kazanımı odaklı</p>
+          <h1 id="viewTitle">Bugünkü Görevin</h1>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="resetProgress" aria-label="İlerlemeyi sıfırla" title="İlerlemeyi sıfırla"><i data-lucide="rotate-ccw"></i></button>
+        </div>
+      </header>
+
+      <section class="view is-visible" id="dashboardView" aria-labelledby="viewTitle">
+        <div class="hero-band">
+          <div class="hero-copy">
+            <span class="pill">Bugün</span>
+            <h2 id="dailyHeadline">5. sınıf için kısa ve net paragraf antrenmanı</h2>
+            <p id="dailySubline">Konu bulma, ana düşünce ve basit çıkarım soruları ağırlıklı gelir.</p>
+            <div class="count-picker" role="group" aria-label="Soru sayısı">
+              <button class="segmented is-selected" data-count="5">5</button>
+              <button class="segmented" data-count="10">10</button>
+              <button class="segmented" data-count="15">15</button>
+              <button class="segmented" data-count="20">20</button>
+            </div>
+            <button class="primary-action" id="startDaily"><i data-lucide="play"></i><span>Antrenmana başla</span></button>
+          </div>
+          <img src="./assets/paragraf-kocu-hero.png" alt="Paragraf çalışan öğrenci illüstrasyonu" class="hero-image">
+        </div>
+
+        <div class="stat-grid" id="quickStats"></div>
+        <div class="section-band two-column">
+          <section class="panel">
+            <div class="panel-title">
+              <h3>Haftalık öneriler</h3>
+              <i data-lucide="sparkles"></i>
+            </div>
+            <ul class="recommendation-list" id="weeklyRecommendations"></ul>
+          </section>
+          <section class="panel">
+            <div class="panel-title">
+              <h3>Rozetler</h3>
+              <i data-lucide="award"></i>
+            </div>
+            <div class="badge-list" id="badgeList"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="topicsView" aria-labelledby="viewTitle">
+        <div class="section-band">
+          <div class="toolbar">
+            <div>
+              <p class="eyebrow">Konu konu çalışma</p>
+              <h2>Paragraf başlıkları</h2>
+            </div>
+            <select id="topicFilter" aria-label="Konu filtresi"></select>
+          </div>
+          <div class="topic-layout">
+            <div class="topic-list" id="topicList"></div>
+            <article class="topic-detail" id="topicDetail"></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="mistakesView" aria-labelledby="viewTitle">
+        <div class="section-band">
+          <div class="toolbar">
+            <div>
+              <p class="eyebrow">Yanlış analizi</p>
+              <h2>Zorlandığın soru tipleri</h2>
+            </div>
+            <button class="secondary-action" id="practiceWeakTopic"><i data-lucide="target"></i><span>Eksik konu çalış</span></button>
+          </div>
+          <div class="analysis-grid" id="mistakeAnalysis"></div>
+        </div>
+      </section>
+
+      <section class="view" id="reportView" aria-labelledby="viewTitle">
+        <div class="section-band">
+          <div class="toolbar">
+            <div>
+              <p class="eyebrow">Gelişim raporu</p>
+              <h2>Süre, doğruluk ve konu bazlı başarı</h2>
+            </div>
+          </div>
+          <div class="report-grid" id="reportGrid"></div>
+          <div class="chart-panel">
+            <h3>Konu bazlı durum</h3>
+            <div id="topicBars"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="assignmentsView" aria-labelledby="viewTitle">
+        <div class="section-band">
+          <div class="toolbar">
+            <div>
+              <p class="eyebrow">Ödevlerim</p>
+              <h2>Öğrenciye özel çalışma planı</h2>
+            </div>
+          </div>
+          <div class="assignment-list" id="assignmentList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="teacherView" aria-labelledby="viewTitle">
+        <div class="section-band">
+          <div class="toolbar">
+            <div>
+              <p class="eyebrow">Öğretmen paneli</p>
+              <h2>Sınıf takibi ve ödev atama</h2>
+            </div>
+            <button class="secondary-action" id="addStudent"><i data-lucide="user-plus"></i><span>Öğrenci ekle</span></button>
+          </div>
+          <div class="teacher-layout">
+            <div class="student-table-wrap">
+              <table class="student-table">
+                <thead>
+                  <tr>
+                    <th>Öğrenci</th>
+                    <th>Sınıf</th>
+                    <th>Çözüm</th>
+                    <th>D/Y</th>
+                    <th>Zorlandığı konu</th>
+                  </tr>
+                </thead>
+                <tbody id="studentRows"></tbody>
+              </table>
+            </div>
+            <form class="assignment-form" id="teacherAssignmentForm">
+              <h3>Ödev ata</h3>
+              <label>Öğrenci<select id="assignStudent"></select></label>
+              <label>Sınıf<select id="assignGrade"><option>5</option><option>6</option><option>7</option><option>8</option></select></label>
+              <label>Konu<select id="assignTopic"></select></label>
+              <label>Soru sayısı<input id="assignCount" type="number" min="5" max="40" step="5" value="10"></label>
+              <label>Zorluk<select id="assignDifficulty"><option>Kolay</option><option>Orta</option><option>Zor</option></select></label>
+              <button class="primary-action" type="submit"><i data-lucide="send"></i><span>Ödevi kaydet</span></button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="quiz-drawer" id="quizDrawer" aria-live="polite" hidden>
+        <div class="quiz-header">
+          <div>
+            <p class="eyebrow" id="quizMeta">Antrenman</p>
+            <h2 id="quizTitle">Soru</h2>
+          </div>
+          <button class="icon-button" id="closeQuiz" aria-label="Testi kapat" title="Testi kapat"><i data-lucide="x"></i></button>
+        </div>
+        <div class="quiz-progress"><span id="quizProgressBar"></span></div>
+        <article class="question-card" id="questionCard"></article>
+      </section>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
