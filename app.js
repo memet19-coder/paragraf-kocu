@@ -371,6 +371,417 @@ function stimulusCards(items) {
   return `<div class="stimulus-cards">${items.map((item) => `<div><strong>${item.title}</strong><span>${item.text}</span></div>`).join("")}</div>`;
 }
 
+const gradeEightPassages = [
+  {
+    title: "Sessiz okuma alışkanlığı",
+    text: "Bazı öğrenciler kitap okumayı yalnızca sayfa tamamlamak olarak görür. Oysa düzenli okuma, insanın dikkatini uzun süre aynı düşünce üzerinde tutmasını sağlar. Her gün kısa da olsa nitelikli bir metne zaman ayıran öğrenci, zamanla sözcükleri daha hızlı tanır, cümleler arasındaki ilişkiyi daha kolay kurar ve okuduğu metinden çıkarım yaparken daha az zorlanır.",
+    topic: "düzenli okumanın anlama becerisine katkısı",
+    main: "Düzenli ve nitelikli okuma, öğrencinin metni anlama gücünü geliştirir.",
+    detail: "Düzenli okuyan öğrencinin cümleler arasındaki ilişkiyi daha kolay kurduğu",
+    inference: "Okuma alışkanlığı yalnız hız kazandırmaz, anlam kurma becerisini de destekler."
+  },
+  {
+    title: "Kısa video alışkanlığı",
+    text: "Kısa videolar, bilgiye hızlı ulaşma hissi verebilir; ancak bu içerikler çoğu zaman düşünmeye zaman bırakmadan bir sonrakine geçer. Uzun metin okurken zorlanan bazı öğrencilerin temel sorunu, bilgiyi anlamak değil, dikkatini yeterince uzun süre koruyamamaktır. Bu nedenle paragraf çalışması, yalnızca Türkçe dersi için değil, zihni odaklama alışkanlığı için de değerlidir.",
+    topic: "kısa içeriklerin dikkat süresine etkisi",
+    main: "Paragraf çalışması, öğrencinin uzun süre odaklanma becerisini güçlendirir.",
+    detail: "Kısa videoların düşünmeye zaman bırakmadan tüketildiği",
+    inference: "Uzun metinlerde zorlanmak bazen bilgi eksikliğinden değil dikkat süresinden kaynaklanır."
+  },
+  {
+    title: "Kütüphane köşesi",
+    text: "Okulun koridorunda kullanılmayan küçük bir alan, öğrencilerin önerisiyle okuma köşesine dönüştürüldü. Başta yalnız birkaç öğrenci burada vakit geçirirken zamanla teneffüslerde sessizce kitap okuyanların sayısı arttı. Öğretmenler, bu değişimin öğrencilerin kendi ihtiyaçlarını fark edip çözüm üretmesiyle gerçekleştiğini belirtti.",
+    topic: "öğrencilerin okuma alanı oluşturması",
+    main: "Öğrencilerin sahip çıktığı düzenlemeler okul yaşamını olumlu değiştirebilir.",
+    detail: "Kullanılmayan bir alanın okuma köşesine dönüştürüldüğü",
+    inference: "Öğrenciler yalnız sorun fark etmemiş, çözümün uygulanmasına da katkı sağlamıştır."
+  },
+  {
+    title: "Yanlış defteri",
+    text: "Bir öğrenci, çözemediği soruları silip geçmek yerine küçük bir deftere kaydetmeye başladı. Deftere yalnız doğru cevabı değil, kendisini yanıltan seçeneği ve bu seçeneği neden düşündüğünü de yazdı. Birkaç hafta sonra aynı tür sorularda daha az hata yaptığını fark etti çünkü artık yanlışını ezberlemiyor, yanlış düşünme yolunu tanıyordu.",
+    topic: "yanlışları analiz ederek öğrenme",
+    main: "Yanlışların nedenini incelemek, aynı hatayı tekrar etme olasılığını azaltır.",
+    detail: "Öğrencinin kendisini yanıltan seçeneği de deftere yazdığı",
+    inference: "Öğrenci yalnız cevabı değil, hataya götüren düşünce biçimini de değerlendirmiştir."
+  },
+  {
+    title: "Soru kökünü okuma",
+    text: "Paragraf sorularında bazı öğrenciler önce metni hızlıca okuyup hemen seçeneklere geçer. Bu yöntem kısa metinlerde işe yarıyor gibi görünse de uzun metinlerde öğrencinin ne aradığını unutmasına yol açabilir. Soru kökünü önce okumak, metindeki önemli bilgileri seçmeyi kolaylaştırır; çünkü öğrenci zihninde bir hedefle okuma yapar.",
+    topic: "soru kökünü önce okumanın yararı",
+    main: "Soru kökünü önce okumak, uzun metinlerde hedefli okuma yapmayı sağlar.",
+    detail: "Öğrencinin zihninde bir hedefle okuma yaptığı",
+    inference: "Uzun metinlerde başarı, yalnız hızlı okumaya değil ne aradığını bilmeye de bağlıdır."
+  },
+  {
+    title: "Görsel okuma",
+    text: "Bir afişte verilen bilgiler, metin kadar dikkatli okunmadığında yanlış yorumlanabilir. Başlık, renk, oran ve küçük notlar birlikte değerlendirilmelidir. Öğrenci yalnız en büyük yazıya bakarsa görselin vermek istediği mesajın bir bölümünü kaçırabilir. Bu yüzden görsel sorularında ayrıntılar da ana bilgi kadar önem taşır.",
+    topic: "görsel unsurları birlikte değerlendirme",
+    main: "Görsel okuma, başlık ve ayrıntıları birlikte yorumlamayı gerektirir.",
+    detail: "Başlık, renk, oran ve küçük notların birlikte değerlendirilmesi gerektiği",
+    inference: "Görsel sorularında yalnız dikkat çeken bölüme bakmak eksik yorumlara yol açabilir."
+  },
+  {
+    title: "Kaynak güvenilirliği",
+    text: "İnternette karşılaşılan her bilgi doğru kabul edildiğinde araştırma yapmak kolaylaşmaz, aksine daha riskli hâle gelir. Güvenilir bir bilgi için kaynağın kim tarafından hazırlandığı, ne zaman yayımlandığı ve başka kaynaklarla desteklenip desteklenmediği kontrol edilmelidir. Bilgiye hızlı ulaşmak, onu sorgulamadan kullanmak anlamına gelmez.",
+    topic: "bilginin güvenilirliğini sorgulama",
+    main: "Araştırmada bilgiye ulaşmak kadar bilginin güvenilirliğini kontrol etmek de önemlidir.",
+    detail: "Bilginin başka kaynaklarla desteklenip desteklenmediğinin kontrol edilmesi",
+    inference: "Hızlı ulaşılan bilgi, doğruluğu incelenmeden kullanılmamalıdır."
+  },
+  {
+    title: "Okuma grubu",
+    text: "Bir sınıfta öğrenciler aynı kitabı okuyup haftada bir kısa değerlendirme yapmaya başladı. Her öğrenci kitaptaki farklı bir ayrıntıya dikkat çektiği için tartışmalar tek bir doğru cevap arayışına dönüşmedi. Zamanla öğrenciler, bir metnin farklı bakış açılarıyla daha zengin anlaşılabileceğini gördü.",
+    topic: "metni farklı bakış açılarıyla değerlendirme",
+    main: "Ortak okuma çalışmaları, metni farklı yönleriyle anlamayı sağlar.",
+    detail: "Her öğrencinin kitaptaki farklı bir ayrıntıya dikkat çektiği",
+    inference: "Aynı metin, farklı okurların katkısıyla daha kapsamlı değerlendirilebilir."
+  },
+  {
+    title: "Paragrafta hız",
+    text: "Sınavda hızlı olmak elbette önemlidir; fakat hız, anlamı gözden kaçırmaya başladığında yarar yerine zarar getirir. Bir öğrenci metni kısa sürede bitirip soruya yanlış cevap veriyorsa asıl sorun sürenin uzunluğu değil, okuma sırasında kurduğu bağın zayıflığıdır. Etkili okuma, hız ile anlam arasındaki dengeyi korumayı gerektirir.",
+    topic: "hız ve anlama dengesi",
+    main: "Paragraf çözümünde hız, anlamı koruduğu sürece değerlidir.",
+    detail: "Hızlı okuyup yanlış cevap veren öğrencide bağ kurma sorunu olabileceği",
+    inference: "Süreyi azaltmak tek başına paragraf başarısını artırmaz."
+  },
+  {
+    title: "Anahtar sözcükler",
+    text: "Bir paragrafta bazı sözcükler, metnin hangi düşünce etrafında kurulduğunu gösterir. Bu sözcükler her zaman en çok tekrar eden kelimeler olmak zorunda değildir; bazen bir sonuç cümlesinde ya da örneğin sonunda belirir. Dikkatli okur, bu ipuçlarını fark ederek metnin ana yönünü daha kolay belirler.",
+    topic: "anahtar sözcüklerin metni anlamadaki işlevi",
+    main: "Anahtar sözcükler, paragrafın temel düşüncesini belirlemede okura yol gösterir.",
+    detail: "Anahtar sözcüklerin bazen sonuç cümlesinde belirdiği",
+    inference: "Metnin ana yönü yalnız tekrar sayısına bakılarak bulunamaz."
+  },
+  {
+    title: "Sosyal sorumluluk duyurusu",
+    text: "Okulda başlatılan kitap bağışı kampanyası yalnız rafları doldurmak için yapılmadı. Öğrenciler, okudukları kitapların başka çocukların da dünyasını genişletebileceğini düşündü. Kampanya sonunda toplanan kitaplar köy okuluna gönderildiğinde, öğrenciler paylaşmanın somut bir karşılık bulduğunu gördü.",
+    topic: "kitap paylaşımı yoluyla sosyal sorumluluk",
+    main: "Paylaşma bilinci, küçük okul etkinlikleriyle somut bir değere dönüşebilir.",
+    detail: "Toplanan kitapların köy okuluna gönderildiği",
+    inference: "Kampanya, yalnız eşya toplama değil başkalarının öğrenmesine katkı sağlama amacı taşımıştır."
+  },
+  {
+    title: "Metin karşılaştırma",
+    text: "İki metin aynı konudan söz edebilir ancak okura aynı mesajı vermeyebilir. Örneğin biri doğayı korumak için bireysel sorumluluğu vurgularken diğeri kurumların alması gereken önlemleri öne çıkarabilir. Bu nedenle karşılaştırma sorularında yalnız konuya değil, yazarın konuya hangi açıdan yaklaştığına da bakmak gerekir.",
+    topic: "aynı konudaki metinlerin farklı bakış açıları",
+    main: "Metin karşılaştırmada konu kadar yazarın bakış açısı da dikkate alınmalıdır.",
+    detail: "Bir metnin bireysel sorumluluğu, diğerinin kurumsal önlemleri öne çıkarabileceği",
+    inference: "Aynı konuyu işleyen metinler farklı ana düşüncelere sahip olabilir."
+  },
+  {
+    title: "Uzun paragraf",
+    text: "Uzun paragraflar çoğu öğrenciyi ilk bakışta zorlar; fakat bu metinler genellikle küçük düşünce basamaklarından oluşur. Her cümle bir öncekinin üzerine yeni bir ayrıntı ekler ya da önceki düşünceyi açıklar. Öğrenci bu basamakları fark ettiğinde paragraf, tek parça bir yük olmaktan çıkar ve izlenebilir bir düşünce zincirine dönüşür.",
+    topic: "uzun paragrafta düşünce basamaklarını izleme",
+    main: "Uzun paragraflar, düşünce basamakları izlenerek daha kolay anlaşılır.",
+    detail: "Her cümlenin önceki düşünceye yeni ayrıntı eklediği ya da onu açıkladığı",
+    inference: "Uzun metin korkusu, metnin yapısı fark edildiğinde azalabilir."
+  },
+  {
+    title: "Çeldirici seçenekler",
+    text: "Bazı seçenekler metindeki bir kelimeyi aynen kullandığı için doğruymuş gibi görünür. Oysa doğru seçenek, yalnız aynı kelimeyi taşıyan değil, metnin bütünündeki yargıyla uyuşan seçenektir. Bu nedenle öğrenci, seçenekleri değerlendirirken kelime benzerliğine değil anlam uygunluğuna bakmalıdır.",
+    topic: "çeldirici seçenekleri anlamca eleme",
+    main: "Doğru seçenek, metindeki kelimeye değil metnin bütün anlamına uygun olmalıdır.",
+    detail: "Bazı seçeneklerin metindeki kelimeyi aynen kullandığı için doğru göründüğü",
+    inference: "Kelime benzerliği, bir seçeneğin doğru olduğunu tek başına kanıtlamaz."
+  },
+  {
+    title: "Not alarak okuma",
+    text: "Bir metni okurken kenara küçük işaretler koymak, öğrencinin dikkatini canlı tutar. Ancak her cümlenin altını çizmek bu yöntemi etkisizleştirir; çünkü önemli olanla ayrıntı birbirine karışır. İyi bir okur, yalnız metnin yönünü değiştiren, örnek veren ya da sonuç bildiren bölümleri işaretler.",
+    topic: "seçici not alarak okuma",
+    main: "Not alarak okuma, yalnız önemli noktalar seçildiğinde işe yarar.",
+    detail: "Her cümlenin altını çizmenin yöntemi etkisizleştirdiği",
+    inference: "İşaretleme yaparken amaç çok çizmek değil doğru yeri seçmektir."
+  },
+  {
+    title: "Deneme sonrası konuşma",
+    text: "Deneme sınavından sonra öğrenciler yalnız kaç doğru yaptıklarını söylemekle yetinmedi. Hangi soruda acele ettiklerini, hangi metinde dikkatlerinin dağıldığını ve hangi seçeneği neden elediklerini tartıştılar. Bu konuşma, sonucun arkasındaki çözüm sürecini görmelerini sağladı.",
+    topic: "deneme sonrası çözüm sürecini değerlendirme",
+    main: "Deneme değerlendirmesi, yalnız doğru sayısını değil çözüm sürecini de incelemelidir.",
+    detail: "Öğrencilerin hangi seçeneği neden elediklerini tartıştığı",
+    inference: "Sınavdan sonra yapılan nitelikli değerlendirme, sonraki çalışmalar için yol gösterir."
+  },
+  {
+    title: "Okuma ortamı",
+    text: "Bir öğrenci, aynı metni kalabalık bir odada okuduğunda sık sık başa döndüğünü fark etti. Daha sessiz bir ortamda ise cümleleri daha kolay takip etti. Bu durum, okuduğunu anlamanın yalnız metnin zorluğuyla değil, okuma ortamının dikkat üzerindeki etkisiyle de ilgili olduğunu gösterir.",
+    topic: "okuma ortamının anlama üzerindeki etkisi",
+    main: "Okuma ortamı, öğrencinin metni takip etme ve anlama becerisini etkileyebilir.",
+    detail: "Öğrencinin kalabalık odada sık sık başa döndüğü",
+    inference: "Anlama güçlüğünün nedeni her zaman metnin zor olması değildir."
+  },
+  {
+    title: "Soru türünü tanıma",
+    text: "Bir paragraf sorusunda öğrencinin önce ne istendiğini belirlemesi gerekir. Konu sorusu metnin ne hakkında olduğunu, ana düşünce sorusu ise yazarın vermek istediği temel mesajı arar. Bu iki soru türü karıştırıldığında öğrenci doğru metni okusa bile yanlış seçeneğe yönelebilir.",
+    topic: "konu ve ana düşünce sorularını ayırt etme",
+    main: "Soru türünü doğru tanımak, paragraf çözümünde doğru cevaba ulaşmayı kolaylaştırır.",
+    detail: "Konu sorusunun ne hakkında olduğunu, ana düşünce sorusunun temel mesajı aradığı",
+    inference: "Metni anlamak kadar soru kökünün istediğini doğru belirlemek de önemlidir."
+  },
+  {
+    title: "Okuma hedefi",
+    text: "Bir metni her okuyuşumuzda aynı amaçla okumayız. Bazen bilgi edinmek, bazen yazarın tutumunu anlamak, bazen de iki düşünce arasındaki ilişkiyi bulmak isteriz. Okuma amacı değiştiğinde metinde dikkat edeceğimiz yerler de değişir. Bu yüzden başarılı okur, metne başlamadan önce ne aradığını bilir.",
+    topic: "okuma amacının dikkati yönlendirmesi",
+    main: "Okuma amacı, metinde hangi bilgilere dikkat edileceğini belirler.",
+    detail: "Okuma amacı değiştiğinde dikkat edilecek yerlerin de değiştiği",
+    inference: "Aynı metin, farklı amaçlarla okunduğunda farklı yönleriyle değerlendirilebilir."
+  },
+  {
+    title: "Metindeki kanıt",
+    text: "Bir seçenek kulağa mantıklı gelebilir; fakat paragraf sorularında önemli olan seçeneğin metinle desteklenmesidir. Öğrenci, cevabı işaretlemeden önce metinde bu yargıyı karşılayan cümleyi ya da ipucunu bulmalıdır. Metnin kanıtlamadığı bir düşünce, genel olarak doğru olsa bile o sorunun cevabı olmayabilir.",
+    topic: "seçeneği metindeki kanıtla doğrulama",
+    main: "Paragraf sorularında doğru seçenek, metindeki kanıtla desteklenmelidir.",
+    detail: "Metnin kanıtlamadığı bir düşüncenin genel olarak doğru olsa bile cevap olmayabileceği",
+    inference: "Cevap verirken kişisel bilgi değil metnin sunduğu kanıt esas alınmalıdır."
+  },
+  {
+    title: "Dikkat dağıtan ayrıntı",
+    text: "Uzun metinlerde bazı ayrıntılar, öğrencinin ilgisini çeker ancak sorunun cevabıyla doğrudan ilgili değildir. Bu ayrıntılar metni zenginleştirir fakat ana düşüncenin yerine geçmez. Öğrenci, soru kökünün istediği bilgiye döndüğünde hangi ayrıntının önemli, hangisinin yardımcı olduğunu daha kolay ayırt eder.",
+    topic: "ana düşünce ile ayrıntıyı ayırt etme",
+    main: "Paragraf çözümünde ayrıntılar, soru kökünün istediği bilgiye göre değerlendirilmelidir.",
+    detail: "Bazı ayrıntıların metni zenginleştirdiği fakat ana düşüncenin yerine geçmediği",
+    inference: "Her ilgi çekici ayrıntı sorunun cevabını belirlemez."
+  },
+  {
+    title: "Eleştirel okuma",
+    text: "Eleştirel okumak, metne sürekli karşı çıkmak anlamına gelmez. Okur, yazarın hangi düşünceyi savunduğunu, bu düşünceyi hangi örneklerle desteklediğini ve nerede yorum yaptığını fark etmeye çalışır. Böyle okuyan biri, metindeki bilgiyi ezberlemek yerine düşüncenin nasıl kurulduğunu görür.",
+    topic: "eleştirel okumanın metni çözümlemedeki rolü",
+    main: "Eleştirel okuma, metindeki düşüncenin nasıl kurulduğunu anlamayı sağlar.",
+    detail: "Okurun yazarın düşünceyi hangi örneklerle desteklediğini fark etmeye çalıştığı",
+    inference: "Eleştirel okuma, metni reddetmek değil metnin yapısını sorgulayarak anlamaktır."
+  },
+  {
+    title: "Paragraf tekrarı",
+    text: "Aynı tür sorudan arka arkaya çözmek kısa sürede pratik kazandırabilir; fakat öğrenci hep aynı kalıpla karşılaşırsa gerçek sınavdaki farklı metinlerde zorlanabilir. Bu nedenle çalışma planında konu tekrarı yapılırken metin türleri ve soru biçimleri değiştirilmelidir. Öğrenme, aynı beceriyi farklı durumlarda kullanabildiğimizde güçlenir.",
+    topic: "farklı metinlerle paragraf becerisini geliştirme",
+    main: "Paragraf çalışmasında aynı beceri farklı metin ve soru biçimleriyle pekiştirilmelidir.",
+    detail: "Konu tekrarı yapılırken metin türleri ve soru biçimlerinin değiştirilmesi gerektiği",
+    inference: "Sürekli aynı kalıptaki sorular, öğrenciyi gerçek sınav çeşitliliğine yeterince hazırlamayabilir."
+  },
+  {
+    title: "Sonuç cümlesi",
+    text: "Birçok paragrafta yazar asıl düşüncesini doğrudan ilk cümlede vermez. Önce örnekler sunar, sonra bu örneklerden ulaşılacak sonucu belirtir. Bu nedenle özellikle ana düşünce sorularında paragrafın son bölümü dikkatle okunmalıdır. Sonuç cümlesi, metnin dağınık gibi görünen ayrıntılarını bir araya getirebilir.",
+    topic: "sonuç cümlesinin ana düşünceyi belirlemedeki rolü",
+    main: "Sonuç cümlesi, paragrafın ana düşüncesini bulmada güçlü bir ipucu olabilir.",
+    detail: "Yazarın önce örnekler sunup sonra sonucu belirtebildiği",
+    inference: "Ana düşünce her zaman ilk cümlede açıkça verilmez."
+  },
+  {
+    title: "Okuma sabrı",
+    text: "Bazı öğrenciler uzun metin görünce soruyu daha okumadan zorlanacağını düşünür. Bu düşünce, metinden önce öğrencinin kendisini yenmesine neden olur. Oysa metin parça parça takip edildiğinde çoğu zaman beklenenden daha anlaşılırdır. Okuma sabrı, uzun paragrafın göz korkutan görüntüsünü yönetmeyi sağlar.",
+    topic: "uzun metin karşısında okuma sabrı",
+    main: "Uzun metinlerde sabırlı ve parça parça okuma, anlamayı kolaylaştırır.",
+    detail: "Öğrencinin uzun metni görür görmez zorlanacağını düşünmesi",
+    inference: "Metnin uzunluğu, onun mutlaka anlaşılamaz olduğu anlamına gelmez."
+  },
+  {
+    title: "Çözüm sırası",
+    text: "Bazı öğrenciler paragraf sorularını sırayla çözmek zorunda olduğunu düşünür. Ancak sınavda çok zaman alan bir soruya takılıp kalmak, diğer sorular için ayrılan süreyi azaltabilir. Zorlanılan soruyu işaretleyip sonra dönmek, hem zamanı korur hem de zihnin aynı soruya sıkışmasını önler.",
+    topic: "sınavda çözüm sırasını yönetme",
+    main: "Zorlanılan soruya gerektiğinde sonra dönmek, zamanı daha verimli kullanmayı sağlar.",
+    detail: "Çok zaman alan soruya takılıp kalmanın diğer soruların süresini azaltabileceği",
+    inference: "Her soruyu ilk karşılaşıldığı anda bitirmeye çalışmak doğru bir zaman yönetimi olmayabilir."
+  }
+];
+
+function gradeEightSkillQuestion(topic, index, difficulty, number) {
+  const passage = gradeEightPassages[index % gradeEightPassages.length];
+  const passageCycle = Math.floor(index / gradeEightPassages.length);
+  const passageAdditions = [
+    "",
+    " Öğretmen bu metni değerlendirirken öğrencilerden yalnız sonucu değil, düşüncenin hangi gerekçelerle kurulduğunu da göstermelerini istemiştir.",
+    " Çalışmanın ikinci aşamasında öğrenciler, metindeki ana yargıyı destekleyen cümleleri ayrı renkle işaretlemiştir."
+  ];
+  const passageText = `${passage.text}${passageAdditions[passageCycle % passageAdditions.length]}`;
+  const letters = ["A", "B", "C", "D"];
+  const common = {
+    grade: 8,
+    topic,
+    difficulty,
+    outcome: `${topic} kazanımına uygun özgün soru ${number}.`,
+    text: passageText,
+    strategy: "Önce soru kökünün istediğini belirle, sonra metindeki kanıtla seçenekleri karşılaştır.",
+    hint: "Metnin yalnız ilk cümlesine değil, sonuç bölümüne de bak."
+  };
+  const byTopic = {
+    "Konu bulma": {
+      stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
+      options: [`${passage.topic}`, "Okul kurallarının tarihsel gelişimi", "Bir kitabın yazar kadrosu", "Sınav kitapçığının basım aşamaları"],
+      answer: "A",
+      solution: `Metin ${passage.topic} çevresinde kurulmuştur; diğer seçenekler metnin merkezinde değildir.`
+    },
+    "Ana düşünce": {
+      stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
+      options: ["Paragraf sorularında yalnız hız yeterlidir.", passage.main, "Metinlerde ayrıntılar her zaman gereksizdir.", "Soru kökü okunmadan doğru cevap bulunabilir."],
+      answer: "B",
+      solution: `Metnin örnekleri ve sonuç bölümü '${passage.main}' düşüncesini destekler.`
+    },
+    "Yardımcı düşünce": {
+      stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
+      options: ["Öğrencinin bütün soruları yanlış yaptığına", passage.detail, "Metinlerin yalnız ezberle anlaşılacağına", "Okuma çalışmalarının gereksiz olduğuna"],
+      answer: "B",
+      solution: `Metinde '${passage.detail}' bilgisine açıkça yer verilmiştir.`
+    },
+    "Çıkarım yapma": {
+      stem: "Bu metinden aşağıdakilerden hangisi çıkarılabilir?",
+      options: ["Paragraf başarısı rastlantıya bağlıdır.", passage.inference, "Metni anlamak için seçeneklere bakmak yeterlidir.", "Uzun metinler hiçbir zaman çözülemez."],
+      answer: "B",
+      solution: `Metindeki açıklamalar '${passage.inference}' çıkarımını destekler.`
+    },
+    "Zaman yönetimi": {
+      stem: "Bu metne göre paragraf çözümünde zaman yönetimi için en uygun davranış hangisidir?",
+      options: ["Zorlanılan soruda süreyi tamamen unutmak", "Soru kökünü, metindeki kanıtı ve ayrılan süreyi birlikte kontrol etmek", "Her soruyu yalnız ilk cümleye göre cevaplamak", "Uzun metinleri okumadan boş bırakmak"],
+      answer: "B",
+      solution: "Metnin vurgusu, çözüm sürecini bilinçli yönetmek ve süreyi anlamdan koparmamaktır."
+    }
+  };
+  if (topic === "Metinler arası karşılaştırma") {
+    const other = gradeEightPassages[(index + 7) % gradeEightPassages.length];
+    const otherText = `${other.text}${passageAdditions[passageCycle % passageAdditions.length]}`;
+    return buildQuestion({
+      ...common,
+      text: `I. metin: ${passageText}\n\nII. metin: ${otherText}`,
+      stem: "Bu iki metin için aşağıdakilerden hangisi söylenebilir?",
+      options: [
+        `I. metin ${passage.topic} üzerinde dururken II. metin ${other.topic} üzerinde durur.`,
+        "İki metin de yalnız kitap türlerini tanıtmaktadır.",
+        "I. metin kişisel bir anı, II. metin bir masal örneğidir.",
+        "İki metinde de paragraf çözümüyle ilgili hiçbir düşünce yoktur."
+      ],
+      answer: "A",
+      solution: `I. metnin odağı ${passage.topic}, II. metnin odağı ise ${other.topic} konusudur.`
+    });
+  }
+  if (topic === "LGS tarzı yeni nesil paragraf soruları") {
+    const rows = [
+      ["Metindeki kanıt", index % 3 === 0 ? "Güçlü" : "Orta"],
+      ["Çeldirici benzerliği", index % 2 === 0 ? "Yüksek" : "Düşük"],
+      ["Soru kökü", index % 4 === 0 ? "Olumsuz" : "Doğrudan"],
+      ["Metin uzunluğu", index % 5 < 2 ? "Uzun" : "Orta"]
+    ];
+    return buildQuestion({
+      ...common,
+      text: `<p>${passageText}</p>${stimulusTable(["İncelenen özellik", "Durum"], rows)}<p>Öğrenci, metni ve tabloyu birlikte değerlendirerek cevap vermelidir.</p>`,
+      stem: "Bu metin ve tablo birlikte değerlendirildiğinde öğrencinin öncelikle hangi davranışı göstermesi gerekir?",
+      options: [
+        "Seçeneklerde metinden geçen ilk kelimeyi bulup işaretlemek",
+        "Soru kökünü belirleyip metindeki kanıtla seçenekleri karşılaştırmak",
+        "Tablodaki en kısa ifadeyi doğru kabul etmek",
+        "Metin uzun olduğu için yalnız seçenekleri okumak"
+      ],
+      answer: "B",
+      solution: "Yeni nesil soruda metin, tablo ve soru kökü birlikte değerlendirilmelidir; yalnız kelime benzerliği yeterli değildir."
+    });
+  }
+  if (topic === "Tablo-grafik-görsel okuma") {
+    const dataSets = [
+      { title: "Okuma çalışması", rows: [["Ana fikir", "%72", "68 sn"], ["Yardımcı fikir", "%61", "82 sn"], ["Görsel okuma", "%80", "65 sn"], ["Sözel mantık", "%49", "118 sn"]], answer: "Sözel mantık", reason: "doğru oranı en düşük, süre en yüksektir" },
+      { title: "Kütüphane kullanımı", rows: [["Roman", "42", "8 gün"], ["Bilgi kitabı", "31", "10 gün"], ["Şiir", "16", "5 gün"], ["Deneme", "24", "7 gün"]], answer: "Roman", reason: "ödünç alma sayısı en fazladır" },
+      { title: "Çalışma planı", rows: [["Konu tekrarı", "35 dk", "Orta"], ["Paragraf", "50 dk", "Yüksek"], ["Sözel mantık", "25 dk", "Düşük"], ["Kontrol", "15 dk", "Orta"]], answer: "Paragraf", reason: "en uzun süre ve yüksek öncelik bu alandadır" },
+      { title: "Deneme değerlendirmesi", rows: [["Boş bırakma", "%6", "Az"], ["Acele hatası", "%18", "Orta"], ["Yanlış çıkarım", "%27", "Yüksek"], ["Kodlama hatası", "%4", "Az"]], answer: "Yanlış çıkarım", reason: "oranı ve risk düzeyi en yüksek başlıktır" }
+    ];
+    const data = dataSets[index % dataSets.length];
+    return buildQuestion({
+      ...common,
+      text: `<p>${passage.title} çalışmasıyla bağlantılı olarak "${data.title}" için hazırlanan tablo aşağıda verilmiştir.</p>${stimulusTable(["Alan", "Değer", "Not"], data.rows)}<p>Tablo yalnız görünen değerlerden hareketle yorumlanmalıdır; tabloda olmayan bilgiler doğru kabul edilmemelidir.</p>`,
+      stem: "Bu tabloya göre aşağıdakilerden hangisi kesin olarak söylenebilir?",
+      options: [
+        `${data.answer} öne çıkan alandır çünkü ${data.reason}.`,
+        "Bütün alanların değerleri birbirine eşittir.",
+        "Tablodaki en düşük değer her zaman en başarılı alanı gösterir.",
+        "Tabloda öğrencilerin adları verildiği için kişisel sıralama yapılabilir."
+      ],
+      answer: "A",
+      solution: `Tablodaki değerler karşılaştırıldığında ${data.answer} için verilen bilgi doğrudan desteklenir.`
+    });
+  }
+  if (topic === "Sözel mantık destekli paragraf soruları") {
+    const sets = [
+      { names: ["Arda", "Beril", "Cem", "Duru"], fixed: "Duru son sıradadır.", relation: "Arda, Cem'den hemen önce sunum yapar.", extra: "Beril ilk sırada değildir.", answer: "Beril - Arda - Cem - Duru" },
+      { names: ["Ela", "Fırat", "Gizem", "Hakan"], fixed: "Gizem ikinci sıradadır.", relation: "Ela, Hakan'dan önce; Fırat'tan sonra gelir.", extra: "Hakan son sıradadır.", answer: "Fırat - Gizem - Ela - Hakan" },
+      { names: ["İrem", "Kaan", "Lale", "Mert"], fixed: "Kaan ilk sırada değildir.", relation: "Lale ile Mert arasında bir kişi vardır.", extra: "İrem ilk sıradadır ve Mert son sırada değildir.", answer: "İrem - Mert - Kaan - Lale" },
+      { names: ["Nehir", "Ozan", "Pelin", "Rüzgar"], fixed: "Pelin üçüncü sıradadır.", relation: "Ozan, Nehir'den hemen sonra gelir.", extra: "Rüzgar ilk sırada değildir.", answer: "Nehir - Ozan - Pelin - Rüzgar" }
+    ];
+    const set = sets[index % sets.length];
+    return buildQuestion({
+      ...common,
+      text: `<p>${passage.title} etkinliğinin sonunda ${set.names.join(", ")} adlı dört öğrenci sırayla görev alacaktır.</p>${stimulusList([set.fixed, set.relation, set.extra])}<p>Bu bilgiler birlikte kullanıldığında yalnız bir sıralama tüm koşulları sağlar.</p>`,
+      stem: "Bu bilgilere göre doğru sıralama aşağıdakilerden hangisidir?",
+      options: [set.answer, set.names.join(" - "), [...set.names].reverse().join(" - "), `${set.names[1]} - ${set.names[0]} - ${set.names[3]} - ${set.names[2]}`],
+      answer: "A",
+      solution: "Kesin yer bilgisi ve hemen önce/sonra koşulu birlikte yerleştirildiğinde yalnız A seçeneği tüm koşulları sağlar."
+    });
+  }
+  const selected = byTopic[topic];
+  if (!selected) return null;
+  const answerIndex = letters.indexOf(selected.answer);
+  selected.options = selected.options.map((option, optionIndex) => optionIndex === answerIndex ? option : option);
+  return buildQuestion({ ...common, ...selected });
+}
+
+function variedNewGenerationQuestion(grade, topic, index, difficulty, number) {
+  const isVisual = topic === "Tablo-grafik-görsel okuma";
+  const isLogic = topic === "Sözel mantık destekli paragraf soruları";
+  if (!isVisual && !isLogic) return null;
+  const common = {
+    grade,
+    topic,
+    difficulty,
+    outcome: `${topic} kazanımına uygun özgün soru ${number}.`,
+    strategy: "Verilen bilgileri tek tek işaretle, sonra seçenekleri yalnız bu bilgilere göre değerlendir.",
+    hint: "Tabloda ya da koşullarda doğrudan verilen bilgiyi ara."
+  };
+  if (isVisual) {
+    const contexts = [
+      { title: "Kitap kulübü", item: "tür", rows: ["Hikâye", "Masal", "Şiir", "Bilgi kitabı"], unit: "kitap", note: "en çok seçilen tür" },
+      { title: "Bahçe çalışması", item: "fidan", rows: ["Elma", "Erik", "Çam", "Ihlamur"], unit: "fidan", note: "en fazla dikilen fidan" },
+      { title: "Geri dönüşüm", item: "atık", rows: ["Kâğıt", "Plastik", "Cam", "Metal"], unit: "kg", note: "en çok toplanan atık" },
+      { title: "Okuma saati", item: "gün", rows: ["Pazartesi", "Salı", "Çarşamba", "Perşembe"], unit: "dk", note: "en uzun okuma süresi" },
+      { title: "Kulüp tercihi", item: "kulüp", rows: ["Satranç", "Drama", "Resim", "Robotik"], unit: "öğrenci", note: "en çok tercih edilen kulüp" },
+      { title: "Sağlıklı yaşam", item: "etkinlik", rows: ["Yürüyüş", "Bisiklet", "Yüzme", "Jimnastik"], unit: "kişi", note: "en fazla katılım olan etkinlik" }
+    ];
+    const context = contexts[(index + grade) % contexts.length];
+    const cycle = Math.floor(index / contexts.length);
+    const base = 10 + ((index * 7 + grade) % 18) + (cycle * 2);
+    const values = [base + 9, base - 2, base + 3, base + 6];
+    const rows = context.rows.map((label, rowIndex) => [label, `${values[rowIndex]} ${context.unit}`, rowIndex === 0 ? "En yüksek" : rowIndex === 1 ? "En düşük" : "Orta"]);
+    return buildQuestion({
+      ...common,
+      text: `<p>${grade}. sınıf öğrencileri "${context.title}" konusunda bir tablo hazırlamıştır. Tablo yalnız verilen sayılara göre yorumlanacaktır.</p>${stimulusTable([context.item, "Sayı", "Not"], rows)}<p>Öğrencilerden, tabloda açıkça verilen bilgiden hareketle kesin bir sonuca ulaşmaları istenmiştir.</p>`,
+      stem: "Bu tabloya göre aşağıdakilerden hangisi kesin olarak söylenebilir?",
+      options: [
+        `${context.rows[0]}, ${context.note} olarak görünmektedir.`,
+        `${context.rows[1]}, ${context.rows[0]}'dan daha fazladır.`,
+        "Tablodaki bütün değerler birbirine eşittir.",
+        "Tabloda öğrencilerin adları verildiği için kişisel başarı sıralaması yapılabilir."
+      ],
+      answer: "A",
+      solution: `Tabloda ${context.rows[0]} için verilen değer en yüksektir; bu bilgi doğrudan tablodan çıkarılır.`,
+      wrong: "Yanlış seçenekler tablodaki sayılarla desteklenmez ya da tabloda verilmeyen bir bilgiye dayanır."
+    });
+  }
+  const nameSets = [
+    ["Ece", "Mert", "Deniz", "Zeynep"],
+    ["Ada", "Bora", "Cem", "Duru"],
+    ["Ela", "Fırat", "Gizem", "Hakan"],
+    ["İrem", "Kaan", "Lale", "Mert"],
+    ["Nehir", "Ozan", "Pelin", "Rüzgar"],
+    ["Selin", "Tunç", "Umut", "Yaren"],
+    ["Ayça", "Berk", "Ceren", "Doruk"],
+    ["Elif", "Kerem", "Mina", "Doruk"]
+  ];
+  const activities = ["kitap tanıtımı", "proje sunumu", "şiir okuma", "deney anlatımı", "pano görevi", "kulüp konuşması"];
+  const names = nameSets[index % nameSets.length];
+  const activity = activities[Math.floor(index / nameSets.length) % activities.length];
+  return buildQuestion({
+    ...common,
+    text: `<p>${names.join(", ")} adlı dört öğrenci ${activity} için sıraya girecektir.</p>${stimulusList([`${names[0]}, ${names[2]}'den hemen önce görev alacaktır.`, `${names[1]} ilk sırada değildir.`, `${names[3]} son sıradadır.`, `${names[1]} ikinci sıradadır.`])}<p>Bu koşulların tamamını sağlayan sıralama seçilecektir.</p>`,
+    stem: "Bu bilgilere göre doğru sıralama aşağıdakilerden hangisidir?",
+    options: [`${names[1]} - ${names[0]} - ${names[2]} - ${names[3]}`, `${names[0]} - ${names[1]} - ${names[2]} - ${names[3]}`, `${names[1]} - ${names[2]} - ${names[0]} - ${names[3]}`, `${names[2]} - ${names[1]} - ${names[0]} - ${names[3]}`],
+    answer: "A",
+    solution: `${names[1]} ikinci sıradadır. ${names[0]}, ${names[2]}'den hemen önce olmalı ve ${names[3]} son sırada yer almalıdır. Bu koşulları A seçeneği sağlar.`,
+    wrong: "Diğer seçenekler ikinci sıra, hemen önce ya da son sıra koşullarından en az birini bozar."
+  });
+}
+
 function newGenerationQuestion(grade, topic, index, seed, note, difficulty, number) {
   const isVisual = topic === "Tablo-grafik-görsel okuma";
   const isLogic = topic === "Sözel mantık destekli paragraf soruları";
@@ -533,6 +944,10 @@ function generatedQuestion(grade, topic, index) {
   };
   const note = variantNotes[grade][Math.floor(index / passageSeeds[grade].length) % variantNotes[grade].length];
   const extension = paragraphExtension(grade, seed, note, index);
+  const gradeEightQuestion = grade === 8 ? gradeEightSkillQuestion(topic, index, difficulty, number) : null;
+  if (gradeEightQuestion) return gradeEightQuestion;
+  const variedNewGen = variedNewGenerationQuestion(grade, topic, index, difficulty, number);
+  if (variedNewGen) return variedNewGen;
   const newGenQuestion = newGenerationQuestion(grade, topic, index, seed, note, difficulty, number);
   if (newGenQuestion) return newGenQuestion;
 
@@ -667,28 +1082,28 @@ function generatedQuestion(grade, topic, index) {
         solution: `Metnin verdiği örnek, '${seed.hidden}' yorumunu destekler.`
       },
       "Cümle sıralama": {
-        text: `(I) Sonunda öğrenciler ${seed.idea} düşüncesini daha iyi kavradı. (II) Öğretmen önce sınıfa kısa bir örnek verdi. (III) Daha sonra öğrenciler bu örnekten yola çıkarak kendi cümlelerini yazdı. (IV) Derste ${seed.title.toLowerCase()} konusu işlendi.`,
+        text: `(I) Sonunda öğrenciler ${seed.idea} düşüncesini daha iyi kavradı. (II) Öğretmen önce sınıfa kısa bir örnek verdi ve ${note}. (III) Daha sonra öğrenciler bu örnekten yola çıkarak kendi cümlelerini yazdı. (IV) Derste ${seed.title.toLowerCase()} konusu işlendi.`,
         stem: "Numaralanmış cümlelerle anlamlı bir paragraf oluşturulduğunda sıralama nasıl olmalıdır?",
         options: ["IV-II-III-I", "II-I-IV-III", "I-III-II-IV", "III-IV-I-II"],
         answer: "A",
         solution: "Önce konu verilir, sonra öğretmenin örneği, öğrencilerin çalışması ve sonuç gelir."
       },
       "Düşüncenin akışını bozan cümle": {
-        text: `(I) ${seed.title} öğrencilerin dikkatini çeken bir konuydu. (II) Öğretmen ${seed.idea} üzerinde durdu. (III) ${seed.odd} (IV) Verilen örnekler konunun daha iyi anlaşılmasını sağladı.`,
+        text: `(I) ${seed.title} öğrencilerin dikkatini çeken bir konuydu. (II) Öğretmen ${seed.idea} üzerinde durdu ve ${note}. (III) ${seed.odd} (IV) Verilen örnekler konunun daha iyi anlaşılmasını sağladı.`,
         stem: "Numaralanmış cümlelerden hangisi düşüncenin akışını bozmaktadır?",
         options: ["I", "II", "III", "IV"],
         answer: "C",
         solution: "III. cümle metnin konusu ile ilgili değildir ve anlam akışını bozar."
       },
       "Anlatım biçimleri": {
-        text: `${seed.example}. Metinde ayrıntılar, düşünceyi okurun zihninde belirginleştirmek için seçilmiştir. Yazar, konuyu doğrudan bilgi vererek ve örnekle destekleyerek anlatır.`,
+        text: `${seed.example}. Metinde ayrıntılar, düşünceyi okurun zihninde belirginleştirmek için seçilmiştir. Yazar, konuyu doğrudan bilgi vererek ve örnekle destekleyerek anlatır. Bu bölümde ayrıca ${note}.`,
         stem: "Bu metinde ağır basan anlatım biçimi hangisidir?",
         options: ["Öyküleyici anlatım", seed.style, "Destansı anlatım", "Masalsı anlatım"],
         answer: "B",
         solution: `Metnin kuruluşu ${seed.style} özelliği gösterir.`
       },
       "Düşünceyi geliştirme yolları": {
-        text: `${seed.idea} çoğu zaman somut bir örnekle daha kolay anlaşılır. Örneğin ${seed.example}. Bu örnek, anlatılan düşüncenin günlük yaşamda nasıl karşılık bulduğunu gösterir.`,
+        text: `${seed.idea} çoğu zaman somut bir örnekle daha kolay anlaşılır. Örneğin ${seed.example}. Bu örnek, anlatılan düşüncenin günlük yaşamda nasıl karşılık bulduğunu gösterir. Öğretmen bu bölümde ${note}. ${extension}`,
         stem: "Bu metinde düşünceyi geliştirmek için hangi yola başvurulmuştur?",
         options: ["Tanık gösterme", "Örneklendirme", "Sayısal verilerden yararlanma", "Karşıt görüş çürütme"],
         answer: "B",
