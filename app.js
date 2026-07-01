@@ -1178,9 +1178,6 @@ function strategyCard(topic) {
     <div class="strategy-note">
       <b>Dikkat:</b> ${strategy.trap}
     </div>
-    <div class="strategy-example">
-      <b>Mini örnek:</b> ${strategy.example}
-    </div>
   `;
 }
 

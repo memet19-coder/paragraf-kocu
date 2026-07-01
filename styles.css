@@ -441,8 +441,7 @@ h3 {
 }
 
 .strategy-block b,
-.strategy-note b,
-.strategy-example b {
+.strategy-note b {
   color: var(--ink);
 }
 
@@ -452,8 +451,7 @@ h3 {
   line-height: 1.55;
 }
 
-.strategy-note,
-.strategy-example {
+.strategy-note {
   border-radius: 8px;
   padding: 10px 12px;
   line-height: 1.5;
@@ -462,11 +460,6 @@ h3 {
 .strategy-note {
   background: var(--soft-coral);
   color: #73352c;
-}
-
-.strategy-example {
-  background: var(--soft-teal);
-  color: #164d50;
 }
 
 .stat-card span, .analysis-card span, .report-card span {
