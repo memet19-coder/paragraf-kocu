@@ -1501,6 +1501,17 @@ function renderQuestion() {
     ${question.grade === 8 ? `<div class="question-field"><small>Süre takibi</small><span class="timer-chip">8. sınıf için süre kaydediliyor</span></div>` : ""}
     <div class="question-field"><small>Paragraf metni</small><div class="paragraph-text">${question.text}</div></div>
     <div class="question-field"><small>Soru kökü</small><strong>${question.stem}</strong></div>
+    <div class="scratch-pad">
+      <div class="scratch-toolbar">
+        <strong>Çalışma alanı</strong>
+        <div class="scratch-tools" role="group" aria-label="Çalışma alanı araçları">
+          <button class="scratch-tool is-active" id="penTool" type="button">Kalem</button>
+          <button class="scratch-tool" id="eraserTool" type="button">Silgi</button>
+          <button class="scratch-tool" id="clearScratch" type="button">Temizle</button>
+        </div>
+      </div>
+      <canvas id="scratchCanvas" aria-label="Soru çözme çalışma alanı"></canvas>
+    </div>
     <div class="option-list">
       ${question.options.map((option, index) => {
         const letter = String.fromCharCode(65 + index);
@@ -1515,6 +1526,73 @@ function renderQuestion() {
   `;
   quiz.questionStartedAt = Date.now();
   quiz.locked = false;
+  initScratchPad();
+}
+
+function initScratchPad() {
+  const canvas = $("#scratchCanvas");
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  const penButton = $("#penTool");
+  const eraserButton = $("#eraserTool");
+  const clearButton = $("#clearScratch");
+  let activeTool = "pen";
+  let drawing = false;
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = Math.max(1, Math.round(rect.width * ratio));
+    canvas.height = Math.max(1, Math.round(rect.height * ratio));
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.lineCap = "round";
+    context.lineJoin = "round";
+  }
+
+  function setTool(tool) {
+    activeTool = tool;
+    penButton?.classList.toggle("is-active", tool === "pen");
+    eraserButton?.classList.toggle("is-active", tool === "eraser");
+  }
+
+  function point(event) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+
+  function startDrawing(event) {
+    drawing = true;
+    canvas.setPointerCapture?.(event.pointerId);
+    const current = point(event);
+    context.beginPath();
+    context.moveTo(current.x, current.y);
+  }
+
+  function draw(event) {
+    if (!drawing) return;
+    const current = point(event);
+    context.globalCompositeOperation = activeTool === "eraser" ? "destination-out" : "source-over";
+    context.strokeStyle = "#102030";
+    context.lineWidth = activeTool === "eraser" ? 18 : 3;
+    context.lineTo(current.x, current.y);
+    context.stroke();
+  }
+
+  function stopDrawing(event) {
+    if (!drawing) return;
+    drawing = false;
+    canvas.releasePointerCapture?.(event.pointerId);
+    context.closePath();
+  }
+
+  resizeCanvas();
+  penButton?.addEventListener("click", () => setTool("pen"));
+  eraserButton?.addEventListener("click", () => setTool("eraser"));
+  clearButton?.addEventListener("click", () => context.clearRect(0, 0, canvas.width, canvas.height));
+  canvas.addEventListener("pointerdown", startDrawing);
+  canvas.addEventListener("pointermove", draw);
+  canvas.addEventListener("pointerup", stopDrawing);
+  canvas.addEventListener("pointercancel", stopDrawing);
 }
 
 function answerQuestion(answer) {
