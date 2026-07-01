@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=newgen-questions-1">
+  <link rel="stylesheet" href="./styles.css?v=question-bank-menu-1">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -72,6 +72,7 @@
         <button class="nav-item" data-view="mistakes"><i data-lucide="scan-search"></i><span>Yanlışlarım</span></button>
         <button class="nav-item" data-view="report"><i data-lucide="chart-no-axes-combined"></i><span>Gelişim Raporum</span></button>
         <button class="nav-item" data-view="assignments"><i data-lucide="clipboard-list"></i><span>Ödevlerim</span></button>
+        <button class="nav-item" data-view="questionBank"><i data-lucide="library-big"></i><span>Soru Havuzu</span></button>
         <button class="nav-item" data-view="teacher"><i data-lucide="users-round"></i><span>Öğretmen Paneli</span></button>
       </nav>
     </aside>
@@ -223,6 +224,44 @@
         </div>
       </section>
 
+      <section class="view" id="questionBankView" aria-labelledby="viewTitle">
+        <div class="section-band">
+          <div class="toolbar">
+            <div>
+              <p class="eyebrow">Öğretmen inceleme alanı</p>
+              <h2>Tüm soru havuzu</h2>
+            </div>
+            <strong class="question-bank-count" id="questionBankCount">0 soru</strong>
+          </div>
+          <div class="question-bank-controls">
+            <label>Sınıf
+              <select id="questionBankGrade">
+                <option value="all">Tüm sınıflar</option>
+                <option value="5">5. sınıf</option>
+                <option value="6">6. sınıf</option>
+                <option value="7">7. sınıf</option>
+                <option value="8">8. sınıf</option>
+              </select>
+            </label>
+            <label>Konu
+              <select id="questionBankTopic"></select>
+            </label>
+            <label>Zorluk
+              <select id="questionBankDifficulty">
+                <option value="all">Tümü</option>
+                <option value="Kolay">Kolay</option>
+                <option value="Orta">Orta</option>
+                <option value="Zor">Zor</option>
+              </select>
+            </label>
+            <label>Arama
+              <input id="questionBankSearch" type="search" placeholder="Metin, soru kökü veya seçenek ara">
+            </label>
+          </div>
+          <div class="question-bank-list" id="questionBankList"></div>
+        </div>
+      </section>
+
       <section class="view" id="teacherView" aria-labelledby="viewTitle">
         <div class="section-band">
           <div class="toolbar">
@@ -346,7 +385,7 @@
     })();
   </script>
   <script src="./supabase-config.js"></script>
-  <script src="./app.js?v=newgen-questions-1"></script>
+  <script src="./app.js?v=question-bank-menu-1"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>

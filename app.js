@@ -1319,6 +1319,7 @@ function setView(view) {
     mistakes: "Yanlışlarım",
     report: "Gelişim Raporum",
     assignments: "Ödevlerim",
+    questionBank: "Soru Havuzu",
     teacher: "Öğretmen Paneli"
   };
   $("#viewTitle").textContent = titles[view];
@@ -1748,6 +1749,92 @@ function renderAssignments() {
   `).join("");
 }
 
+function textOnly(html) {
+  const scratch = document.createElement("div");
+  scratch.innerHTML = html || "";
+  return scratch.textContent || scratch.innerText || "";
+}
+
+function reviewQuestionBank() {
+  return [...questionBank, ...(state.customQuestions || [])];
+}
+
+function questionBankTopicsForGrade(gradeValue) {
+  if (gradeValue === "all") {
+    const topicSet = new Set(reviewQuestionBank().map((question) => question.topic));
+    return ["Tüm konular", ...Array.from(topicSet).sort((a, b) => a.localeCompare(b, "tr"))];
+  }
+  return ["Tüm konular", ...availableTopicsForGrade(Number(gradeValue))];
+}
+
+function updateQuestionBankTopics() {
+  const gradeSelect = $("#questionBankGrade");
+  const topicSelect = $("#questionBankTopic");
+  if (!gradeSelect || !topicSelect) return;
+  const currentTopic = topicSelect.value || "Tüm konular";
+  const topicsForGrade = questionBankTopicsForGrade(gradeSelect.value);
+  topicSelect.innerHTML = topicsForGrade.map((topic) => `<option>${topic}</option>`).join("");
+  topicSelect.value = topicsForGrade.includes(currentTopic) ? currentTopic : "Tüm konular";
+}
+
+function filteredQuestionBank() {
+  const gradeValue = $("#questionBankGrade")?.value || "all";
+  const topicValue = $("#questionBankTopic")?.value || "Tüm konular";
+  const difficultyValue = $("#questionBankDifficulty")?.value || "all";
+  const searchValue = ($("#questionBankSearch")?.value || "").trim().toLocaleLowerCase("tr-TR");
+  return reviewQuestionBank().filter((question) => {
+    if (gradeValue !== "all" && question.grade !== Number(gradeValue)) return false;
+    if (topicValue !== "Tüm konular" && question.topic !== topicValue) return false;
+    if (difficultyValue !== "all" && question.difficulty !== difficultyValue) return false;
+    if (!searchValue) return true;
+    const haystack = [
+      question.topic,
+      question.difficulty,
+      textOnly(question.text),
+      question.stem,
+      ...(question.options || []),
+      question.solution
+    ].join(" ").toLocaleLowerCase("tr-TR");
+    return haystack.includes(searchValue);
+  });
+}
+
+function renderQuestionBank() {
+  const list = $("#questionBankList");
+  const count = $("#questionBankCount");
+  if (!list || !count) return;
+  updateQuestionBankTopics();
+  const filtered = filteredQuestionBank();
+  count.textContent = `${filtered.length} soru`;
+  list.innerHTML = filtered.length ? filtered.map((question, index) => {
+    const answerIndex = "ABCD".indexOf(question.answer);
+    const answerText = answerIndex >= 0 ? question.options[answerIndex] : "";
+    return `
+      <article class="question-preview-card">
+        <div class="question-preview-head">
+          <span class="pill">${question.grade}. sınıf</span>
+          <strong>${index + 1}. ${question.topic}</strong>
+          <span>${question.difficulty}</span>
+        </div>
+        <div class="question-preview-text">${question.text}</div>
+        <div class="question-preview-stem">${question.stem}</div>
+        <ol class="question-preview-options" type="A">
+          ${question.options.map((option, optionIndex) => `<li class="${optionIndex === answerIndex ? "is-answer" : ""}">${option}</li>`).join("")}
+        </ol>
+        <div class="question-preview-solution">
+          <strong>Doğru cevap: ${question.answer}${answerText ? ` - ${answerText}` : ""}</strong>
+          <p>${question.solution}</p>
+        </div>
+      </article>
+    `;
+  }).join("") : `
+    <article class="question-preview-card">
+      <strong>Bu filtrelere uygun soru bulunamadı.</strong>
+      <p>Arama kutusunu temizleyebilir ya da sınıf/konu filtresini değiştirebilirsin.</p>
+    </article>
+  `;
+}
+
 function mistakeToQuestion(item) {
   return {
     ...item,
@@ -1906,6 +1993,7 @@ function renderAll() {
   renderMistakes();
   renderReport();
   renderAssignments();
+  renderQuestionBank();
   renderTeacher();
 }
 
@@ -2221,6 +2309,13 @@ function bindEvents() {
     renderAll();
   });
   $("#topicFilter").addEventListener("change", renderTopics);
+  $("#questionBankGrade").addEventListener("change", () => {
+    updateQuestionBankTopics();
+    renderQuestionBank();
+  });
+  $("#questionBankTopic").addEventListener("change", renderQuestionBank);
+  $("#questionBankDifficulty").addEventListener("change", renderQuestionBank);
+  $("#questionBankSearch").addEventListener("input", renderQuestionBank);
   $("#topicList").addEventListener("click", (event) => {
     const card = event.target.closest(".topic-card");
     if (!card) return;

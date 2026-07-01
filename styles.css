@@ -927,6 +927,104 @@ h3 {
   margin-top: 8px;
 }
 
+.question-bank-controls {
+  display: grid;
+  grid-template-columns: 160px minmax(180px, 1fr) 140px minmax(220px, 1.2fr);
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.question-bank-controls label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.question-bank-count {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--soft-teal);
+  color: var(--teal-dark);
+  padding: 0 14px;
+}
+
+.question-bank-list {
+  display: grid;
+  gap: 14px;
+}
+
+.question-preview-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.question-preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.question-preview-head strong {
+  font-size: 18px;
+}
+
+.question-preview-head > span:last-child {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.question-preview-text {
+  background: #f8faf9;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  line-height: 1.65;
+}
+
+.question-preview-stem {
+  font-weight: 800;
+}
+
+.question-preview-options {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 24px;
+}
+
+.question-preview-options li {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.question-preview-options li.is-answer {
+  border-color: var(--green);
+  background: #edf7ef;
+  font-weight: 800;
+}
+
+.question-preview-solution {
+  border-left: 5px solid var(--teal);
+  background: #eef7f5;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.question-preview-solution p {
+  margin: 6px 0 0;
+  color: #45556c;
+  line-height: 1.55;
+}
+
 .teacher-layout {
   display: grid;
   grid-template-columns: 1fr 310px;
@@ -1042,7 +1140,7 @@ h3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .hero-band, .topic-layout, .teacher-layout, .two-column {
+  .hero-band, .topic-layout, .teacher-layout, .two-column, .question-bank-controls {
     grid-template-columns: 1fr;
   }
 
