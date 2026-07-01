@@ -572,6 +572,7 @@ let selectedCount = 5;
 let activeTopic = topics[0];
 let pendingGrade = state.grade;
 let quiz = null;
+let syncInProgress = false;
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -613,6 +614,78 @@ async function remoteTry(task, fallback = null) {
   }
 }
 
+function ensureSyncQueue() {
+  if (!Array.isArray(state.syncQueue)) state.syncQueue = [];
+  return state.syncQueue;
+}
+
+function pendingSyncCount() {
+  return ensureSyncQueue().length;
+}
+
+function persistStateOnly() {
+  localStorage.setItem("paragrafKocuState", JSON.stringify(state));
+}
+
+function updatePendingSyncStatus() {
+  const count = pendingSyncCount();
+  if (count > 0) setSyncStatus(`Yerel kayıt aktif; ${count} kayıt Supabase için bekliyor.`, "warn");
+}
+
+function queueSync(type, payload, key) {
+  const queue = ensureSyncQueue();
+  const itemKey = key || `${type}:${Date.now()}:${Math.random().toString(36).slice(2)}`;
+  const existing = queue.find((item) => item.key === itemKey);
+  if (existing) {
+    existing.payload = payload;
+    existing.queuedAt = new Date().toISOString();
+  } else {
+    queue.push({ type, key: itemKey, payload, queuedAt: new Date().toISOString() });
+  }
+  persistStateOnly();
+  updatePendingSyncStatus();
+}
+
+async function syncQueuedRecords() {
+  const queue = ensureSyncQueue();
+  if (syncInProgress || !isRemoteReady() || !queue.length) {
+    updatePendingSyncStatus();
+    return 0;
+  }
+  syncInProgress = true;
+  let synced = 0;
+  const remaining = [];
+  for (const item of queue) {
+    const ok = await pushQueuedRecord(item);
+    if (ok) synced += 1;
+    else remaining.push(item);
+  }
+  state.syncQueue = remaining;
+  persistStateOnly();
+  syncInProgress = false;
+  if (synced > 0 && remaining.length === 0) setSyncStatus(`${synced} kayıt senkronize edildi.`, "ok");
+  else if (synced > 0) setSyncStatus(`${synced} kayıt gönderildi; ${remaining.length} kayıt bekliyor.`, "warn");
+  else updatePendingSyncStatus();
+  return synced;
+}
+
+async function pushQueuedRecord(item) {
+  if (!isRemoteReady()) return false;
+  if (item.type === "student") {
+    return Boolean(await sendStudentPayload(item.payload));
+  }
+  if (item.type === "attempt") {
+    return Boolean(await remoteTry(() => remoteDb.from("attempts").insert(item.payload), null));
+  }
+  if (item.type === "mistake") {
+    return Boolean(await remoteTry(() => remoteDb.from("mistakes").upsert(item.payload, { onConflict: "student_key,question_id" }), null));
+  }
+  if (item.type === "customQuestion") {
+    return Boolean(await remoteTry(() => remoteDb.from("custom_questions").upsert(item.payload), null));
+  }
+  return true;
+}
+
 async function remoteUpsertClass() {
   if (!isRemoteReady()) return;
   await remoteTry(() => remoteDb.from("classes").upsert({
@@ -622,9 +695,26 @@ async function remoteUpsertClass() {
 }
 
 async function remoteUpsertStudent() {
-  if (!isRemoteReady() || !state.studentName?.trim()) return;
+  if (!state.studentName?.trim()) return;
+  const payload = buildCurrentStudentPayload();
+  if (!isRemoteReady()) {
+    queueSync("student", payload, `student:${payload.student_key}`);
+    return;
+  }
+  const result = await sendStudentPayload(payload);
+  if (result) {
+    state.syncQueue = ensureSyncQueue().filter((item) => item.key !== `student:${payload.student_key}`);
+    persistStateOnly();
+    setSyncStatus("Supabase bağlantısı aktif.", "ok");
+    syncQueuedRecords();
+  } else {
+    queueSync("student", payload, `student:${payload.student_key}`);
+  }
+}
+
+function buildCurrentStudentPayload() {
   const code = state.classCode || state.teacherClassCode;
-  const result = await remoteTry(() => remoteDb.from("students").upsert({
+  return {
     student_key: studentKey(state.studentName, code),
     class_code: code,
     name: state.studentName.trim(),
@@ -635,8 +725,12 @@ async function remoteUpsertStudent() {
     question_times: state.questionTimes || [],
     assignments: state.assignments || [],
     updated_at: new Date().toISOString()
-  }, { onConflict: "student_key" }));
-  if (result) setSyncStatus("Supabase bağlantısı aktif.", "ok");
+  };
+}
+
+async function sendStudentPayload(payload) {
+  if (!isRemoteReady()) return null;
+  return remoteTry(() => remoteDb.from("students").upsert(payload, { onConflict: "student_key" }), null);
 }
 
 async function remoteLoadStudent(name, code) {
@@ -658,9 +752,9 @@ async function remoteLoadStudent(name, code) {
 }
 
 async function remoteSaveAttempt(record) {
-  if (!isRemoteReady() || !state.studentName?.trim()) return;
+  if (!state.studentName?.trim()) return;
   const code = state.classCode || state.teacherClassCode;
-  await remoteTry(() => remoteDb.from("attempts").insert({
+  const payload = {
     student_key: studentKey(state.studentName, code),
     class_code: code,
     name: state.studentName.trim(),
@@ -670,13 +764,21 @@ async function remoteSaveAttempt(record) {
     is_correct: record.correct,
     is_blank: record.blank,
     spent_seconds: record.spent
-  }));
+  };
+  const key = `attempt:${payload.student_key}:${record.id}:${record.at}`;
+  if (!isRemoteReady()) {
+    queueSync("attempt", payload, key);
+    return;
+  }
+  const result = await remoteTry(() => remoteDb.from("attempts").insert(payload), null);
+  if (!result) queueSync("attempt", payload, key);
+  else syncQueuedRecords();
 }
 
 async function remoteUpsertMistake(item) {
-  if (!isRemoteReady() || !state.studentName?.trim()) return;
+  if (!state.studentName?.trim()) return;
   const code = state.classCode || state.teacherClassCode;
-  await remoteTry(() => remoteDb.from("mistakes").upsert({
+  const payload = {
     student_key: studentKey(state.studentName, code),
     class_code: code,
     question_id: item.id,
@@ -686,7 +788,15 @@ async function remoteUpsertMistake(item) {
     miss_count: item.missCount || 1,
     question: item,
     updated_at: new Date().toISOString()
-  }, { onConflict: "student_key,question_id" }));
+  };
+  const key = `mistake:${payload.student_key}:${item.id}`;
+  if (!isRemoteReady()) {
+    queueSync("mistake", payload, key);
+    return;
+  }
+  const result = await remoteTry(() => remoteDb.from("mistakes").upsert(payload, { onConflict: "student_key,question_id" }), null);
+  if (!result) queueSync("mistake", payload, key);
+  else syncQueuedRecords();
 }
 
 async function remoteLoadClassroom(code = state.teacherClassCode) {
@@ -725,8 +835,7 @@ function attemptsToAnswers(attempts) {
 }
 
 async function remoteSaveCustomQuestion(question) {
-  if (!isRemoteReady()) return;
-  await remoteTry(() => remoteDb.from("custom_questions").upsert({
+  const payload = {
     id: question.id,
     class_code: state.teacherClassCode,
     grade: question.grade,
@@ -741,7 +850,15 @@ async function remoteSaveCustomQuestion(question) {
     wrong: question.wrong,
     strategy: question.strategy,
     hint: question.hint
-  }));
+  };
+  const key = `customQuestion:${question.id}`;
+  if (!isRemoteReady()) {
+    queueSync("customQuestion", payload, key);
+    return;
+  }
+  const result = await remoteTry(() => remoteDb.from("custom_questions").upsert(payload), null);
+  if (!result) queueSync("customQuestion", payload, key);
+  else syncQueuedRecords();
 }
 
 async function remoteLoadCustomQuestions() {
@@ -781,6 +898,7 @@ function loadState() {
     stats: { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 },
     topicStats: {},
     answers: [],
+    syncQueue: [],
     assignments: [
       { topic: "Ana düşünce", grade: 5, count: 10, difficulty: "Kolay", status: "Hazır" },
       { topic: "Paragraf tamamlama", grade: 6, count: 10, difficulty: "Orta", status: "Planlandı" }
@@ -1349,8 +1467,12 @@ function renderAll() {
 }
 
 async function bootstrapRemoteData() {
-  if (!isRemoteReady()) return;
+  if (!isRemoteReady()) {
+    updatePendingSyncStatus();
+    return;
+  }
   await remoteUpsertClass();
+  await syncQueuedRecords();
   await remoteLoadCustomQuestions();
   renderAll();
 }
@@ -1660,5 +1782,13 @@ function bindEvents() {
 
 bindEvents();
 renderAll();
+updatePendingSyncStatus();
+window.addEventListener("online", () => {
+  setSyncStatus("Bağlantı geri geldi; bekleyen kayıtlar gönderiliyor.", "warn");
+  syncQueuedRecords();
+});
+setInterval(() => {
+  if (pendingSyncCount() > 0) syncQueuedRecords();
+}, 30000);
 window.paragrafKocuRemoteReady = bootstrapRemoteData;
 bootstrapRemoteData();
