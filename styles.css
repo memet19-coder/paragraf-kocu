@@ -672,6 +672,75 @@ h3 {
   padding: 14px;
 }
 
+.paragraph-text p {
+  margin: 0 0 10px;
+}
+
+.paragraph-text p:last-child {
+  margin-bottom: 0;
+}
+
+.stimulus-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  overflow: hidden;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.stimulus-table th,
+.stimulus-table td {
+  border: 1px solid #cfdad7;
+  padding: 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.stimulus-table th {
+  background: #eaf3f1;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.stimulus-table td {
+  background: #fff;
+}
+
+.stimulus-list {
+  margin: 8px 0 10px;
+  padding-left: 22px;
+}
+
+.stimulus-list li {
+  margin: 4px 0;
+}
+
+.stimulus-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.stimulus-cards div {
+  border: 1px solid #cfdad7;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px;
+}
+
+.stimulus-cards strong,
+.stimulus-cards span {
+  display: block;
+}
+
+.stimulus-cards span {
+  color: #45556c;
+  line-height: 1.45;
+}
+
 .paragraph-workbench {
   display: grid;
   grid-template-columns: 90px minmax(0, 1fr);
@@ -1028,6 +1097,19 @@ h3 {
 
   .paragraph-workbench {
     grid-template-columns: 1fr;
+  }
+
+  .stimulus-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .stimulus-table {
+    font-size: 12px;
+  }
+
+  .stimulus-table th,
+  .stimulus-table td {
+    padding: 6px;
   }
 
   .marking-tools {

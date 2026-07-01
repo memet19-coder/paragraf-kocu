@@ -15,17 +15,17 @@ const gradePlan = {
   5: {
     headline: "5. sınıf için kısa ve net paragraf antrenmanı",
     subline: "Konu bulma, ana düşünce, başlık ve basit çıkarım soruları ağırlıklı gelir.",
-    focus: ["Konu bulma", "Ana düşünce", "Başlık bulma", "Yardımcı düşünce", "Hikâye unsurları", "Çıkarım yapma"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Başlık bulma", "Çıkarım yapma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Hikâye unsurları"]
   },
   6: {
     headline: "6. sınıf için ipucu yakalama çalışması",
     subline: "Ana fikir, yardımcı fikir, metnin amacı ve anlam bütünlüğü birlikte çalışılır.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
   },
   7: {
     headline: "7. sınıf için yorumlama ve akışı koruma",
     subline: "Örtülü anlam, cümle sıralama, anlatım biçimleri ve akışı bozan cümleler öne çıkar.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
   },
   8: {
     headline: "8. sınıf için LGS düzeyi yeni nesil tempo",
@@ -357,6 +357,170 @@ function paragraphExtension(grade, seed, note, index) {
   return pools[grade][index % pools[grade].length];
 }
 
+function stimulusTable(headers, rows) {
+  const head = headers.map((header) => `<th>${header}</th>`).join("");
+  const body = rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("");
+  return `<table class="stimulus-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
+
+function stimulusList(items) {
+  return `<ul class="stimulus-list">${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+}
+
+function stimulusCards(items) {
+  return `<div class="stimulus-cards">${items.map((item) => `<div><strong>${item.title}</strong><span>${item.text}</span></div>`).join("")}</div>`;
+}
+
+function newGenerationQuestion(grade, topic, index, seed, note, difficulty, number) {
+  const isVisual = topic === "Tablo-grafik-görsel okuma";
+  const isLogic = topic === "Sözel mantık destekli paragraf soruları";
+  const isLgs = topic === "LGS tarzı yeni nesil paragraf soruları";
+  if (!isVisual && !isLogic && !isLgs) return null;
+
+  if (isVisual && grade === 5) {
+    const variants = [
+      {
+        text: `<p>5/A sınıfı, okul kitaplığındaki kitapları türlerine göre saymıştır. Öğrenciler, tabloyu inceleyip hangi türde kaç kitap olduğunu not etmişlerdir.</p>${stimulusTable(["Tür", "Kitap sayısı", "Raf etiketi"], [["Hikâye", "28", "Mavi"], ["Masal", "19", "Sarı"], ["Şiir", "12", "Yeşil"], ["Bilgi kitabı", "24", "Turuncu"]])}<p>Öğretmen, en çok kitabın bulunduğu türden başlayarak kitaplık düzenini yeniden planlamalarını istemiştir.</p>`,
+        stem: "Bu tabloya göre aşağıdakilerden hangisi kesin olarak söylenebilir?",
+        options: ["En çok hikâye kitabı vardır.", "Şiir kitapları masal kitaplarından fazladır.", "Bilgi kitapları yeşil etikette durmaktadır.", "Masal ve şiir kitaplarının sayısı eşittir."],
+        answer: "A",
+        solution: "Tabloda hikâye kitabı 28'dir ve bu sayı diğer türlerden fazladır."
+      },
+      {
+        text: `<p>Bir okul bahçesinde dikilen fidanlarla ilgili kısa bilgi kartı hazırlanmıştır.</p>${stimulusTable(["Fidan", "Sulama aralığı", "Gölge isteği", "Meyve verir mi?"], [["Elma", "2 günde bir", "Az", "Evet"], ["Çam", "4 günde bir", "Orta", "Hayır"], ["Erik", "2 günde bir", "Az", "Evet"], ["Ihlamur", "3 günde bir", "Orta", "Hayır"]])}<p>Bahçe kulübü, aynı sulama aralığına sahip fidanları yan yana dikmeyi planlamaktadır.</p>`,
+        stem: "Bu bilgilere göre hangi iki fidan aynı sulama aralığına sahiptir?",
+        options: ["Elma ve erik", "Çam ve ıhlamur", "Elma ve çam", "Erik ve ıhlamur"],
+        answer: "A",
+        solution: "Elma ve erik fidanlarının sulama aralığı tabloda '2 günde bir' olarak verilmiştir."
+      }
+    ];
+    const selected = variants[index % variants.length];
+    return buildQuestion({ grade, topic, difficulty, outcome: "Tablo ve bilgi kartından doğrudan çıkarım yapar.", strategy: "Önce başlığı ve sütunları oku, sonra seçenekleri tablodaki sayılarla karşılaştır.", hint: "En büyük ya da eşit olan değerleri işaretle.", wrong: "Yanlış seçenekler tablodaki sayı ya da etiketlerle uyuşmaz.", ...selected });
+  }
+
+  if (isLogic && grade === 5) {
+    const names = ["Ece", "Mert", "Deniz", "Zeynep"];
+    return buildQuestion({
+      grade, topic, difficulty, outcome: "Basit koşullardan sıralama yapar.",
+      text: `<p>${names.join(", ")} adlı dört öğrenci okuma saatinde sırayla kitap tanıtacaktır.</p>${stimulusList([`${names[1]}, ${names[0]}'den hemen sonra tanıtım yapacaktır.`, `${names[2]} ilk sırada değildir.`, `${names[3]} son sırada tanıtım yapacaktır.`, `${names[0]} ilk sıradadır.`])}`,
+      stem: "Bu bilgilere göre doğru sıralama aşağıdakilerden hangisidir?",
+      options: [`${names[0]} - ${names[1]} - ${names[2]} - ${names[3]}`, `${names[1]} - ${names[0]} - ${names[2]} - ${names[3]}`, `${names[0]} - ${names[2]} - ${names[1]} - ${names[3]}`, `${names[2]} - ${names[0]} - ${names[1]} - ${names[3]}`],
+      answer: "A",
+      solution: `${names[0]} ilk sıradadır, ${names[1]} hemen ardından gelir, ${names[3]} son sıradadır. Geriye ${names[2]} üçüncü sıraya kalır.`,
+      strategy: "Kesin yeri verilen kişileri önce yerleştir, sonra kalan boşluğu tamamla.",
+      hint: "İlk ve son sırayı önce bul.",
+      wrong: "Diğer seçenekler ya ilk sırayı ya da hemen sonra koşulunu bozar."
+    });
+  }
+
+  if (isVisual && grade === 6) {
+    const variants = [
+      {
+        text: `<p>Bir araştırmada öğrencilerin günlük okuma süreleri ve haftalık kitap değerlendirme notları karşılaştırılmıştır.</p>${stimulusTable(["Öğrenci", "Günlük okuma", "Haftalık not"], [["Ada", "20 dk", "3 sayfa"], ["Bora", "35 dk", "5 sayfa"], ["Cem", "15 dk", "2 sayfa"], ["Duru", "30 dk", "4 sayfa"]])}<p>Tablodaki bilgiler yalnızca öğrencilerin bir haftalık gözlemine dayanmaktadır.</p>`,
+        stem: "Bu tabloya göre aşağıdaki sonuçlardan hangisine ulaşılabilir?",
+        options: ["En uzun okuma süresi Bora'ya aittir.", "Cem haftada hiç not tutmamıştır.", "Ada'nın notu Duru'dan fazladır.", "Tüm öğrenciler eşit süre okumuştur."],
+        answer: "A",
+        solution: "Günlük okuma süresi en yüksek olan öğrenci 35 dakika ile Bora'dır."
+      },
+      {
+        text: `<p>Okul kantininde sağlıklı ara öğün haftası için bir afiş hazırlanmıştır. Afişte ürünlerin özellikleri şöyle verilmiştir:</p>${stimulusTable(["Ürün", "Meyve içerir", "Şeker eklenmiş", "Saklama"], [["Yoğurtlu kase", "Evet", "Hayır", "Soğuk"], ["Kuru meyve paketi", "Evet", "Hayır", "Kuru"], ["Çikolatalı bar", "Hayır", "Evet", "Kuru"], ["Meyveli içecek", "Evet", "Evet", "Soğuk"]])}<p>Öğrencilerden meyve içeren ama şeker eklenmemiş ürünleri seçmeleri istenmiştir.</p>`,
+        stem: "Bu koşula uyan ürünler aşağıdakilerin hangisinde birlikte verilmiştir?",
+        options: ["Yoğurtlu kase ve kuru meyve paketi", "Çikolatalı bar ve meyveli içecek", "Yoğurtlu kase ve çikolatalı bar", "Kuru meyve paketi ve meyveli içecek"],
+        answer: "A",
+        solution: "Meyve içeren ve şeker eklenmemiş olan ürünler yoğurtlu kase ile kuru meyve paketidir."
+      }
+    ];
+    const selected = variants[index % variants.length];
+    return buildQuestion({ grade, topic, difficulty, outcome: "Tablodaki verileri karşılaştırarak sonuç çıkarır.", strategy: "Her seçeneği tabloda iki ayrı sütunla kontrol et.", hint: "Koşul birden fazlaysa hepsini aynı anda sağlayan satırı ara.", wrong: "Yanlış seçenekler tablodaki koşullardan en az birini sağlamaz.", ...selected });
+  }
+
+  if (isLogic && grade === 6) {
+    return buildQuestion({
+      grade, topic, difficulty, outcome: "Koşullara göre doğru çıkarım yapar.",
+      text: `<p>Bir sözcük oluşturma etkinliğinde öğrenciler, kutulardaki heceleri birleştirerek anlamlı sözcükler bulacaktır. Her sözcük birinci, ikinci ve üçüncü kutudaki hecelerin sırasıyla birleşmesiyle oluşur.</p>${stimulusTable(["1. kutu", "2. kutu", "3. kutu"], [["YA", "?", "MUR"], ["KA", "?", "LEM"], ["SE", "?", "PET"], ["DE", "?", "NİZ"]])}<p>Eksik heceler yerleştirildiğinde yağmur, kalem, sepet ve deniz sözcükleri oluşacaktır.</p>`,
+      stem: "Buna göre ikinci kutulardan birine aşağıdakilerden hangisi yazılamaz?",
+      options: ["Ğ", "L", "P", "RE"],
+      answer: "D",
+      solution: "Yağmur için Ğ, kalem için L, sepet için P gerekir. Deniz için eksik bölüm Nİ'dir; RE hiçbir sözcüğü tamamlamaz.",
+      strategy: "Her satırı ayrı sözcük gibi düşün ve eksik parçayı tamamla.",
+      hint: "Seçenekleri satır satır dene.",
+      wrong: "A, B ve C seçenekleri verilen sözcüklerden birini tamamlar."
+    });
+  }
+
+  if (isVisual && grade === 7) {
+    const rows = [
+      ["Pazartesi", "Kitap kulübü", "Robotik", "Drama"],
+      ["Salı", "Satranç", "Kitap kulübü", "Resim"],
+      ["Çarşamba", "Drama", "Resim", "Robotik"],
+      ["Perşembe", "Robotik", "Satranç", "Kitap kulübü"]
+    ];
+    return buildQuestion({
+      grade, topic, difficulty, outcome: "Çizelgeden hareketle kesin bilgi belirler.",
+      text: `<p>7. sınıf öğrencileri, öğle arası kulüp çalışmalarına katılacaktır. Çizelgede günlere göre yapılacak çalışmalar verilmiştir.</p>${stimulusTable(["Gün", "1. salon", "2. salon", "3. salon"], rows)}<p>Ela yalnız kitap kulübüne, Kuzey yalnız robotiğe, Nisa ise drama ya da resim çalışmalarından birine katılacaktır.</p>`,
+      stem: "Bu bilgilere göre aşağıdakilerden hangisi kesin olarak doğrudur?",
+      options: ["Ela pazartesi 1. salona gidebilir.", "Kuzey salı günü robotiğe katılabilir.", "Nisa perşembe günü dramaya katılabilir.", "Kitap kulübü her gün aynı salondadır."],
+      answer: "A",
+      solution: "Pazartesi 1. salonda kitap kulübü vardır; Ela yalnız kitap kulübüne katıldığı için bu bilgi kesin olarak uygundur.",
+      strategy: "Kişinin koşulunu çizelgede ilgili gün ve salonla eşleştir.",
+      hint: "Önce öğrencinin katılabileceği kulübü bul.",
+      wrong: "B'de salı robotik yoktur, C'de perşembe drama yoktur, D'de kitap kulübünün salonu değişir."
+    });
+  }
+
+  if (isLogic && grade === 7) {
+    return buildQuestion({
+      grade, topic, difficulty, outcome: "Birden çok koşulu birlikte değerlendirir.",
+      text: `<p>Bir okul dergisinde röportaj sırası için Aylin, Baran, Cenk, Defne ve Eren seçilmiştir. Sıralamayla ilgili bilgiler şöyledir:</p>${stimulusList(["Defne üçüncü sıradadır.", "Aylin, Baran'dan önce; Cenk'ten sonra röportaj verecektir.", "Eren ilk ya da son sırada değildir.", "Baran, Defne'den sonra röportaj verecektir."])}<p>Bu bilgilerden hareketle öğrenciler sıralamayı belirlemeye çalışmıştır.</p>`,
+      stem: "Buna göre aşağıdakilerden hangisi kesinlikle yanlıştır?",
+      options: ["Cenk birinci sırada olabilir.", "Aylin ikinci sırada olabilir.", "Baran dördüncü sırada olabilir.", "Eren beşinci sırada olabilir."],
+      answer: "D",
+      solution: "Eren ilk ya da son sırada değildir. Bu nedenle Eren'in beşinci sırada olması kesinlikle yanlıştır.",
+      strategy: "Olumsuz koşulları ayrı işaretle; kesinlikle yanlış sorularında bu koşullar çok belirleyicidir.",
+      hint: "Eren'in olamayacağı yerlere bak.",
+      wrong: "A, B ve C verilen koşullara göre ihtimal olarak kalabilir."
+    });
+  }
+
+  if (grade === 8 && (isVisual || isLgs)) {
+    const variants = [
+      {
+        text: `<p>Bir okulun paragraf denemesi sonrası hazırlanan konu başarı tablosu aşağıdaki gibidir.</p>${stimulusTable(["Konu", "Doğru oranı", "Boş oranı", "Ortalama süre"], [["Ana fikir", "%68", "%4", "72 sn"], ["Yardımcı fikir", "%54", "%8", "84 sn"], ["Görsel okuma", "%76", "%3", "69 sn"], ["Sözel mantık", "%41", "%12", "118 sn"]])}<p>Öğretmen, öğrencilerin yalnız doğru oranına değil boş oranı ve süreye de bakarak çalışma planı yapmasını istemiştir.</p>`,
+        stem: "Bu bilgilere göre çalışma planında öncelik verilmesi gereken konu hangisidir?",
+        options: ["Ana fikir", "Yardımcı fikir", "Görsel okuma", "Sözel mantık"],
+        answer: "D",
+        solution: "Sözel mantıkta doğru oranı en düşük, boş oranı ve ortalama süre en yüksektir. Bu nedenle öncelik bu konudadır."
+      },
+      {
+        text: `<p>Bir bilgilendirme metninde okul gezisi için kayıt koşulları verilmiştir.</p>${stimulusCards([{ title: "Müze", text: "En fazla 24 öğrenci, rehber zorunlu." }, { title: "Bilim merkezi", text: "En fazla 30 öğrenci, deney atölyesi var." }, { title: "Tiyatro", text: "En fazla 20 öğrenci, sessiz izleme kuralı var." }, { title: "Doğa parkı", text: "En fazla 28 öğrenci, kapalı ayakkabı zorunlu." }])}<p>8/A sınıfında 26 öğrenci vardır. Öğretmen, sınıfı bölmeden ve ek ücret gerektirmeden gezi yapmak istemektedir.</p>`,
+        stem: "Buna göre 8/A sınıfı hangi yerlere sınıfı bölmeden gidebilir?",
+        options: ["Bilim merkezi ve doğa parkı", "Müze ve tiyatro", "Tiyatro ve bilim merkezi", "Müze ve doğa parkı"],
+        answer: "A",
+        solution: "26 öğrenci, 30 kişilik bilim merkezi ve 28 kişilik doğa parkı sınırına uygundur; müze ve tiyatro kapasitesi yetersizdir."
+      }
+    ];
+    const selected = variants[index % variants.length];
+    return buildQuestion({ grade, topic, difficulty, outcome: "Çoklu veri ve koşullardan sonuç çıkarır.", strategy: "Tabloyu yalnız tek sütuna göre değil, tüm koşulları birlikte okuyarak değerlendir.", hint: "En zayıf alanı bulurken doğru, boş ve süre verilerini birlikte düşün.", wrong: "Yanlış seçenekler verilerden yalnız birini dikkate alır ya da kapasite koşulunu bozar.", ...selected });
+  }
+
+  if (isLogic && grade === 8) {
+    const symbols = stimulusTable(["Harf", "İşaret", "Harf", "İşaret", "Harf", "İşaret"], [["A", "▲", "E", "●", "K", "◆"], ["L", "■", "M", "◇", "N", "★"], ["R", "□", "T", "△", "Y", "○"]]);
+    return buildQuestion({
+      grade, topic, difficulty, outcome: "Kod tablosu ve koşulları birlikte yorumlar.",
+      text: `<p>Bir etkinlikte öğrenciler, aşağıdaki işaret tablosunu kullanarak sözcükleri şifrelemiştir. Sözcükler soldan sağa okunmaktadır.</p>${symbols}<p>Öğretmen, "KARTAL" sözcüğünü doğru şifreleyen öğrencinin kodunu seçmelerini istemiştir.</p>`,
+      stem: "Buna göre KARTAL sözcüğünün doğru şifrelenmiş biçimi aşağıdakilerden hangisidir?",
+      options: ["◆ ▲ □ △ ▲ ■", "◆ ▲ △ □ ▲ ■", "■ ▲ □ △ ▲ ◆", "◆ ● □ △ ▲ ■"],
+      answer: "A",
+      solution: "K=◆, A=▲, R=□, T=△, A=▲, L=■ olduğundan doğru sıra A seçeneğindedir.",
+      strategy: "Kod sorularında her harfi sırayla tabloya götür ve işareti aynı sırada yaz.",
+      hint: "Önce K harfinin işaretini bul.",
+      wrong: "Diğer seçeneklerde R-T sırası, ilk harf ya da ikinci harf yanlış kodlanmıştır."
+    });
+  }
+
+  return null;
+}
+
 function generatedQuestion(grade, topic, index) {
   const seed = passageSeeds[grade][index % passageSeeds[grade].length];
   const difficulty = index % 5 < 2 ? "Kolay" : index % 5 < 4 ? "Orta" : "Zor";
@@ -369,6 +533,8 @@ function generatedQuestion(grade, topic, index) {
   };
   const note = variantNotes[grade][Math.floor(index / passageSeeds[grade].length) % variantNotes[grade].length];
   const extension = paragraphExtension(grade, seed, note, index);
+  const newGenQuestion = newGenerationQuestion(grade, topic, index, seed, note, difficulty, number);
+  if (newGenQuestion) return newGenQuestion;
 
   if (grade === 5) {
     const text = `${seed.person}, ${seed.place} için küçük bir görev üstlendi. Önce ${seed.action}, sonra ${seed.detail} konusunda arkadaşlarından yardım aldı. Günün sonunda herkes yapılan işin işe yaradığını fark etti. ${seed.person}, birlikte çalışınca işlerin daha kolay bittiğini düşündü; ayrıca ${note}. ${extension}`;
@@ -620,42 +786,48 @@ function balanceQuestionBank(baseQuestions) {
   const balanced = [];
   const weightedTargets = {
     5: {
-      "Konu bulma": 70,
-      "Ana düşünce": 70,
-      "Yardımcı düşünce": 60,
-      "Başlık bulma": 35,
-      "Hikâye unsurları": 25,
-      "Çıkarım yapma": 40
+      "Konu bulma": 55,
+      "Ana düşünce": 60,
+      "Yardımcı düşünce": 50,
+      "Başlık bulma": 30,
+      "Hikâye unsurları": 20,
+      "Çıkarım yapma": 35,
+      "Tablo-grafik-görsel okuma": 25,
+      "Sözel mantık destekli paragraf soruları": 25
     },
     6: {
-      "Konu bulma": 50,
-      "Ana düşünce": 65,
-      "Yardımcı düşünce": 65,
-      "Metnin amacı": 35,
-      "Neden-sonuç": 30,
-      "Karşılaştırma": 25,
-      "Paragraf tamamlama": 30
+      "Konu bulma": 40,
+      "Ana düşünce": 55,
+      "Yardımcı düşünce": 55,
+      "Metnin amacı": 30,
+      "Neden-sonuç": 25,
+      "Karşılaştırma": 20,
+      "Paragraf tamamlama": 25,
+      "Tablo-grafik-görsel okuma": 25,
+      "Sözel mantık destekli paragraf soruları": 25
     },
     7: {
-      "Konu bulma": 35,
-      "Ana düşünce": 45,
-      "Yardımcı düşünce": 45,
-      "Örtülü anlam": 35,
-      "Yorumlama": 30,
-      "Cümle sıralama": 25,
-      "Düşüncenin akışını bozan cümle": 25,
-      "Anlatım biçimleri": 25,
-      "Düşünceyi geliştirme yolları": 35
+      "Konu bulma": 30,
+      "Ana düşünce": 40,
+      "Yardımcı düşünce": 40,
+      "Örtülü anlam": 30,
+      "Yorumlama": 25,
+      "Cümle sıralama": 20,
+      "Düşüncenin akışını bozan cümle": 20,
+      "Anlatım biçimleri": 20,
+      "Düşünceyi geliştirme yolları": 25,
+      "Tablo-grafik-görsel okuma": 25,
+      "Sözel mantık destekli paragraf soruları": 25
     },
     8: {
-      "Konu bulma": 30,
-      "Ana düşünce": 45,
-      "Yardımcı düşünce": 45,
+      "Konu bulma": 25,
+      "Ana düşünce": 35,
+      "Yardımcı düşünce": 35,
       "LGS tarzı yeni nesil paragraf soruları": 50,
       "Metinler arası karşılaştırma": 30,
-      "Tablo-grafik-görsel okuma": 25,
-      "Sözel mantık destekli paragraf soruları": 25,
-      "Çıkarım yapma": 30,
+      "Tablo-grafik-görsel okuma": 40,
+      "Sözel mantık destekli paragraf soruları": 40,
+      "Çıkarım yapma": 25,
       "Zaman yönetimi": 20
     }
   };
