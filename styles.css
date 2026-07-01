@@ -669,6 +669,13 @@ h3 {
   font-weight: 700;
 }
 
+.report-version-note {
+  margin: 6px 0 0;
+  color: var(--teal-dark);
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .topic-bar {
   display: grid;
   grid-template-columns: minmax(130px, 220px) 1fr 54px;

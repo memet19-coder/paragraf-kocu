@@ -1055,6 +1055,7 @@ function renderStrategies() {
 }
 
 function renderReport() {
+  ensureReportDetails();
   const accuracy = state.stats.solved ? Math.round((state.stats.correct / state.stats.solved) * 100) : 0;
   const avgTime = state.stats.solved ? Math.round(state.stats.seconds / state.stats.solved) : 0;
   const avgEightTime = (state.questionTimes || []).length ? Math.round(state.questionTimes.reduce((sum, item) => sum + item.spent, 0) / state.questionTimes.length) : 0;
@@ -1091,6 +1092,43 @@ function renderReport() {
       <td>${answer.spent || 0} sn</td>
     </tr>
   `).join("") : `<tr><td colspan="6">${emptyAnswerMessage}</td></tr>`;
+}
+
+function ensureReportDetails() {
+  const reportGrid = $("#reportGrid");
+  const topicBars = $("#topicBars");
+  if (!reportGrid || !topicBars) return;
+  const reportToolbar = $("#reportView .toolbar div");
+  if (reportToolbar && !$("#reportVersionNote")) {
+    reportToolbar.insertAdjacentHTML("beforeend", `<p class="report-version-note" id="reportVersionNote">Detaylı öğrenci raporu aktif</p>`);
+  }
+  if (!$("#reportIdentity")) {
+    reportGrid.insertAdjacentHTML("afterend", `<div class="report-identity" id="reportIdentity"></div>`);
+  }
+  if (!$("#answerRows")) {
+    const topicPanel = topicBars.closest(".chart-panel");
+    const details = `
+      <div class="chart-panel">
+        <h3>Son çözümler</h3>
+        <div class="student-table-wrap compact-table">
+          <table class="student-table">
+            <thead>
+              <tr>
+                <th>Tarih</th>
+                <th>Öğrenci</th>
+                <th>Sınıf</th>
+                <th>Konu</th>
+                <th>Sonuç</th>
+                <th>Süre</th>
+              </tr>
+            </thead>
+            <tbody id="answerRows"></tbody>
+          </table>
+        </div>
+      </div>
+    `;
+    (topicPanel || reportGrid).insertAdjacentHTML("afterend", details);
+  }
 }
 
 function formatReportDate(value) {
@@ -1186,6 +1224,7 @@ function addCustomQuestion() {
 }
 
 function renderTeacher() {
+  ensureTeacherDetails();
   syncCurrentStudent();
   const code = state.teacherClassCode;
   const room = ensureClassroom(code);
@@ -1204,6 +1243,7 @@ function renderTeacher() {
 }
 
 async function refreshRemoteTeacherPanel() {
+  ensureTeacherDetails();
   const students = await remoteLoadClassroom(state.teacherClassCode);
   if (!students.length) return;
   const room = ensureClassroom(state.teacherClassCode);
@@ -1217,6 +1257,13 @@ async function refreshRemoteTeacherPanel() {
     return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${studentLastAnswer(student)}</td></tr>`;
   }).join("");
   $("#assignStudent").innerHTML = students.map((student) => `<option>${student.name}</option>`).join("");
+}
+
+function ensureTeacherDetails() {
+  const header = document.querySelector(".student-table thead tr");
+  if (!header) return;
+  const hasLastSolved = Array.from(header.children).some((cell) => cell.textContent.trim() === "Son çözdüğü");
+  if (!hasLastSolved) header.insertAdjacentHTML("beforeend", "<th>Son çözdüğü</th>");
 }
 
 function studentLastAnswer(student) {
