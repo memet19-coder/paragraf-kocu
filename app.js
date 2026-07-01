@@ -1480,7 +1480,14 @@ async function bootstrapRemoteData() {
 function startQuiz(questions, title, meta) {
   quiz = { questions, index: 0, title, meta, correct: 0, wrong: 0, blank: 0, startedAt: Date.now(), questionStartedAt: Date.now(), locked: false };
   $("#quizDrawer").hidden = false;
+  document.body.classList.add("quiz-open");
   renderQuestion();
+}
+
+function closeQuizDrawer() {
+  $("#quizDrawer").hidden = true;
+  document.body.classList.remove("quiz-open");
+  quiz = null;
 }
 
 function renderQuestion() {
@@ -1679,7 +1686,7 @@ function bindEvents() {
     selectedCount = Number(button.dataset.count);
   }));
   $("#startDaily").addEventListener("click", () => startQuiz(pickQuestions({ count: selectedCount, grade: state.grade }), "Günlük Antrenman", `${state.grade}. sınıf`));
-  $("#closeQuiz").addEventListener("click", () => { $("#quizDrawer").hidden = true; quiz = null; });
+  $("#closeQuiz").addEventListener("click", closeQuizDrawer);
   $("#resetProgress").addEventListener("click", () => {
     state.stats = { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 };
     state.topicStats = {};
@@ -1714,8 +1721,7 @@ function bindEvents() {
       else renderQuestion();
     }
     if (event.target.closest("#finishClose")) {
-      $("#quizDrawer").hidden = true;
-      quiz = null;
+      closeQuizDrawer();
     }
   });
   $("#practiceWeakTopic").addEventListener("click", () => {
