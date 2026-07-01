@@ -89,6 +89,7 @@ button {
 .profile-switch {
   display: grid;
   gap: 7px;
+  min-width: 0;
 }
 
 .profile-switch label {
@@ -97,6 +98,8 @@ button {
 }
 
 select, input {
+  width: 100%;
+  min-width: 0;
   min-height: 42px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -107,11 +110,14 @@ select, input {
 
 .inline-form {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) minmax(58px, auto);
   gap: 6px;
+  min-width: 0;
 }
 
 .mini-button {
+  width: 100%;
+  min-width: 58px;
   min-height: 42px;
   border: 1px solid #36516a;
   border-radius: 8px;
@@ -877,6 +883,12 @@ h3 {
   }
 
   .topic-bar {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 360px) {
+  .inline-form {
     grid-template-columns: 1fr;
   }
 }
