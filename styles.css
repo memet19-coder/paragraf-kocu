@@ -71,14 +71,20 @@ button {
 }
 
 .brand-mark {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 8px;
   display: grid;
   place-items: center;
-  background: var(--yellow);
-  color: #102030;
-  font-weight: 800;
+  background: #fff;
+  border: 1px solid rgba(255,255,255,.35);
+  overflow: hidden;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .brand strong, .brand span {
@@ -229,6 +235,11 @@ i[data-lucide="lightbulb"]::before { content: "◌"; }
 i[data-lucide="circle-dashed"]::before { content: "○"; }
 i[data-lucide="arrow-right"]::before { content: "→"; }
 i[data-lucide="check"]::before { content: "✓"; }
+i[data-lucide="shuffle"]::before { content: "↝"; }
+i[data-lucide="clipboard-check"]::before { content: "✓"; }
+i[data-lucide="scan-text"]::before { content: "▤"; }
+i[data-lucide="library-big"]::before { content: "▦"; }
+i[data-lucide="lock-keyhole-open"]::before { content: "⌁"; }
 
 .nav-item.is-active {
   background: #244a76;
@@ -479,6 +490,48 @@ h3 {
   border: 1px solid #d7e3df;
   border-radius: 8px;
   padding: 16px;
+}
+
+.practice-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.practice-mode-card {
+  min-height: 132px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  padding: 16px;
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 8px;
+  text-align: left;
+}
+
+.practice-mode-card:hover,
+.practice-mode-card:focus-visible {
+  border-color: var(--teal);
+  box-shadow: 0 10px 28px rgba(22, 140, 140, .12);
+  outline: none;
+}
+
+.practice-mode-card i,
+.practice-mode-card svg {
+  color: var(--teal-dark);
+}
+
+.practice-mode-card strong {
+  font-size: 17px;
+}
+
+.practice-mode-card span {
+  color: var(--muted);
+  line-height: 1.45;
 }
 
 .two-column {
@@ -1170,7 +1223,7 @@ h3 {
     order: -1;
   }
 
-  .stat-grid, .report-grid, .analysis-grid, .assignment-list {
+  .stat-grid, .report-grid, .analysis-grid, .assignment-list, .practice-mode-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1184,7 +1237,7 @@ h3 {
     padding: 16px;
   }
 
-  .nav-list, .stat-grid, .report-grid, .analysis-grid, .lesson-grid, .assignment-list, .strategy-grid, .mistake-book, .form-grid {
+  .nav-list, .stat-grid, .report-grid, .analysis-grid, .lesson-grid, .assignment-list, .strategy-grid, .mistake-book, .form-grid, .practice-mode-grid {
     grid-template-columns: 1fr;
   }
 

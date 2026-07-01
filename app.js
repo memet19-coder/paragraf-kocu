@@ -2003,6 +2003,15 @@ function gradeQuestions(grade = state.grade) {
   return [...questionBank, ...(state.customQuestions || [])].filter((question) => question.grade === Number(grade));
 }
 
+function shuffleQuestions(items) {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
+}
+
 function pickQuestions({ count = 5, grade = state.grade, topic = null, difficulty = null } = {}) {
   const gradePool = gradeQuestions(grade);
   let pool = gradePool;
@@ -2015,7 +2024,27 @@ function pickQuestions({ count = 5, grade = state.grade, topic = null, difficult
     pool = difficultyPool.length ? difficultyPool : pool;
   }
   if (!pool.length) return [];
-  return Array.from({ length: count }, (_, index) => pool[index % pool.length]);
+  const shuffled = shuffleQuestions(pool);
+  return Array.from({ length: count }, (_, index) => shuffled[index % shuffled.length]);
+}
+
+function pickBalancedQuestions({ count = 10, grade = state.grade, topics: preferredTopics = null } = {}) {
+  const gradePool = gradeQuestions(grade);
+  const topicNames = preferredTopics?.length ? preferredTopics : [...new Set(gradePool.map((question) => question.topic))];
+  const buckets = topicNames
+    .map((topic) => [topic, shuffleQuestions(gradePool.filter((question) => question.topic === topic))])
+    .filter(([, bucket]) => bucket.length);
+  if (!buckets.length) return pickQuestions({ count, grade });
+
+  const selected = [];
+  let bucketIndex = Math.floor(Math.random() * buckets.length);
+  while (selected.length < count) {
+    const [, bucket] = buckets[bucketIndex % buckets.length];
+    if (bucket.length) selected.push(bucket.shift());
+    bucketIndex += 1;
+    if (buckets.every(([, bucket]) => !bucket.length)) break;
+  }
+  return selected.length ? selected : pickQuestions({ count, grade });
 }
 
 function availableTopicsForGrade(grade = state.grade) {
@@ -2824,7 +2853,41 @@ async function bootstrapRemoteData() {
   renderAll();
 }
 
+function startPracticeMode(mode) {
+  const newGenerationTopics = [
+    "Bağlam temelli yeni nesil okuma",
+    "Tablo-grafik-görsel okuma",
+    "Sözel mantık destekli paragraf soruları",
+    "LGS tarzı yeni nesil paragraf soruları"
+  ];
+
+  if (mode === "mixed") {
+    startQuiz(pickBalancedQuestions({ count: 10, grade: state.grade }), "Karma Test", `${state.grade}. sınıf`);
+    return;
+  }
+
+  if (mode === "exam") {
+    startQuiz(pickBalancedQuestions({ count: 20, grade: state.grade }), "Deneme Tarzı", `${state.grade}. sınıf`);
+    return;
+  }
+
+  if (mode === "newgen") {
+    const available = availableTopicsForGrade(state.grade).filter((topic) => newGenerationTopics.includes(topic));
+    startQuiz(pickBalancedQuestions({ count: 10, grade: state.grade, topics: available }), "Yeni Nesil Test", `${state.grade}. sınıf`);
+    return;
+  }
+
+  if (mode === "weak") {
+    const weak = weakestTopic() || gradePlan[state.grade].focus[0];
+    startQuiz(pickQuestions({ count: 10, grade: state.grade, topic: weak }), "Zayıf Konu Testi", weak);
+  }
+}
+
 function startQuiz(questions, title, meta) {
+  if (!questions?.length) {
+    alert("Bu çalışma için uygun soru bulunamadı.");
+    return;
+  }
   quiz = { questions, index: 0, title, meta, correct: 0, wrong: 0, blank: 0, startedAt: Date.now(), questionStartedAt: Date.now(), locked: false };
   $("#quizDrawer").hidden = false;
   document.body.classList.add("quiz-open");
@@ -3116,6 +3179,11 @@ function bindEvents() {
     selectedCount = Number(button.dataset.count);
   }));
   $("#startDaily").addEventListener("click", () => startQuiz(pickQuestions({ count: selectedCount, grade: state.grade }), "Günlük Antrenman", `${state.grade}. sınıf`));
+  $(".practice-mode-grid")?.addEventListener("click", (event) => {
+    const card = event.target.closest(".practice-mode-card");
+    if (!card) return;
+    startPracticeMode(card.dataset.mode);
+  });
   $("#closeQuiz").addEventListener("click", closeQuizDrawer);
   $("#resetProgress").addEventListener("click", () => {
     state.stats = { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 };

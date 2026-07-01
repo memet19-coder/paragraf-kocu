@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=question-bank-lock-1">
+  <link rel="stylesheet" href="./styles.css?v=logo-test-modes-1">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -40,7 +40,7 @@
   <div class="app-shell">
     <aside class="sidebar" aria-label="Ana gezinme">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true">PK</div>
+        <div class="brand-mark" aria-hidden="true"><img src="./assets/mg-logo.png" alt=""></div>
         <div>
           <strong>Paragraf Koçu</strong>
           <span>5-8. sınıf paragraf çalışması</span>
@@ -106,6 +106,36 @@
         </div>
 
         <div class="stat-grid" id="quickStats"></div>
+        <div class="section-band">
+          <div class="toolbar">
+            <div>
+              <p class="eyebrow">Hızlı çalışma seçenekleri</p>
+              <h2>Nasıl çözmek istersin?</h2>
+            </div>
+          </div>
+          <div class="practice-mode-grid">
+            <button class="practice-mode-card" data-mode="mixed" type="button">
+              <i data-lucide="shuffle"></i>
+              <strong>Karma Test</strong>
+              <span>Tüm konulardan dengeli soru karışımı.</span>
+            </button>
+            <button class="practice-mode-card" data-mode="exam" type="button">
+              <i data-lucide="clipboard-check"></i>
+              <strong>Deneme Tarzı</strong>
+              <span>20 soruluk sınav temposu.</span>
+            </button>
+            <button class="practice-mode-card" data-mode="newgen" type="button">
+              <i data-lucide="scan-text"></i>
+              <strong>Yeni Nesil</strong>
+              <span>Bağlam, tablo, afiş ve sözel mantık ağırlıklı.</span>
+            </button>
+            <button class="practice-mode-card" data-mode="weak" type="button">
+              <i data-lucide="target"></i>
+              <strong>Zayıf Konu</strong>
+              <span>Yanlış yaptığın konuya odaklanır.</span>
+            </button>
+          </div>
+        </div>
         <div class="section-band two-column">
           <section class="panel">
             <div class="panel-title">
@@ -396,7 +426,7 @@
     })();
   </script>
   <script src="./supabase-config.js"></script>
-  <script src="./app.js?v=pdf-lgs-style-2"></script>
+  <script src="./app.js?v=logo-test-modes-1"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>
