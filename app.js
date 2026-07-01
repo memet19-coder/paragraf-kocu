@@ -1498,9 +1498,7 @@ function renderQuestion() {
   $("#questionCard").innerHTML = `
     <div class="question-field"><small>Sınıf seviyesi</small><span>${question.grade}. sınıf</span></div>
     <div class="question-field"><small>Konu</small><span>${question.topic}</span></div>
-    <div class="question-field"><small>Zorluk düzeyi</small><span>${question.difficulty}</span></div>
     ${question.grade === 8 ? `<div class="question-field"><small>Süre takibi</small><span class="timer-chip">8. sınıf için süre kaydediliyor</span></div>` : ""}
-    <div class="question-field"><small>Kazanım</small><span>${question.outcome}</span></div>
     <div class="question-field"><small>Paragraf metni</small><div class="paragraph-text">${question.text}</div></div>
     <div class="question-field"><small>Soru kökü</small><strong>${question.stem}</strong></div>
     <div class="option-list">
