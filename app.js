@@ -855,6 +855,8 @@ let activeTopic = topics[0];
 let pendingGrade = state.grade;
 let quiz = null;
 let syncInProgress = false;
+const QUESTION_BANK_PASSWORD = "KOCU2026";
+let questionBankUnlocked = false;
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -1803,6 +1805,18 @@ function renderQuestionBank() {
   const list = $("#questionBankList");
   const count = $("#questionBankCount");
   if (!list || !count) return;
+  const lockPanel = $("#questionBankLock");
+  const controls = $("#questionBankControls");
+  if (!questionBankUnlocked) {
+    count.textContent = "Kilitli";
+    if (lockPanel) lockPanel.hidden = false;
+    if (controls) controls.hidden = true;
+    list.hidden = true;
+    return;
+  }
+  if (lockPanel) lockPanel.hidden = true;
+  if (controls) controls.hidden = false;
+  list.hidden = false;
   updateQuestionBankTopics();
   const filtered = filteredQuestionBank();
   count.textContent = `${filtered.length} soru`;
@@ -2316,6 +2330,22 @@ function bindEvents() {
   $("#questionBankTopic").addEventListener("change", renderQuestionBank);
   $("#questionBankDifficulty").addEventListener("change", renderQuestionBank);
   $("#questionBankSearch").addEventListener("input", renderQuestionBank);
+  $("#unlockQuestionBank").addEventListener("click", () => {
+    const password = ($("#questionBankPassword").value || "").trim();
+    const message = $("#questionBankLockMessage");
+    if (password !== QUESTION_BANK_PASSWORD) {
+      if (message) message.textContent = "Şifre yanlış. Tekrar dene.";
+      $("#questionBankPassword").value = "";
+      $("#questionBankPassword").focus();
+      return;
+    }
+    questionBankUnlocked = true;
+    if (message) message.textContent = "Soru havuzu açıldı.";
+    renderQuestionBank();
+  });
+  $("#questionBankPassword").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") $("#unlockQuestionBank").click();
+  });
   $("#topicList").addEventListener("click", (event) => {
     const card = event.target.closest(".topic-card");
     if (!card) return;

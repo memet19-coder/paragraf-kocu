@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=question-bank-menu-1">
+  <link rel="stylesheet" href="./styles.css?v=question-bank-lock-1">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -233,7 +233,18 @@
             </div>
             <strong class="question-bank-count" id="questionBankCount">0 soru</strong>
           </div>
-          <div class="question-bank-controls">
+          <div class="question-bank-lock" id="questionBankLock">
+            <div>
+              <p class="eyebrow">Şifreli alan</p>
+              <h3>Bu bölüm yalnız öğretmen içindir.</h3>
+            </div>
+            <div class="question-bank-login">
+              <input id="questionBankPassword" type="password" placeholder="Şifre">
+              <button class="primary-action" id="unlockQuestionBank" type="button"><i data-lucide="lock-keyhole-open"></i><span>Aç</span></button>
+            </div>
+            <small id="questionBankLockMessage">Soru havuzunu görmek için öğretmen şifresini gir.</small>
+          </div>
+          <div class="question-bank-controls" id="questionBankControls" hidden>
             <label>Sınıf
               <select id="questionBankGrade">
                 <option value="all">Tüm sınıflar</option>
@@ -258,7 +269,7 @@
               <input id="questionBankSearch" type="search" placeholder="Metin, soru kökü veya seçenek ara">
             </label>
           </div>
-          <div class="question-bank-list" id="questionBankList"></div>
+          <div class="question-bank-list" id="questionBankList" hidden></div>
         </div>
       </section>
 
@@ -385,7 +396,7 @@
     })();
   </script>
   <script src="./supabase-config.js"></script>
-  <script src="./app.js?v=question-bank-menu-1"></script>
+  <script src="./app.js?v=question-bank-lock-1"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>

@@ -951,6 +951,27 @@ h3 {
   padding: 0 14px;
 }
 
+.question-bank-lock {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  max-width: 560px;
+}
+
+.question-bank-login {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.question-bank-lock small {
+  color: var(--muted);
+}
+
 .question-bank-list {
   display: grid;
   gap: 14px;
@@ -1190,6 +1211,10 @@ h3 {
   }
 
   .topic-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .question-bank-login {
     grid-template-columns: 1fr;
   }
 
