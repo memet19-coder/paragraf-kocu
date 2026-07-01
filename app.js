@@ -1812,6 +1812,31 @@ async function sendStudentPayload(payload) {
   return remoteTry(() => remoteDb.from("students").upsert(payload, { onConflict: "student_key" }), null);
 }
 
+function buildStudentPayloadFromProfile(student, key, code) {
+  return {
+    student_key: key,
+    class_code: code,
+    name: (student.name || "").trim(),
+    grade: Number(student.grade || state.grade),
+    stats: student.stats || { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 },
+    topic_stats: student.topicStats || {},
+    mistake_book: student.mistakeBook || [],
+    question_times: student.questionTimes || [],
+    assignments: student.assignments || [],
+    updated_at: new Date().toISOString()
+  };
+}
+
+async function remoteUpsertStudentProfile(student, key, code) {
+  const payload = buildStudentPayloadFromProfile(student, key, code);
+  if (!isRemoteReady()) {
+    queueSync("student", payload, `student:${key}`);
+    return;
+  }
+  const result = await sendStudentPayload(payload);
+  if (!result) queueSync("student", payload, `student:${key}`);
+}
+
 async function remoteLoadStudent(name, code) {
   if (!isRemoteReady()) return null;
   const result = await remoteTry(() => remoteDb.from("students").select("*").eq("student_key", studentKey(name, code)).maybeSingle(), null);
@@ -1978,10 +2003,7 @@ function loadState() {
     topicStats: {},
     answers: [],
     syncQueue: [],
-    assignments: [
-      { topic: "Ana düşünce", grade: 5, count: 10, difficulty: "Kolay", status: "Hazır" },
-      { topic: "Paragraf tamamlama", grade: 6, count: 10, difficulty: "Orta", status: "Planlandı" }
-    ]
+    assignments: []
   };
 
   try {
@@ -2084,6 +2106,7 @@ function resetStudentProgress(grade = state.grade) {
   state.mistakeBook = [];
   state.questionTimes = [];
   state.answers = [];
+  state.assignments = [];
 }
 
 function applyStudentProfile(source) {
@@ -2094,7 +2117,7 @@ function applyStudentProfile(source) {
     state.mistakeBook = source.mistakeBook || [];
     state.questionTimes = source.questionTimes || [];
     state.answers = source.answers || state.answers || [];
-    state.assignments = source.assignments || state.assignments;
+    state.assignments = source.assignments || [];
   }
 }
 
@@ -2562,6 +2585,12 @@ function currentClassStudents(code = state.classCode || state.teacherClassCode) 
   return Object.values(room.students || {}).sort((a, b) => (a.name || "").localeCompare(b.name || "", "tr-TR"));
 }
 
+function currentClassStudentEntries(code = state.teacherClassCode) {
+  const room = ensureClassroom(code || state.teacherClassCode);
+  return Object.entries(room.students || {})
+    .sort((a, b) => (a[1].name || "").localeCompare(b[1].name || "", "tr-TR"));
+}
+
 function wrongTopicSummary(student) {
   const wrongTopics = Object.entries(student.topicStats || {})
     .map(([topic, stat]) => ({ topic, wrong: stat?.wrong || 0 }))
@@ -2571,7 +2600,12 @@ function wrongTopicSummary(student) {
   return wrongTopics.map((item) => `${item.topic} (${item.wrong})`).join(", ");
 }
 
-function renderAssignments() {
+function assignmentTargetText(assignment) {
+  if (assignment.target === "all") return "Tüm sınıf";
+  return assignment.targetStudentName ? `${assignment.targetStudentName} için` : "Öğrenciye özel";
+}
+
+function renderAssignmentsLegacy() {
   $("#assignmentList").innerHTML = state.assignments.map((assignment, index) => `
     <article class="assignment-card">
       <strong>${assignment.topic}</strong>
@@ -2580,6 +2614,79 @@ function renderAssignments() {
       <button class="secondary-action start-assignment" data-index="${index}"><i data-lucide="play"></i><span>Başla</span></button>
     </article>
   `).join("");
+}
+
+function renderAssignments() {
+  const assignments = state.assignments || [];
+  $("#assignmentList").innerHTML = assignments.length ? assignments.map((assignment, index) => `
+    <article class="assignment-card">
+      <strong>${assignment.topic}</strong>
+      <span>${assignment.grade}. sınıf · ${assignment.count} soru · ${assignment.difficulty}</span>
+      <span>${assignmentTargetText(assignment)}</span>
+      <span>${assignment.status}</span>
+      <button class="secondary-action start-assignment" data-index="${index}"><i data-lucide="play"></i><span>Başla</span></button>
+    </article>
+  `).join("") : `
+    <article class="assignment-card">
+      <strong>Henüz ödev yok</strong>
+      <span>Öğretmen panelinden bu öğrenciye ödev atanınca burada görünür.</span>
+    </article>
+  `;
+}
+
+function createTeacherAssignment() {
+  const selectedStudentKey = $("#assignStudent").value || "__all__";
+  const room = ensureClassroom(state.teacherClassCode);
+  const selectedStudent = selectedStudentKey !== "__all__" ? room.students[selectedStudentKey] : null;
+  return {
+    id: `odev-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    target: selectedStudentKey === "__all__" ? "all" : "student",
+    targetStudentKey: selectedStudentKey === "__all__" ? null : selectedStudentKey,
+    targetStudentName: selectedStudent?.name || "",
+    classCode: state.teacherClassCode,
+    topic: $("#assignTopic").value,
+    grade: Number($("#assignGrade").value),
+    count: Number($("#assignCount").value),
+    difficulty: $("#assignDifficulty").value,
+    status: "Yeni",
+    createdAt: new Date().toISOString()
+  };
+}
+
+function applyAssignmentToStudent(key, assignment) {
+  const room = ensureClassroom(assignment.classCode || state.teacherClassCode);
+  const student = room.students[key];
+  if (!student) return false;
+  const assignmentForStudent = {
+    ...assignment,
+    target: assignment.target === "all" ? "all" : "student",
+    targetStudentKey: key,
+    targetStudentName: student.name
+  };
+  student.assignments = [assignmentForStudent, ...(student.assignments || [])];
+  if (studentKey(state.studentName, assignment.classCode) === key) {
+    state.assignments = student.assignments;
+  }
+  remoteUpsertStudentProfile(student, key, assignment.classCode);
+  return true;
+}
+
+function assignHomework() {
+  syncCurrentStudent();
+  const assignment = createTeacherAssignment();
+  const entries = currentClassStudentEntries(assignment.classCode);
+  if (!entries.length) {
+    alert("Ödev atamak için önce öğrencinin sınıfa katılması gerekir.");
+    return false;
+  }
+  const targetEntries = assignment.target === "all"
+    ? entries
+    : entries.filter(([key]) => key === assignment.targetStudentKey);
+  targetEntries.forEach(([key]) => applyAssignmentToStudent(key, assignment));
+  saveState();
+  renderTeacher();
+  renderAssignments();
+  return true;
 }
 
 function textOnly(html) {
@@ -2761,7 +2868,8 @@ function renderTeacher() {
   syncCurrentStudent();
   const code = state.teacherClassCode;
   const room = ensureClassroom(code);
-  const students = Object.values(room.students);
+  const studentEntries = currentClassStudentEntries(code);
+  const students = studentEntries.map(([, student]) => student);
   $("#teacherClassCode").textContent = code;
   $("#studentRows").innerHTML = students.length ? students.map((student) => {
     const weak = weakestTopicFor(student.topicStats || {});
@@ -2770,6 +2878,7 @@ function renderTeacher() {
     return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
   }).join("") : `<tr><td colspan="6">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
   $("#assignStudent").innerHTML = students.length ? students.map((student) => `<option>${student.name}</option>`).join("") : `<option>Genel ödev</option>`;
+  $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
   updateAssignmentTopics();
   updateCustomTopics();
   refreshRemoteTeacherPanel();
@@ -2789,7 +2898,8 @@ async function refreshRemoteTeacherPanel() {
     const wrong = student.stats?.wrong || 0;
     return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
   }).join("");
-  $("#assignStudent").innerHTML = students.map((student) => `<option>${student.name}</option>`).join("");
+  const studentEntries = currentClassStudentEntries(state.teacherClassCode);
+  $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
 }
 
 function ensureTeacherDetails() {
@@ -3278,6 +3388,10 @@ function bindEvents() {
     const button = event.target.closest(".start-assignment");
     if (!button) return;
     const assignment = state.assignments[Number(button.dataset.index)];
+    if (!assignment) return;
+    assignment.status = "Başlandı";
+    saveState();
+    renderAssignments();
     startQuiz(
       pickQuestions({ count: assignment.count, grade: assignment.grade, topic: assignment.topic, difficulty: assignment.difficulty }),
       assignment.topic,
@@ -3286,16 +3400,7 @@ function bindEvents() {
   });
   $("#teacherAssignmentForm").addEventListener("submit", (event) => {
     event.preventDefault();
-    state.assignments.unshift({
-      topic: $("#assignTopic").value,
-      grade: Number($("#assignGrade").value),
-      count: Number($("#assignCount").value),
-      difficulty: $("#assignDifficulty").value,
-      status: "Yeni"
-    });
-    saveState();
-    renderAssignments();
-    setView("assignments");
+    if (assignHomework()) alert("Ödev kaydedildi.");
   });
   $("#customQuestionForm").addEventListener("submit", (event) => {
     event.preventDefault();
