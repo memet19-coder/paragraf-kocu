@@ -25,6 +25,7 @@
           <input id="classCodeInput" type="text" placeholder="Örn. 8A01">
           <button class="mini-button" id="joinClass" type="button">Katıl</button>
         </div>
+        <small class="sync-status" id="syncStatus">Yerel kayıt hazır.</small>
         <label for="gradeSelect">Sınıf seviyesi</label>
         <select id="gradeSelect">
           <option value="5">5. sınıf</option>
@@ -248,8 +249,53 @@
     </main>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (() => {
+      const nameInput = document.querySelector("#studentNameInput");
+      const codeInput = document.querySelector("#classCodeInput");
+      const gradeSelect = document.querySelector("#gradeSelect");
+      const joinButton = document.querySelector("#joinClass");
+      const status = document.querySelector("#syncStatus");
+      const quickJoin = () => {
+        if (window.paragrafKocuAppReady) return;
+        const name = (nameInput?.value || "").trim();
+        const code = ((codeInput?.value || "PK2026").trim() || "PK2026").toUpperCase();
+        if (!name) {
+          alert("Önce öğrenci adını yaz.");
+          return;
+        }
+        let saved = {};
+        try {
+          saved = JSON.parse(localStorage.getItem("paragrafKocuState") || "{}");
+        } catch {
+          saved = {};
+        }
+        localStorage.setItem("paragrafKocuState", JSON.stringify({
+          ...saved,
+          contentVersion: 5,
+          studentName: name,
+          classCode: code,
+          grade: gradeSelect?.value || saved.grade || "5"
+        }));
+        if (codeInput) codeInput.value = code;
+        if (status) {
+          status.textContent = `${name} ${code} sınıfına katıldı.`;
+          status.className = "sync-status is-ok";
+        }
+        if (joinButton) {
+          joinButton.textContent = "Katıldı";
+          setTimeout(() => { joinButton.textContent = "Katıl"; }, 1800);
+        }
+        document.querySelector(".main-content")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      joinButton?.addEventListener("click", quickJoin);
+      codeInput?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") quickJoin();
+      });
+    })();
+  </script>
   <script src="./supabase-config.js"></script>
   <script src="./app.js"></script>
+  <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>

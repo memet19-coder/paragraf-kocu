@@ -121,6 +121,26 @@ select, input {
   padding: 0 10px;
 }
 
+.mini-button:disabled {
+  cursor: progress;
+  opacity: 0.82;
+}
+
+.sync-status {
+  min-height: 18px;
+  color: #afbdc9;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.sync-status.is-ok {
+  color: #9be0b0;
+}
+
+.sync-status.is-warn {
+  color: #ffd37a;
+}
+
 .profile-switch select {
   background: #1e3347;
   color: #fff;

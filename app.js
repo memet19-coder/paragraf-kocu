@@ -575,26 +575,55 @@ let quiz = null;
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 const remoteConfig = window.PARAGRAF_KOCU_SUPABASE || {};
-const remoteDb = remoteConfig.url && remoteConfig.key && window.supabase
-  ? window.supabase.createClient(remoteConfig.url, remoteConfig.key)
-  : null;
+let remoteDb = null;
+
+function getRemoteDb() {
+  if (!remoteDb && remoteConfig.url && remoteConfig.key && window.supabase) {
+    remoteDb = window.supabase.createClient(remoteConfig.url, remoteConfig.key);
+  }
+  return remoteDb;
+}
 
 function isRemoteReady() {
-  return Boolean(remoteDb);
+  return Boolean(getRemoteDb());
+}
+
+function setSyncStatus(message, type = "info") {
+  const node = $("#syncStatus");
+  if (!node) return;
+  node.textContent = message;
+  node.classList.toggle("is-ok", type === "ok");
+  node.classList.toggle("is-warn", type === "warn");
+}
+
+async function remoteTry(task, fallback = null) {
+  if (!isRemoteReady()) return fallback;
+  try {
+    const result = await Promise.race([
+      task(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Supabase zaman aşımı")), 7000))
+    ]);
+    if (result?.error) throw result.error;
+    return result;
+  } catch (error) {
+    console.warn("Supabase bağlantısı:", error);
+    setSyncStatus("Yerel kayıt aktif; Supabase bağlantısı bekliyor.", "warn");
+    return fallback;
+  }
 }
 
 async function remoteUpsertClass() {
   if (!isRemoteReady()) return;
-  await remoteDb.from("classes").upsert({
+  await remoteTry(() => remoteDb.from("classes").upsert({
     class_code: state.teacherClassCode,
     teacher_name: "Öğretmen"
-  }, { onConflict: "class_code" });
+  }, { onConflict: "class_code" }));
 }
 
 async function remoteUpsertStudent() {
   if (!isRemoteReady() || !state.studentName?.trim()) return;
   const code = state.classCode || state.teacherClassCode;
-  await remoteDb.from("students").upsert({
+  const result = await remoteTry(() => remoteDb.from("students").upsert({
     student_key: studentKey(state.studentName, code),
     class_code: code,
     name: state.studentName.trim(),
@@ -605,12 +634,14 @@ async function remoteUpsertStudent() {
     question_times: state.questionTimes || [],
     assignments: state.assignments || [],
     updated_at: new Date().toISOString()
-  }, { onConflict: "student_key" });
+  }, { onConflict: "student_key" }));
+  if (result) setSyncStatus("Supabase bağlantısı aktif.", "ok");
 }
 
 async function remoteLoadStudent(name, code) {
   if (!isRemoteReady()) return null;
-  const { data } = await remoteDb.from("students").select("*").eq("student_key", studentKey(name, code)).maybeSingle();
+  const result = await remoteTry(() => remoteDb.from("students").select("*").eq("student_key", studentKey(name, code)).maybeSingle(), null);
+  const data = result?.data;
   if (!data) return null;
   return {
     name: data.name,
@@ -626,7 +657,7 @@ async function remoteLoadStudent(name, code) {
 async function remoteSaveAttempt(record) {
   if (!isRemoteReady() || !state.studentName?.trim()) return;
   const code = state.classCode || state.teacherClassCode;
-  await remoteDb.from("attempts").insert({
+  await remoteTry(() => remoteDb.from("attempts").insert({
     student_key: studentKey(state.studentName, code),
     class_code: code,
     name: state.studentName.trim(),
@@ -636,13 +667,13 @@ async function remoteSaveAttempt(record) {
     is_correct: record.correct,
     is_blank: record.blank,
     spent_seconds: record.spent
-  });
+  }));
 }
 
 async function remoteUpsertMistake(item) {
   if (!isRemoteReady() || !state.studentName?.trim()) return;
   const code = state.classCode || state.teacherClassCode;
-  await remoteDb.from("mistakes").upsert({
+  await remoteTry(() => remoteDb.from("mistakes").upsert({
     student_key: studentKey(state.studentName, code),
     class_code: code,
     question_id: item.id,
@@ -652,12 +683,13 @@ async function remoteUpsertMistake(item) {
     miss_count: item.missCount || 1,
     question: item,
     updated_at: new Date().toISOString()
-  }, { onConflict: "student_key,question_id" });
+  }, { onConflict: "student_key,question_id" }));
 }
 
 async function remoteLoadClassroom(code = state.teacherClassCode) {
   if (!isRemoteReady()) return [];
-  const { data } = await remoteDb.from("students").select("*").eq("class_code", code).order("updated_at", { ascending: false });
+  const result = await remoteTry(() => remoteDb.from("students").select("*").eq("class_code", code).order("updated_at", { ascending: false }), { data: [] });
+  const data = result?.data || [];
   return (data || []).map((student) => ({
     name: student.name,
     grade: String(student.grade),
@@ -671,7 +703,7 @@ async function remoteLoadClassroom(code = state.teacherClassCode) {
 
 async function remoteSaveCustomQuestion(question) {
   if (!isRemoteReady()) return;
-  await remoteDb.from("custom_questions").upsert({
+  await remoteTry(() => remoteDb.from("custom_questions").upsert({
     id: question.id,
     class_code: state.teacherClassCode,
     grade: question.grade,
@@ -686,14 +718,15 @@ async function remoteSaveCustomQuestion(question) {
     wrong: question.wrong,
     strategy: question.strategy,
     hint: question.hint
-  });
+  }));
 }
 
 async function remoteLoadCustomQuestions() {
   if (!isRemoteReady()) return;
   const codes = [state.teacherClassCode, state.classCode].filter(Boolean);
   if (!codes.length) return;
-  const { data } = await remoteDb.from("custom_questions").select("*").in("class_code", codes);
+  const result = await remoteTry(() => remoteDb.from("custom_questions").select("*").in("class_code", codes), { data: [] });
+  const data = result?.data || [];
   state.customQuestions = (data || []).map((item) => ({
     id: item.id,
     grade: item.grade,
@@ -794,13 +827,7 @@ function syncCurrentStudent() {
   };
 }
 
-async function loadStudentProfile(name, code) {
-  const room = state.classrooms[code];
-  const profile = room?.students?.[studentKey(name, code)];
-  state.studentName = name.trim();
-  state.classCode = code.trim().toUpperCase();
-  const remoteProfile = await remoteLoadStudent(name, state.classCode);
-  const source = remoteProfile || profile;
+function applyStudentProfile(source) {
   if (source) {
     state.grade = String(source.grade || state.grade);
     state.stats = source.stats || state.stats;
@@ -809,8 +836,31 @@ async function loadStudentProfile(name, code) {
     state.questionTimes = source.questionTimes || [];
     state.assignments = source.assignments || state.assignments;
   }
+}
+
+function loadStudentProfile(name, code) {
+  const cleanName = name.trim();
+  const cleanCode = code.trim().toUpperCase();
+  const room = state.classrooms[cleanCode];
+  const profile = room?.students?.[studentKey(cleanName, cleanCode)];
+  state.studentName = cleanName;
+  state.classCode = cleanCode;
+  applyStudentProfile(profile);
   syncCurrentStudent();
-  await remoteUpsertStudent();
+  localStorage.setItem("paragrafKocuState", JSON.stringify(state));
+  setSyncStatus(`${cleanName} ${cleanCode} sınıfına katıldı.`, "ok");
+
+  remoteLoadStudent(cleanName, cleanCode).then((remoteProfile) => {
+    if (studentKey(state.studentName, state.classCode) !== studentKey(cleanName, cleanCode)) return;
+    if (remoteProfile) {
+      applyStudentProfile(remoteProfile);
+      syncCurrentStudent();
+      saveState();
+      renderAll();
+      return;
+    }
+    remoteUpsertStudent();
+  });
 }
 
 function smartRecommendations() {
@@ -1305,24 +1355,39 @@ function finishQuiz() {
 
 function bindEvents() {
   $$(".nav-item").forEach((button) => button.addEventListener("click", () => setView(button.dataset.view)));
-  $("#studentNameInput").addEventListener("change", async (event) => {
+  $("#studentNameInput").addEventListener("change", (event) => {
     const name = event.target.value.trim();
     if (!name) return;
-    await loadStudentProfile(name, state.classCode || state.teacherClassCode);
+    loadStudentProfile(name, state.classCode || state.teacherClassCode);
     saveState();
     renderAll();
   });
-  $("#joinClass").addEventListener("click", async () => {
+  const joinButton = $("#joinClass");
+  joinButton.addEventListener("click", () => {
     const name = $("#studentNameInput").value.trim();
     const code = ($("#classCodeInput").value.trim() || state.teacherClassCode).toUpperCase();
     if (!name) {
       alert("Önce öğrenci adını yaz.");
       return;
     }
-    await loadStudentProfile(name, code);
-    await remoteLoadCustomQuestions();
+    joinButton.disabled = true;
+    joinButton.textContent = "Katıldı";
+    loadStudentProfile(name, code);
+    remoteLoadCustomQuestions().then(() => {
+      saveState();
+      renderAll();
+    });
     saveState();
+    setView("dashboard");
     renderAll();
+    document.querySelector(".main-content")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setTimeout(() => {
+      joinButton.disabled = false;
+      joinButton.textContent = "Katıl";
+    }, 1800);
+  });
+  $("#classCodeInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") joinButton.click();
   });
   $("#gradeSelect").addEventListener("change", (event) => {
     state.grade = event.target.value;
@@ -1434,8 +1499,10 @@ function bindEvents() {
   $("#addStudent").addEventListener("click", () => {
     alert("Yeni öğrenci ekleme akışı prototipte hazır durum olarak temsil edilir.");
   });
+  window.paragrafKocuAppReady = true;
 }
 
 bindEvents();
 renderAll();
+window.paragrafKocuRemoteReady = bootstrapRemoteData;
 bootstrapRemoteData();
