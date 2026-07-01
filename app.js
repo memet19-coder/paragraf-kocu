@@ -1499,19 +1499,21 @@ function renderQuestion() {
     <div class="question-field"><small>Sınıf seviyesi</small><span>${question.grade}. sınıf</span></div>
     <div class="question-field"><small>Konu</small><span>${question.topic}</span></div>
     ${question.grade === 8 ? `<div class="question-field"><small>Süre takibi</small><span class="timer-chip">8. sınıf için süre kaydediliyor</span></div>` : ""}
-    <div class="question-field"><small>Paragraf metni</small><div class="paragraph-text">${question.text}</div></div>
-    <div class="question-field"><small>Soru kökü</small><strong>${question.stem}</strong></div>
-    <div class="scratch-pad">
-      <div class="scratch-toolbar">
-        <strong>Çalışma alanı</strong>
-        <div class="scratch-tools" role="group" aria-label="Çalışma alanı araçları">
-          <button class="scratch-tool is-active" id="penTool" type="button">Kalem</button>
-          <button class="scratch-tool" id="eraserTool" type="button">Silgi</button>
-          <button class="scratch-tool" id="clearScratch" type="button">Temizle</button>
+    <div class="question-field">
+      <small>Paragraf metni</small>
+      <div class="paragraph-workbench">
+        <div class="marking-tools" role="group" aria-label="Paragraf işaretleme araçları">
+          <button class="marking-tool is-active" id="penTool" type="button">Kalem</button>
+          <button class="marking-tool" id="eraserTool" type="button">Silgi</button>
+          <button class="marking-tool" id="clearMarks" type="button">Temizle</button>
+        </div>
+        <div class="paragraph-mark-area">
+          <div class="paragraph-text" id="paragraphText">${question.text}</div>
+          <canvas id="paragraphCanvas" aria-label="Paragraf üzerine işaretleme alanı"></canvas>
         </div>
       </div>
-      <canvas id="scratchCanvas" aria-label="Soru çözme çalışma alanı"></canvas>
     </div>
+    <div class="question-field"><small>Soru kökü</small><strong>${question.stem}</strong></div>
     <div class="option-list">
       ${question.options.map((option, index) => {
         const letter = String.fromCharCode(65 + index);
@@ -1526,22 +1528,25 @@ function renderQuestion() {
   `;
   quiz.questionStartedAt = Date.now();
   quiz.locked = false;
-  initScratchPad();
+  initParagraphMarker();
 }
 
-function initScratchPad() {
-  const canvas = $("#scratchCanvas");
+function initParagraphMarker() {
+  const canvas = $("#paragraphCanvas");
   if (!canvas) return;
   const context = canvas.getContext("2d");
   const penButton = $("#penTool");
   const eraserButton = $("#eraserTool");
-  const clearButton = $("#clearScratch");
+  const clearButton = $("#clearMarks");
   let activeTool = "pen";
   let drawing = false;
 
   function resizeCanvas() {
-    const rect = canvas.getBoundingClientRect();
+    const area = canvas.parentElement;
+    const rect = area.getBoundingClientRect();
     const ratio = window.devicePixelRatio || 1;
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
     canvas.width = Math.max(1, Math.round(rect.width * ratio));
     canvas.height = Math.max(1, Math.round(rect.height * ratio));
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -1553,6 +1558,7 @@ function initScratchPad() {
     activeTool = tool;
     penButton?.classList.toggle("is-active", tool === "pen");
     eraserButton?.classList.toggle("is-active", tool === "eraser");
+    canvas.classList.toggle("is-eraser", tool === "eraser");
   }
 
   function point(event) {
@@ -1572,8 +1578,8 @@ function initScratchPad() {
     if (!drawing) return;
     const current = point(event);
     context.globalCompositeOperation = activeTool === "eraser" ? "destination-out" : "source-over";
-    context.strokeStyle = "#102030";
-    context.lineWidth = activeTool === "eraser" ? 18 : 3;
+    context.strokeStyle = activeTool === "eraser" ? "rgba(0,0,0,1)" : "rgba(245, 207, 39, .55)";
+    context.lineWidth = activeTool === "eraser" ? 28 : 16;
     context.lineTo(current.x, current.y);
     context.stroke();
   }
@@ -1586,6 +1592,7 @@ function initScratchPad() {
   }
 
   resizeCanvas();
+  window.requestAnimationFrame(resizeCanvas);
   penButton?.addEventListener("click", () => setTool("pen"));
   eraserButton?.addEventListener("click", () => setTool("eraser"));
   clearButton?.addEventListener("click", () => context.clearRect(0, 0, canvas.width, canvas.height));
