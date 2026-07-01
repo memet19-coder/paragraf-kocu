@@ -20,17 +20,17 @@ const gradePlan = {
   6: {
     headline: "6. sınıf için ipucu yakalama çalışması",
     subline: "Ana fikir, yardımcı fikir, metnin amacı ve anlam bütünlüğü birlikte çalışılır.",
-    focus: ["Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
   },
   7: {
     headline: "7. sınıf için yorumlama ve akışı koruma",
     subline: "Örtülü anlam, cümle sıralama, anlatım biçimleri ve akışı bozan cümleler öne çıkar.",
-    focus: ["Örtülü anlam", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
   },
   8: {
     headline: "8. sınıf için LGS düzeyi yeni nesil tempo",
     subline: "Uzun paragraf, görsel okuma, sözel mantık ve güçlü çeldiricilerle çalışılır.",
-    focus: ["LGS tarzı yeni nesil paragraf soruları", "Metinler arası karşılaştırma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Çıkarım yapma", "Zaman yönetimi"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "LGS tarzı yeni nesil paragraf soruları", "Metinler arası karşılaştırma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Çıkarım yapma", "Zaman yönetimi"]
   }
 };
 
@@ -332,6 +332,31 @@ const passageSeeds = {
   ]
 };
 
+function paragraphExtension(grade, seed, note, index) {
+  const gradeFive = [
+    "Bu olaydan sonra öğrenciler, küçük bir görevin bile dikkat ve sorumluluk istediğini daha iyi anladı.",
+    "Öğretmen, yapılan çalışmanın yalnızca sonucu değil, öğrencilerin süreçteki çabasını da gösterdiğini belirtti.",
+    "Sınıftaki konuşmada herkes, benzer durumlarda nasıl davranabileceğini kısaca anlattı."
+  ];
+  const gradeSix = [
+    "Öğrenciler bu durumun nedenini ve sonucunu ayrı ayrı yazınca metindeki düşünce daha anlaşılır hâle geldi. Böylece olayın yalnızca ne olduğuna değil, hangi davranışla ortaya çıktığına da dikkat ettiler.",
+    "Sınıf tartışmasında bazı öğrenciler benzer örnekler verdi, bazıları ise metindeki ayrıntıların ana düşünceyi nasıl desteklediğini açıkladı. Bu çalışma, seçenekleri metne bağlı kalarak değerlendirmelerini sağladı.",
+    "Etkinliğin sonunda öğretmen, metindeki yardımcı bilgilerin ana düşünceyi güçlendirdiğini hatırlattı. Öğrenciler de seçenekleri işaretlerken önce metindeki kanıtı bulmaları gerektiğini fark etti."
+  ];
+  const gradeSeven = [
+    "Bu nedenle öğrenciler, metindeki örneklerin yalnızca süsleyici ayrıntı olmadığını; asıl düşünceyi güçlendiren ipuçları olduğunu gördü. Tartışma ilerledikçe bazı cümlelerin konuyu desteklediği, bazılarının ise konu zincirinin dışında kaldığı daha belirginleşti.",
+    "Öğretmen, bir paragrafı anlamanın sadece cümleleri okumakla sınırlı olmadığını söyledi. Metindeki geçiş ifadeleri, örnekler ve sonuç cümlesi birlikte değerlendirildiğinde yazarın asıl yönelimi daha açık görülüyordu.",
+    "Öğrenciler önce metnin konusu üzerinde durdu, sonra bu konudan çıkarılabilecek yorumu tartıştı. Böylece doğrudan söylenen bilgi ile metinden çıkarılan anlam arasındaki fark daha iyi kavrandı."
+  ];
+  const gradeEight = [
+    "Bu değerlendirmede özellikle uzun metinlerde öğrencinin önce soru kökünü okuması, sonra metinde aradığı bilgiyi işaretlemesi önerildi. Çünkü yeni nesil paragraf sorularında çeldiriciler çoğu zaman metindeki bir ayrıntıyı doğru verip asıl yargıyı eksik bırakır. Bu yüzden öğrenci, seçeneklerin yalnızca doğru görünen bölümüne değil, metnin tamamıyla uyumuna da bakmalıdır.",
+    "Öğrencilerden biri, yanlış yaptığı sorularda genellikle iki seçenek arasında kaldığını söyledi. Öğretmen, böyle durumlarda metindeki kesin bilgi ile yorum gerektiren bilgiyi ayırmanın önemli olduğunu vurguladı. Böylece öğrenci hem süre kaybını azaltabilir hem de güçlü çeldiricileri daha bilinçli eleyebilir.",
+    "Deneme sonrasında yapılan inceleme, bazı öğrencilerin kısa metinlerde hızlı ilerlediğini ancak uzun paragraflarda ana düşünceyi kaçırdığını gösterdi. Bu nedenle çalışma planında yalnızca soru sayısı değil, yanlışın konusu ve metnin uzunluğu da dikkate alındı. Öğrencinin gelişimi, aynı beceriyi farklı metinlerde tekrar etmesiyle daha görünür hâle geldi."
+  ];
+  const pools = { 5: gradeFive, 6: gradeSix, 7: gradeSeven, 8: gradeEight };
+  return pools[grade][index % pools[grade].length];
+}
+
 function generatedQuestion(grade, topic, index) {
   const seed = passageSeeds[grade][index % passageSeeds[grade].length];
   const difficulty = index % 5 < 2 ? "Kolay" : index % 5 < 4 ? "Orta" : "Zor";
@@ -343,9 +368,10 @@ function generatedQuestion(grade, topic, index) {
     8: ["öğrenciler sürelerini tabloya işledi", "yanlış seçeneklerin neden güçlü çeldirici olduğu tartışıldı", "soru kökü önce okunarak çözüm yolu belirlendi", "verilerden kesin yargı ile yorum ayrıldı"]
   };
   const note = variantNotes[grade][Math.floor(index / passageSeeds[grade].length) % variantNotes[grade].length];
+  const extension = paragraphExtension(grade, seed, note, index);
 
   if (grade === 5) {
-    const text = `${seed.person}, ${seed.place} için küçük bir görev üstlendi. Önce ${seed.action}, sonra ${seed.detail} konusunda arkadaşlarından yardım aldı. Günün sonunda herkes yapılan işin işe yaradığını fark etti. ${seed.person}, birlikte çalışınca işlerin daha kolay bittiğini düşündü; ayrıca ${note}.`;
+    const text = `${seed.person}, ${seed.place} için küçük bir görev üstlendi. Önce ${seed.action}, sonra ${seed.detail} konusunda arkadaşlarından yardım aldı. Günün sonunda herkes yapılan işin işe yaradığını fark etti. ${seed.person}, birlikte çalışınca işlerin daha kolay bittiğini düşündü; ayrıca ${note}. ${extension}`;
     const map = {
       "Konu bulma": {
         stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
@@ -388,8 +414,14 @@ function generatedQuestion(grade, topic, index) {
   }
 
   if (grade === 6) {
-    const text = `${seed.title} çalışmasında öğrenciler önce durumu gözlemledi. ${seed.cause} ${seed.result}. Öğretmen, ${seed.detail} konusunun yalnızca o gün için değil, sonraki çalışmalar için de önemli olduğunu söyledi. Bu örnek, öğrencilerin günlük yaşamda daha planlı davranmasına yardımcı oldu; ayrıca ${note}.`;
+    const text = `${seed.title} çalışmasında öğrenciler önce durumu gözlemledi. ${seed.cause} ${seed.result}. Öğretmen, ${seed.detail} konusunun yalnızca o gün için değil, sonraki çalışmalar için de önemli olduğunu söyledi. Bu örnek, öğrencilerin günlük yaşamda daha planlı davranmasına yardımcı oldu; ayrıca ${note}. ${extension}`;
     const map = {
+      "Konu bulma": {
+        stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
+        options: ["Öğrencilerin oyun kuralları", `${seed.title} çalışmasında ${seed.detail}`, "Okul gezisinin hazırlıkları", "Bir yarışmanın sonucu"],
+        answer: "B",
+        solution: `Metnin tamamında ${seed.title.toLowerCase()} çalışması ve ${seed.detail} üzerinde durulur. Bu yüzden konu B seçeneğidir.`
+      },
       "Ana düşünce": {
         stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
         options: ["Kurallar her zaman gereksizdir.", seed.message, "Gözlem yapmak öğrenmeyi engeller.", "Planlı olmak sadece yetişkinler için önemlidir."],
@@ -431,8 +463,29 @@ function generatedQuestion(grade, topic, index) {
   }
 
   if (grade === 7) {
-    const baseText = `${seed.title} konusunda yapılan konuşmada öğretmen, ${seed.idea} düşüncesini öne çıkardı. ${seed.example}. Bu durum, öğrencilerin yalnızca sonucu değil, sonuca götüren yolu da değerlendirmesi gerektiğini gösterdi. Son bölümde ${note}.`;
+    const baseText = `${seed.title} konusunda yapılan konuşmada öğretmen, ${seed.idea} düşüncesini öne çıkardı. ${seed.example}. Bu durum, öğrencilerin yalnızca sonucu değil, sonuca götüren yolu da değerlendirmesi gerektiğini gösterdi. Son bölümde ${note}. ${extension}`;
     const map = {
+      "Konu bulma": {
+        text: baseText,
+        stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
+        options: ["Bir spor karşılaşmasının sonucu", `${seed.title} üzerinden ${seed.idea}`, "Bir eşyanın teknik özellikleri", "Okul kantinindeki fiyatlar"],
+        answer: "B",
+        solution: `Metinde ${seed.title.toLowerCase()} ve ${seed.idea} düşüncesi birlikte işlenir; konu bu ortak çizgide toplanır.`
+      },
+      "Ana düşünce": {
+        text: baseText,
+        stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
+        options: ["Sonuca ulaşmak için süreç önemsizdir.", seed.hidden, "Ayrıntılar her zaman konudan uzaklaştırır.", "Öğrenme yalnızca ezberle gerçekleşir."],
+        answer: "B",
+        solution: `Metindeki örnek ve sonuç bölümü '${seed.hidden}' düşüncesini destekler.`
+      },
+      "Yardımcı düşünce": {
+        text: baseText,
+        stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
+        options: ["Öğrencilerin hiçbir etkinliğe katılmadığına", seed.example, "Konunun tamamen değiştirilmesine", "Sonucun rastlantıyla ortaya çıktığına"],
+        answer: "B",
+        solution: `Metinde '${seed.example}' ifadesi destekleyici bilgi olarak yer alır.`
+      },
       "Örtülü anlam": {
         text: baseText,
         stem: "Bu metinden çıkarılabilecek örtülü anlam aşağıdakilerden hangisidir?",
@@ -479,8 +532,29 @@ function generatedQuestion(grade, topic, index) {
     return buildQuestion({ grade, topic, difficulty, outcome: `${topic} kazanımına uygun soru ${number}.`, strategy: "Önce metnin konusu ve düşünce yönünü bul, sonra seçenekleri buna göre ele.", hint: "Konu dışına çıkan ya da metnin desteklemediği seçenekleri ele.", ...map[topic] });
   }
 
-  const lgsText = `${seed.title} üzerine yapılan bir değerlendirmede öğrencilerin yalnızca doğru sayısına bakmasının yeterli olmadığı vurgulandı. Öğrencinin hangi soru tipinde yavaşladığını, hangi seçeneği neden elediğini ve kalan süresini nasıl kullandığını görmesi gerekir. Çünkü paragraf sorularında başarı, metni anlamak kadar zamanı ve dikkati yönetmeye de bağlıdır. Değerlendirme sırasında ${note}.`;
+  const lgsText = `${seed.title} üzerine yapılan bir değerlendirmede öğrencilerin yalnızca doğru sayısına bakmasının yeterli olmadığı vurgulandı. Öğrencinin hangi soru tipinde yavaşladığını, hangi seçeneği neden elediğini ve kalan süresini nasıl kullandığını görmesi gerekir. Çünkü paragraf sorularında başarı, metni anlamak kadar zamanı ve dikkati yönetmeye de bağlıdır. Değerlendirme sırasında ${note}. ${extension}`;
   const map = {
+    "Konu bulma": {
+      text: lgsText,
+      stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
+      options: ["Sınav kitapçığının basımı", "Paragraf sorularında çözüm sürecini değerlendirme", "Okulda yapılan sosyal etkinlikler", "Metin türlerinin tarihsel gelişimi"],
+      answer: "B",
+      solution: "Metnin tamamında paragraf sorularında doğru sayısı, süre, seçenek eleme ve çözüm sürecini değerlendirme üzerinde durulur."
+    },
+    "Ana düşünce": {
+      text: lgsText,
+      stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
+      options: ["Paragraf sorularında yalnızca hızlı okumak yeterlidir.", "Paragraf başarısı, anlama ile birlikte seçenek eleme ve zaman yönetimini de gerektirir.", "Yanlış seçenekleri incelemek gereksizdir.", "Uzun metinlerde soru kökü okunmadan cevap bulunmalıdır."],
+      answer: "B",
+      solution: "Metin, başarıyı yalnızca doğru sayısına değil; anlama, eleme ve zamanı yönetme becerilerine bağlar."
+    },
+    "Yardımcı düşünce": {
+      text: lgsText,
+      stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
+      options: ["Paragraf sorularında sürenin hiç önemsenmemesi gerektiğine", "Öğrencinin hangi soru tipinde yavaşladığını fark etmesi gerektiğine", "Bütün soruların aynı yöntemle çözüldüğüne", "Seçeneklerin metinden bağımsız değerlendirileceğine"],
+      answer: "B",
+      solution: "Metinde öğrencinin hangi soru tipinde yavaşladığını görmesi gerektiği açıkça belirtilmiştir."
+    },
     "LGS tarzı yeni nesil paragraf soruları": {
       text: lgsText,
       stem: "Bu metne göre yeni nesil paragraf sorularında başarı için aşağıdakilerden hangisi gereklidir?",
@@ -544,13 +618,49 @@ function makeQuestionId(question) {
 
 function balanceQuestionBank(baseQuestions) {
   const balanced = [];
-  const targetPerGrade = 100;
+  const weightedTargets = {
+    5: {
+      "Konu bulma": 70,
+      "Ana düşünce": 70,
+      "Yardımcı düşünce": 60,
+      "Başlık bulma": 35,
+      "Hikâye unsurları": 25,
+      "Çıkarım yapma": 40
+    },
+    6: {
+      "Konu bulma": 50,
+      "Ana düşünce": 65,
+      "Yardımcı düşünce": 65,
+      "Metnin amacı": 35,
+      "Neden-sonuç": 30,
+      "Karşılaştırma": 25,
+      "Paragraf tamamlama": 30
+    },
+    7: {
+      "Konu bulma": 35,
+      "Ana düşünce": 45,
+      "Yardımcı düşünce": 45,
+      "Örtülü anlam": 35,
+      "Yorumlama": 30,
+      "Cümle sıralama": 25,
+      "Düşüncenin akışını bozan cümle": 25,
+      "Anlatım biçimleri": 25,
+      "Düşünceyi geliştirme yolları": 35
+    },
+    8: {
+      "Konu bulma": 30,
+      "Ana düşünce": 45,
+      "Yardımcı düşünce": 45,
+      "LGS tarzı yeni nesil paragraf soruları": 50,
+      "Metinler arası karşılaştırma": 30,
+      "Tablo-grafik-görsel okuma": 25,
+      "Sözel mantık destekli paragraf soruları": 25,
+      "Çıkarım yapma": 30,
+      "Zaman yönetimi": 20
+    }
+  };
   [5, 6, 7, 8].forEach((grade) => {
-    const focusTopics = gradePlan[grade].focus;
-    const basePerTopic = Math.floor(targetPerGrade / focusTopics.length);
-    const extraTopics = targetPerGrade % focusTopics.length;
-    focusTopics.forEach((topic, topicIndex) => {
-      const topicTarget = basePerTopic + (topicIndex < extraTopics ? 1 : 0);
+    Object.entries(weightedTargets[grade]).forEach(([topic, topicTarget]) => {
       const existing = baseQuestions.filter((question) => question.grade === grade && question.topic === topic).slice(0, topicTarget);
       const group = [...existing];
       let index = 0;
