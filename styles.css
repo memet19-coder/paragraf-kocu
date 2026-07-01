@@ -57,6 +57,7 @@ button {
   position: sticky;
   top: 0;
   height: 100vh;
+  overflow-x: hidden;
 }
 
 .brand {
@@ -90,6 +91,8 @@ button {
   display: grid;
   gap: 7px;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-switch label {
@@ -110,14 +113,24 @@ select, input {
 
 .inline-form {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(58px, auto);
+  grid-template-columns: minmax(0, 1fr) 64px;
   gap: 6px;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.profile-switch > input,
+.profile-switch select,
+.inline-form input {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 100%;
 }
 
 .mini-button {
   width: 100%;
-  min-width: 58px;
+  min-width: 0;
   min-height: 42px;
   border: 1px solid #36516a;
   border-radius: 8px;
