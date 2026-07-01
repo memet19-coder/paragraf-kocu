@@ -650,6 +650,120 @@ function contextQuestion(grade, index, difficulty, number) {
   });
 }
 
+const lgsPdfContexts = [
+  {
+    title: "Akdeniz Diyeti: Doğanın Soframıza Sunduğu Şifa",
+    text: "Akdeniz diyeti; zeytinyağı, sebze, meyve, tam tahıl, baklagil, kuruyemiş ve balığın öne çıktığı bir beslenme düzenidir. Bu yaklaşım yalnız ne yediğimizle değil, nasıl yaşadığımızla da ilgilidir. Sofra kültürü, hareket etmek, mevsiminde beslenmek ve işlenmiş gıdaları azaltmak bu anlayışın parçalarıdır.",
+    boxTitle: "Altın kurallar",
+    cards: [["Bitkisel gıdalar", "Sebze, meyve ve tam tahıl günlük beslenmenin temelini oluşturur."], ["Zeytinyağı", "Ana yağ kaynağı olarak ölçülü kullanılır."], ["Balık", "Haftada en az iki kez tüketilmesi önerilir."], ["Kırmızı et", "Sınırlı tüketilmelidir."]],
+    table: [["Sebze ve meyve", "Günlük", "Vitamin ve lif"], ["Balık", "Haftalık", "Omega-3"], ["Tam tahıl", "Sık", "Tokluk"], ["Şekerli içecek", "Sınırlı", "Gereksiz enerji"]],
+    myth: "Akdeniz diyeti yalnız zeytinyağı tüketmekten ibarettir.",
+    fact: "Akdeniz diyeti, besin seçimiyle birlikte sofra kültürü ve hareketi de kapsar.",
+    main: "Akdeniz diyeti, dengeli beslenmeyi yaşam tarzıyla birleştiren bütüncül bir yaklaşımdır.",
+    inference: "Bu metinde sağlıklı yaşam tek bir yiyeceğe değil, düzenli alışkanlıkların bütününe bağlanmıştır."
+  },
+  {
+    title: "Buzdolabında Kurulan Gizli Hükümet",
+    text: "Artan yemeklerin unutulmaması için kapların üzerine tarih yazmak, şeffaf kap kullanmak ve yiyecekleri görünür raflara yerleştirmek önerilir. Rehber, mutfaktaki küçük düzenlemelerin israfı azaltabileceğini eğlenceli bir dille anlatır.",
+    boxTitle: "Artıklarla barış rehberi",
+    cards: [["Tarih etiketi", "Kabın ne zaman hazırlandığını gösterir."], ["Şeffaf kap", "İçindekini görünür kılar."], ["Arka raf", "Yiyeceklerin unutulma riskini artırır."], ["Küçük porsiyon", "Artan yemek miktarını azaltır."]],
+    table: [["Tarih yaz", "Unutmayı azaltır", "Planlama"], ["Görünür koy", "Fark edilir", "Düzen"], ["Bir gün belirle", "Tüketimi hızlandırır", "Takip"], ["Çekinmeden paylaş", "İsrafı azaltır", "Dayanışma"]],
+    myth: "Artan yiyecekler mutlaka çöpe gitmelidir.",
+    fact: "Artan yiyecekler doğru saklanır ve planlanırsa değerlendirilebilir.",
+    main: "Yiyecek israfı, mutfakta yapılacak küçük ama düzenli uygulamalarla azaltılabilir.",
+    inference: "Metin, israfı azaltmayı yalnız ekonomik değil, dikkat ve sorumluluk gerektiren bir davranış olarak ele alır."
+  },
+  {
+    title: "Seslerin Haritası",
+    text: "Günlük yaşamda duyduğumuz sesler ruh hâlimizi, dikkat süremizi ve çalışma verimimizi etkileyebilir. Rehberde yağmur, kuş sesi, trafik uğultusu, bildirim sesi ve klavye ritmi gibi seslerin kişide uyandırabileceği etkiler sınıflandırılmıştır.",
+    boxTitle: "Gün içindeki ses katmanları",
+    cards: [["Doğa sesleri", "Yağmur, rüzgâr ve kuş sesleri."], ["Şehir sesleri", "Trafik, korna ve insan kalabalığı."], ["Dijital sesler", "Bildirim, alarm ve klavye tıklamaları."], ["Sessizlik", "Dinlenme ve odaklanma alanı."]],
+    table: [["Yağmur", "Sakinlik", "Doğal ses"], ["Kuş sesi", "Açıklık", "Doğal ses"], ["Trafik", "Yorgunluk", "Şehir sesi"], ["Bildirim", "Dikkat bölünmesi", "Dijital ses"]],
+    myth: "Sessizlik her zaman herkes için en verimli ortamdır.",
+    fact: "Bazı kişiler hafif arka plan sesleriyle daha rahat çalışabilir.",
+    main: "Sesleri bilinçli fark etmek, dikkat ve duygu durumunu yönetmeye yardımcı olur.",
+    inference: "Metin, duymayı pasif bir işitme değil, çevreyi bilinçli tanıma becerisi olarak sunar."
+  },
+  {
+    title: "Balkondan Gökyüzü",
+    text: "Şehir ışıkları arasında bile gökyüzünü izlemek mümkündür. Ayın evrelerini takip etmek, parlak yıldızları not etmek ve kısa gözlem süreleriyle gökyüzü defteri tutmak merak duygusunu canlı tutar.",
+    boxTitle: "Basit gökyüzü rutini",
+    cards: [["Işığı azalt", "Balkon ışığını kıs, gözlerini karanlığa alıştır."], ["Ay'a bak", "Ayın görünümünü ve yönünü not et."], ["Kısa gözlem", "15-20 dakika düzenli gözlem yeterlidir."], ["Kayıt tut", "Tarih, saat ve gördüklerini yaz."]],
+    table: [["Ay", "Her gece farklı", "Kolay gözlenir"], ["Dürbün", "Yaklaştırır", "Araç"], ["Işık kirliliği", "Görüşü azaltır", "Engel"], ["Gözlem defteri", "Karşılaştırma sağlar", "Kayıt"]],
+    myth: "Şehirde yıldız gözlemi yapılamaz.",
+    fact: "Şehirde de Ay, parlak gezegenler ve bazı yıldızlar gözlemlenebilir.",
+    main: "Gökyüzünü izlemek, şehirde bile merak ve düzenli gözlem alışkanlığı kazandırabilir.",
+    inference: "Metin, gökyüzü gözlemini pahalı araçlardan çok süreklilik ve dikkatle ilişkilendirir."
+  },
+  {
+    title: "Bilgiyi Kalıcı Kılan Yöntem",
+    text: "Aralıklı tekrar, öğrenilen bilgilerin belirli zaman aralıklarıyla yeniden hatırlanmasıdır. İlk kısa tekrar, bir gün sonra tekrar, üç gün sonra tekrar ve haftalık genel tekrar bilgiyi daha kalıcı hâle getirebilir.",
+    boxTitle: "Aralıklı tekrar döngüsü",
+    cards: [["İlk öğrenme", "Konu ilk kez çalışılır."], ["Kısa tekrar", "10-20 dakika sonra yapılır."], ["Bir gün sonra", "Hatırlama güçlendirilir."], ["Bir hafta sonra", "Eksikler görülür."]],
+    table: [["İlk tekrar", "10-20 dk", "Unutmayı yavaşlatır"], ["İkinci tekrar", "1 gün", "Hatırlatır"], ["Üçüncü tekrar", "3 gün", "Kalıcı iz oluşturur"], ["Genel tekrar", "1 hafta", "Eksikleri gösterir"]],
+    myth: "Bir konuyu bir kez uzun süre çalışmak tekrar ihtiyacını ortadan kaldırır.",
+    fact: "Bilgi, doğru aralıklarla geri çağrıldığında daha kalıcı olur.",
+    main: "Kalıcı öğrenme, bilgiyi planlı aralıklarla yeniden hatırlamayı gerektirir.",
+    inference: "Metin, çok uzun tek çalışma yerine kısa ve düzenli tekrarların değerini vurgular."
+  },
+  {
+    title: "Bulutların Haritası",
+    text: "Bulutlar yalnız güzel görüntüler sunmaz; hava değişimlerinin ipuçlarını taşır. Şekil, yükseklik, renk ve hareket bilgileri birlikte değerlendirildiğinde gökyüzü daha bilinçli okunabilir.",
+    boxTitle: "Bulut türleri",
+    cards: [["Kümülüs", "Pamuksu, güzel havalarda görülür."], ["Sirüs", "İnce, yükseklerde yer alır."], ["Stratus", "Gri tabaka gibi gökyüzünü kaplar."], ["Nimbüs", "Koyu renkli, yağışla ilişkilidir."]],
+    table: [["Kümülüs", "Alçak-orta", "Açık hava"], ["Sirüs", "Yüksek", "İnce yapı"], ["Stratus", "Alçak", "Kapalı hava"], ["Nimbüs", "Alçak-orta", "Yağış olasılığı"]],
+    myth: "Bütün bulutlar aynı yükseklikte oluşur.",
+    fact: "Bulut türleri şekil ve yükseklik bakımından farklılık gösterir.",
+    main: "Bulutları gözlemlemek, hava olaylarını anlamaya yardımcı olur.",
+    inference: "Metin, doğayı anlamanın yalnız bakmakla değil, ayrıntıları karşılaştırmakla mümkün olduğunu anlatır."
+  }
+];
+
+function lgsPdfStyleQuestion(common, index) {
+  const source = lgsPdfContexts[index % lgsPdfContexts.length];
+  const cycle = Math.floor(index / lgsPdfContexts.length);
+  const mode = (index + cycle) % 8;
+  const cards = stimulusCards(source.cards.map(([title, text]) => ({ title, text })));
+  const dataTable = stimulusTable(["Bölüm", "Bilgi", "İşlev"], source.table);
+  const cycleNotes = [
+    "Öğrenciler bu sayfayı ana metin, bilgi kutusu ve tablo ilişkisiyle incelemiştir.",
+    "Sınıf çalışmasında aynı sayfa bu kez yanlış yorumları ayıklamak için kullanılmıştır.",
+    "Öğretmen, öğrencilerden sayfadaki küçük kutuları ana düşünceyle ilişkilendirmelerini istemiştir."
+  ];
+  const intro = `<p><strong>${source.title}</strong></p><p>${source.text}</p><p>${cycleNotes[cycle % cycleNotes.length]}</p>`;
+  if (mode === 0) {
+    const made = makeOptions(source.main, ["Metnin amacı yalnız okuru eğlendirmektir.", "Metinde verilen kutular ana metinle ilişkisizdir.", "Metin tek bir ayrıntıyı bütün bilgilerden üstün tutmaktadır."], index);
+    return buildQuestion({ ...common, text: `${intro}${cards}`, stem: "Bu metin ve bilgi kutuları birlikte değerlendirildiğinde ulaşılabilecek ana düşünce hangisidir?", ...made, solution: `Ana metin ve kutular '${source.main}' düşüncesinde birleşir.` });
+  }
+  if (mode === 1) {
+    const made = makeOptions(source.fact, [source.myth, "Tablodaki tüm bilgiler aynı anlama gelir.", "Metinde hiçbir karşılaştırma yapılmamıştır."], index);
+    return buildQuestion({ ...common, text: `${intro}${stimulusTable(["Mit", "Gerçek"], [[source.myth, source.fact], ["Tek bilgi bütün metni açıklamaya yeter.", "Metindeki parçalar birlikte okunmalıdır."]])}`, stem: "Mit-gerçek tablosuna göre aşağıdakilerden hangisi doğrudur?", ...made, solution: `Tabloda mitin karşısında gerçek bilgi olarak '${source.fact}' verilmiştir.` });
+  }
+  if (mode === 2) {
+    const correct = `${source.cards[0][0]}, ${source.cards[0][1].toLocaleLowerCase("tr-TR")}`;
+    const made = makeOptions(correct, [`${source.cards[1][0]}, metinde hiç açıklanmamıştır.`, `${source.cards[2][0]}, ana metinle çelişmektedir.`, `${source.cards[3][0]}, yalnız görsel süsleme amacı taşır.`], index);
+    return buildQuestion({ ...common, text: `${intro}${cards}`, stem: "Bilgi kutularından hareketle aşağıdakilerden hangisi söylenebilir?", ...made, solution: `İlk bilgi kutusunda '${source.cards[0][0]}' başlığı altında verilen açıklama doğrudan desteklenir.` });
+  }
+  if (mode === 3) {
+    const made = makeOptions(source.inference, ["Metin, okurun yalnız başlığa bakmasını yeterli görür.", "Metne göre bütün bilgiler tek bir satırdan çıkarılmalıdır.", "Metin, tablo ve kutular arasında ilişki kurulamayacağını savunur."], index);
+    return buildQuestion({ ...common, text: `${intro}${dataTable}`, stem: "Bu bağlamdan aşağıdakilerden hangisi çıkarılabilir?", ...made, solution: `Ana metin ile tablo birlikte düşünüldüğünde '${source.inference}' çıkarımı yapılabilir.` });
+  }
+  if (mode === 4) {
+    const made = makeOptions(`${source.table[0][0]} - ${source.table[0][1]} - ${source.table[0][2]}`, [`${source.table[1][0]} - ${source.table[0][1]} - ${source.table[2][2]}`, `${source.table[2][0]} - ${source.table[3][1]} - ${source.table[0][2]}`, `${source.table[3][0]} - ${source.table[1][1]} - ${source.table[1][2]}`], index);
+    return buildQuestion({ ...common, text: `${intro}${dataTable}`, stem: "Tablodaki bilgiler doğru eşleştirildiğinde aşağıdakilerden hangisi oluşur?", ...made, solution: "Doğru seçenek, tablonun aynı satırındaki üç bilgiyi değiştirmeden verir." });
+  }
+  if (mode === 5) {
+    const made = makeOptions(`"${source.boxTitle}" bölümü, ana metindeki düşünceyi somut bilgilerle desteklemektedir.`, [`"${source.boxTitle}" bölümü metnin konusunu değiştirmektedir.`, `"${source.boxTitle}" bölümü yalnız görsel süsleme amacı taşımaktadır.`, `"${source.boxTitle}" bölümü ana metindeki düşünceyle çelişmektedir.`], index);
+    return buildQuestion({ ...common, text: `${intro}${cards}`, stem: `"${source.boxTitle}" bölümü ile ana metin arasındaki ilişki aşağıdakilerden hangisidir?`, ...made, solution: "Kutular, ana metindeki temel düşünceyi ayrıntılandırıp somutlaştırır." });
+  }
+  if (mode === 6) {
+    const made = makeOptions(source.myth, [source.fact, source.main, source.inference], index);
+    return buildQuestion({ ...common, text: `${intro}${stimulusTable(["Yanlış Anlama", "Düzeltme"], [[source.myth, source.fact]])}`, stem: "Bu metne göre aşağıdakilerden hangisi yanlış bir yorumdur?", ...made, solution: `Metin '${source.myth}' yargısını desteklemez; bunun yerine '${source.fact}' bilgisini verir.` });
+  }
+  const made = makeOptions(`Metin; ana açıklama, bilgi kutuları ve tabloyla ${source.title} konusunu çok yönlü tanıtmaktadır.`, ["Metin yalnız tek cümlelik bir uyarıdan oluşmaktadır.", "Metinde başlık ile bilgi kutuları arasında bağlantı yoktur.", "Metin herhangi bir okuma ya da yorumlama görevi gerektirmez."], index);
+  return buildQuestion({ ...common, text: `${intro}${cards}${dataTable}`, stem: "Bu sayfanın yapısıyla ilgili en doğru yargı hangisidir?", ...made, solution: "Sayfa, ana metin, kutular ve tabloyu birlikte kullanan çok parçalı bir okuma metnidir." });
+}
+
 const gradeEightPassages = [
   {
     title: "Sessiz okuma alışkanlığı",
@@ -930,25 +1044,7 @@ function gradeEightSkillQuestion(topic, index, difficulty, number) {
     });
   }
   if (topic === "LGS tarzı yeni nesil paragraf soruları") {
-    const rows = [
-      ["Metindeki kanıt", index % 3 === 0 ? "Güçlü" : "Orta"],
-      ["Çeldirici benzerliği", index % 2 === 0 ? "Yüksek" : "Düşük"],
-      ["Soru kökü", index % 4 === 0 ? "Olumsuz" : "Doğrudan"],
-      ["Metin uzunluğu", index % 5 < 2 ? "Uzun" : "Orta"]
-    ];
-    return buildQuestion({
-      ...common,
-      text: `<p>${passageText}</p>${stimulusTable(["İncelenen özellik", "Durum"], rows)}<p>Öğrenci, metni ve tabloyu birlikte değerlendirerek cevap vermelidir.</p>`,
-      stem: "Bu metin ve tablo birlikte değerlendirildiğinde öğrencinin öncelikle hangi davranışı göstermesi gerekir?",
-      options: [
-        "Seçeneklerde metinden geçen ilk kelimeyi bulup işaretlemek",
-        "Soru kökünü belirleyip metindeki kanıtla seçenekleri karşılaştırmak",
-        "Tablodaki en kısa ifadeyi doğru kabul etmek",
-        "Metin uzun olduğu için yalnız seçenekleri okumak"
-      ],
-      answer: "B",
-      solution: "Yeni nesil soruda metin, tablo ve soru kökü birlikte değerlendirilmelidir; yalnız kelime benzerliği yeterli değildir."
-    });
+    return lgsPdfStyleQuestion(common, index);
   }
   if (topic === "Tablo-grafik-görsel okuma") {
     const dataSets = [
