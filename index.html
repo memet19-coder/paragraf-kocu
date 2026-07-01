@@ -154,9 +154,28 @@
             <button class="secondary-action" id="downloadPdf"><i data-lucide="clipboard-list"></i><span>PDF rapor al</span></button>
           </div>
           <div class="report-grid" id="reportGrid"></div>
+          <div class="report-identity" id="reportIdentity"></div>
           <div class="chart-panel">
             <h3>Konu bazlı durum</h3>
             <div id="topicBars"></div>
+          </div>
+          <div class="chart-panel">
+            <h3>Son çözümler</h3>
+            <div class="student-table-wrap compact-table">
+              <table class="student-table">
+                <thead>
+                  <tr>
+                    <th>Tarih</th>
+                    <th>Öğrenci</th>
+                    <th>Sınıf</th>
+                    <th>Konu</th>
+                    <th>Sonuç</th>
+                    <th>Süre</th>
+                  </tr>
+                </thead>
+                <tbody id="answerRows"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -196,6 +215,7 @@
                     <th>Çözüm</th>
                     <th>D/Y</th>
                     <th>Zorlandığı konu</th>
+                    <th>Son çözdüğü</th>
                   </tr>
                 </thead>
                 <tbody id="studentRows"></tbody>

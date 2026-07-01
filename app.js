@@ -643,6 +643,7 @@ async function remoteLoadStudent(name, code) {
   const result = await remoteTry(() => remoteDb.from("students").select("*").eq("student_key", studentKey(name, code)).maybeSingle(), null);
   const data = result?.data;
   if (!data) return null;
+  const attemptsResult = await remoteTry(() => remoteDb.from("attempts").select("*").eq("student_key", studentKey(name, code)).order("created_at", { ascending: true }), { data: [] });
   return {
     name: data.name,
     grade: String(data.grade),
@@ -650,6 +651,7 @@ async function remoteLoadStudent(name, code) {
     topicStats: data.topic_stats || {},
     mistakeBook: data.mistake_book || [],
     questionTimes: data.question_times || [],
+    answers: attemptsToAnswers(attemptsResult?.data || []),
     assignments: data.assignments || []
   };
 }
@@ -690,6 +692,12 @@ async function remoteLoadClassroom(code = state.teacherClassCode) {
   if (!isRemoteReady()) return [];
   const result = await remoteTry(() => remoteDb.from("students").select("*").eq("class_code", code).order("updated_at", { ascending: false }), { data: [] });
   const data = result?.data || [];
+  const attemptsResult = await remoteTry(() => remoteDb.from("attempts").select("*").eq("class_code", code).order("created_at", { ascending: true }), { data: [] });
+  const attemptsByStudent = (attemptsResult?.data || []).reduce((groups, attempt) => {
+    groups[attempt.student_key] = groups[attempt.student_key] || [];
+    groups[attempt.student_key].push(attempt);
+    return groups;
+  }, {});
   return (data || []).map((student) => ({
     name: student.name,
     grade: String(student.grade),
@@ -697,7 +705,21 @@ async function remoteLoadClassroom(code = state.teacherClassCode) {
     topicStats: student.topic_stats || {},
     mistakeBook: student.mistake_book || [],
     questionTimes: student.question_times || [],
+    answers: attemptsToAnswers(attemptsByStudent[student.student_key] || []),
     assignments: student.assignments || []
+  }));
+}
+
+function attemptsToAnswers(attempts) {
+  return (attempts || []).map((attempt) => ({
+    id: attempt.question_id,
+    grade: attempt.grade,
+    topic: attempt.topic,
+    correct: Boolean(attempt.is_correct),
+    blank: Boolean(attempt.is_blank),
+    answer: attempt.is_blank ? null : "",
+    spent: attempt.spent_seconds || 0,
+    at: attempt.created_at
   }));
 }
 
@@ -822,6 +844,7 @@ function syncCurrentStudent() {
     topicStats: state.topicStats,
     mistakeBook: state.mistakeBook || [],
     questionTimes: state.questionTimes || [],
+    answers: state.answers || [],
     assignments: state.assignments || [],
     updatedAt: new Date().toLocaleString("tr-TR")
   };
@@ -834,6 +857,7 @@ function applyStudentProfile(source) {
     state.topicStats = source.topicStats || {};
     state.mistakeBook = source.mistakeBook || [];
     state.questionTimes = source.questionTimes || [];
+    state.answers = source.answers || state.answers || [];
     state.assignments = source.assignments || state.assignments;
   }
 }
@@ -1041,12 +1065,39 @@ function renderReport() {
     [state.grade === "8" ? "8. sınıf süre ort." : "Ortalama süre", `${state.grade === "8" ? avgEightTime || avgTime : avgTime} sn`]
   ].map(([label, value]) => `<div class="report-card"><span>${label}</span><strong>${value}</strong></div>`).join("");
 
+  $("#reportIdentity").innerHTML = `
+    <strong>${state.studentName || "Öğrenci adı yok"}</strong>
+    <span>${state.classCode || state.teacherClassCode || "Sınıf kodu yok"} · ${state.grade}. sınıf · Son kayıt: ${formatReportDate(new Date().toISOString())}</span>
+  `;
+
   const bars = Object.entries(state.topicStats);
   $("#topicBars").innerHTML = (bars.length ? bars : gradePlan[state.grade].focus.map((topic) => [topic, { correct: 0, wrong: 0 }])).map(([topic, stat]) => {
     const total = stat.correct + stat.wrong;
     const percent = total ? Math.round((stat.correct / total) * 100) : 0;
     return `<div class="topic-bar"><strong>${topic}</strong><div class="bar-track"><span style="width:${percent}%"></span></div><span>${percent}%</span></div>`;
   }).join("");
+
+  const answers = [...(state.answers || [])].slice(-20).reverse();
+  const emptyAnswerMessage = state.stats.solved
+    ? "Bu öğrencinin özet sonucu var; ayrıntılı soru geçmişi bu güncellemeden sonraki antrenmanlarda tek tek görünecek."
+    : "Henüz çözüm kaydı yok. Bir antrenman bitirince burada hangi konudan ne çözdüğün görünecek.";
+  $("#answerRows").innerHTML = answers.length ? answers.map((answer) => `
+    <tr>
+      <td>${formatReportDate(answer.at)}</td>
+      <td>${state.studentName || "Adsız öğrenci"}</td>
+      <td>${answer.grade || state.grade}. sınıf</td>
+      <td>${answer.topic || "Konu yok"}</td>
+      <td>${answer.blank ? "Boş" : answer.correct ? "Doğru" : "Yanlış"}</td>
+      <td>${answer.spent || 0} sn</td>
+    </tr>
+  `).join("") : `<tr><td colspan="6">${emptyAnswerMessage}</td></tr>`;
+}
+
+function formatReportDate(value) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 }
 
 function renderAssignments() {
@@ -1081,6 +1132,15 @@ function downloadStudentReport() {
     const percent = total ? Math.round(((stat.correct || 0) / total) * 100) : 0;
     return `<tr><td>${topic}</td><td>${stat.correct || 0}</td><td>${stat.wrong || 0}</td><td>${percent}%</td></tr>`;
   }).join("");
+  const answerRows = [...(state.answers || [])].slice(-30).reverse().map((answer) => `
+    <tr>
+      <td>${formatReportDate(answer.at)}</td>
+      <td>${answer.grade || state.grade}. sınıf</td>
+      <td>${answer.topic || "Konu yok"}</td>
+      <td>${answer.blank ? "Boş" : answer.correct ? "Doğru" : "Yanlış"}</td>
+      <td>${answer.spent || 0} sn</td>
+    </tr>
+  `).join("");
   const timeRows = (state.questionTimes || []).slice(-20).map((item) => `<tr><td>${item.topic}</td><td>${item.spent} sn</td><td>${item.correct ? "Doğru" : "Yanlış"}</td></tr>`).join("");
   const report = window.open("", "_blank");
   report.document.write(`
@@ -1093,6 +1153,7 @@ function downloadStudentReport() {
       <p><strong>Zorlandığı konu:</strong> ${weak}</p>
       <h2>Önerilen çalışma</h2><ul>${suggestions}</ul>
       <h2>Konu bazlı başarı</h2><table><thead><tr><th>Konu</th><th>Doğru</th><th>Yanlış</th><th>Başarı</th></tr></thead><tbody>${topicRows || "<tr><td colspan='4'>Veri yok</td></tr>"}</tbody></table>
+      <h2>Son çözümler</h2><table><thead><tr><th>Tarih</th><th>Sınıf</th><th>Konu</th><th>Sonuç</th><th>Süre</th></tr></thead><tbody>${answerRows || "<tr><td colspan='5'>Çözüm kaydı yok</td></tr>"}</tbody></table>
       ${state.grade === "8" ? `<h2>8. sınıf süre takibi</h2><table><thead><tr><th>Konu</th><th>Süre</th><th>Sonuç</th></tr></thead><tbody>${timeRows || "<tr><td colspan='3'>Süre verisi yok</td></tr>"}</tbody></table>` : ""}
       <script>window.print();</script>
     </body></html>
@@ -1134,8 +1195,8 @@ function renderTeacher() {
     const weak = weakestTopicFor(student.topicStats || {});
     const correct = student.stats?.correct || 0;
     const wrong = student.stats?.wrong || 0;
-    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td></tr>`;
-  }).join("") : `<tr><td colspan="5">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
+    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${studentLastAnswer(student)}</td></tr>`;
+  }).join("") : `<tr><td colspan="6">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
   $("#assignStudent").innerHTML = students.length ? students.map((student) => `<option>${student.name}</option>`).join("") : `<option>Genel ödev</option>`;
   updateAssignmentTopics();
   updateCustomTopics();
@@ -1153,9 +1214,16 @@ async function refreshRemoteTeacherPanel() {
     const weak = weakestTopicFor(student.topicStats || {});
     const correct = student.stats?.correct || 0;
     const wrong = student.stats?.wrong || 0;
-    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td></tr>`;
+    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${studentLastAnswer(student)}</td></tr>`;
   }).join("");
   $("#assignStudent").innerHTML = students.map((student) => `<option>${student.name}</option>`).join("");
+}
+
+function studentLastAnswer(student) {
+  const last = [...(student.answers || [])].filter(Boolean).pop();
+  if (!last) return "Henüz kayıt yok";
+  const result = last.blank ? "Boş" : last.correct ? "Doğru" : "Yanlış";
+  return `${last.topic || "Konu"} · ${result} · ${last.spent || 0} sn`;
 }
 
 function updateAssignmentTopics() {

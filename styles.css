@@ -648,6 +648,27 @@ h3 {
   padding: 16px;
 }
 
+.report-identity {
+  margin-top: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.report-identity strong {
+  font-size: 18px;
+}
+
+.report-identity span {
+  color: var(--muted);
+  font-weight: 700;
+}
+
 .topic-bar {
   display: grid;
   grid-template-columns: minmax(130px, 220px) 1fr 54px;
@@ -700,6 +721,14 @@ h3 {
 
 .student-table-wrap {
   overflow: auto;
+}
+
+.compact-table {
+  border: 0;
+}
+
+.compact-table .student-table {
+  min-width: 640px;
 }
 
 .student-table {
@@ -821,6 +850,11 @@ h3 {
   }
 
   .topbar, .toolbar, .panel-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .report-identity {
     align-items: flex-start;
     flex-direction: column;
   }
