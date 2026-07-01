@@ -8,29 +8,30 @@ const topics = [
   "Örneklendirme", "Tanımlama", "Sayısal verilerden yararlanma", "Tanık gösterme",
   "Düşünceyi geliştirme yolları", "Anlatım biçimleri", "Açıklayıcı anlatım", "Öyküleyici anlatım",
   "Betimleyici anlatım", "Tartışmacı anlatım", "Metinler arası karşılaştırma",
-  "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları"
+  "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları",
+  "Bağlam temelli yeni nesil okuma"
 ];
 
 const gradePlan = {
   5: {
     headline: "5. sınıf için kısa ve net paragraf antrenmanı",
     subline: "Konu bulma, ana düşünce, başlık ve basit çıkarım soruları ağırlıklı gelir.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Başlık bulma", "Çıkarım yapma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Hikâye unsurları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Başlık bulma", "Çıkarım yapma", "Bağlam temelli yeni nesil okuma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Hikâye unsurları"]
   },
   6: {
     headline: "6. sınıf için ipucu yakalama çalışması",
     subline: "Ana fikir, yardımcı fikir, metnin amacı ve anlam bütünlüğü birlikte çalışılır.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "Bağlam temelli yeni nesil okuma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
   },
   7: {
     headline: "7. sınıf için yorumlama ve akışı koruma",
     subline: "Örtülü anlam, cümle sıralama, anlatım biçimleri ve akışı bozan cümleler öne çıkar.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "Bağlam temelli yeni nesil okuma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
   },
   8: {
     headline: "8. sınıf için LGS düzeyi yeni nesil tempo",
     subline: "Uzun paragraf, görsel okuma, sözel mantık ve güçlü çeldiricilerle çalışılır.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "LGS tarzı yeni nesil paragraf soruları", "Metinler arası karşılaştırma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Çıkarım yapma", "Zaman yönetimi"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Bağlam temelli yeni nesil okuma", "LGS tarzı yeni nesil paragraf soruları", "Metinler arası karşılaştırma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Çıkarım yapma", "Zaman yönetimi"]
   }
 };
 
@@ -369,6 +370,284 @@ function stimulusList(items) {
 
 function stimulusCards(items) {
   return `<div class="stimulus-cards">${items.map((item) => `<div><strong>${item.title}</strong><span>${item.text}</span></div>`).join("")}</div>`;
+}
+
+function makeOptions(correct, distractors, shift = 0) {
+  const cleanDistractors = distractors.filter((item) => item !== correct).slice(0, 3);
+  const options = [correct, ...cleanDistractors];
+  const rotate = shift % 4;
+  const rotated = [...options.slice(rotate), ...options.slice(0, rotate)];
+  return {
+    options: rotated,
+    answer: "ABCD"[rotated.indexOf(correct)]
+  };
+}
+
+const contextDossiers = [
+  {
+    title: "Akıllı Sofra Rehberi",
+    field: "sağlık ve beslenme",
+    lead: "Okul panosunda sağlıklı beslenme için hazırlanan rehberde tabağın renkli sebzeler, tam tahıllar, baklagiller ve ölçülü yağlarla dengelenmesi gerektiği anlatılmıştır. Rehber, tek bir yiyeceği mucize gibi göstermeden günlük seçimlerin toplam etkisine dikkat çeker.",
+    main: "Sağlıklı beslenme, tek bir besine yüklenmek yerine dengeli ve sürdürülebilir seçimler yapmayı gerektirir.",
+    detail: "rehberin tek bir yiyeceği mucize gibi göstermediği",
+    warning: "Bir besini çok tüketmek, dengeli beslenmenin yerini tutmaz.",
+    fact: "Tam tahıl, baklagil ve sebze birlikte kullanıldığında öğün daha dengeli olur.",
+    myth: "Sağlıklı beslenmek için sevilen bütün yiyecekleri tamamen bırakmak gerekir.",
+    steps: ["Tabağı renklendir", "Porsiyonu ölçülü tut", "Su içmeyi unutma", "Haftalık plan yap"],
+    table: [["Sebze", "Her gün", "Lif desteği"], ["Tam tahıl", "Sık", "Uzun süre tokluk"], ["Baklagil", "Haftada 2-3", "Bitkisel protein"], ["Şekerli içecek", "Sınırlı", "Gereksiz enerji"]],
+    quote: "Sofradaki denge, günün enerjisini sessizce kurar."
+  },
+  {
+    title: "Seslerin Haritası",
+    field: "ses farkındalığı",
+    lead: "Bir dergi sayfası, şehirdeki sesleri yalnız gürültü olarak değil, dikkat ve duygu durumunu etkileyen ipuçları olarak ele almıştır. Öğrencilerden gün içinde duydukları sesleri, hissettirdikleri duyguyla birlikte not etmeleri istenmiştir.",
+    main: "Çevredeki sesleri bilinçli fark etmek, dikkat ve duygu yönetimini destekler.",
+    detail: "seslerin hissettirdiği duygularla birlikte not edilmesi",
+    warning: "Sürekli bildirim sesi, dikkati küçük parçalara bölebilir.",
+    fact: "Kuş sesi, su sesi ve rüzgâr gibi doğal sesler bazı kişilerde sakinlik duygusu oluşturabilir.",
+    myth: "Sessiz bir ortam herkes için her zaman en verimli çalışma ortamıdır.",
+    steps: ["Bir dakika dur", "Duyduğun sesleri ayır", "Sende uyandırdığı duyguyu yaz", "Gereksiz sesi azalt"],
+    table: [["Yağmur", "Sakinlik", "Doğal ses"], ["Trafik", "Yorgunluk", "Şehir sesi"], ["Klavye", "Üretim hissi", "İş sesi"], ["Bildirim", "Dikkat bölünmesi", "Dijital ses"]],
+    quote: "Duymak yalnız işitmek değil, fark etmektir."
+  },
+  {
+    title: "Balkondan Gökyüzü",
+    field: "gökyüzü gözlemi",
+    lead: "Şehir ışıkları arasında bile gökyüzünü izlemek mümkündür. Rehberde, ayın evrelerini not etmek, parlak yıldızları takip etmek ve kısa gözlem süreleriyle gökyüzü alışkanlığı kazanmak önerilir.",
+    main: "Gökyüzünü düzenli gözlemlemek, insanın doğayla bağını ve merak duygusunu güçlendirir.",
+    detail: "ayın evrelerinin not edilmesi ve parlak yıldızların takip edilmesi",
+    warning: "Gözlem için güçlü araçlardan önce düzenli dikkat gerekir.",
+    fact: "Ayın görünümü günlere göre değişir ve bu değişim gözlem defterine kaydedilebilir.",
+    myth: "Şehirde yaşayan biri gökyüzü gözlemi yapamaz.",
+    steps: ["Işığı azalt", "Ayın konumuna bak", "Kısa not al", "Ertesi gün karşılaştır"],
+    table: [["Ay", "Her gece değişir", "Kolay izlenir"], ["Parlak yıldız", "Sabit gibi görünür", "Yön bulmaya yardım eder"], ["Bulut", "Hava ipucu verir", "Gözlemi etkiler"], ["Işık kirliliği", "Görüşü azaltır", "Azaltılabilir"]],
+    quote: "Gökyüzü, başını kaldıran okura açık bir sayfadır."
+  },
+  {
+    title: "Bilgiyi Kalıcı Kılan Tekrar",
+    field: "öğrenme ve tekrar",
+    lead: "Aralıklı tekrar, öğrenilen bilginin belirli zaman aralıklarıyla yeniden hatırlanmasına dayanır. Rehberde kısa ama planlı tekrarların, uzun ve düzensiz çalışmalardan daha kalıcı öğrenme sağlayabileceği belirtilmiştir.",
+    main: "Bilgi, doğru aralıklarla hatırlandığında daha kalıcı hâle gelir.",
+    detail: "kısa ama planlı tekrarların uzun ve düzensiz çalışmalardan etkili olabileceği",
+    warning: "Üst üste uzun çalışmak, öğrenmeyi kalıcı kılmak için tek başına yeterli değildir.",
+    fact: "İlk tekrarın öğrenmeden kısa süre sonra yapılması hatırlamayı güçlendirir.",
+    myth: "Bir konuyu bir kez çok uzun çalışmak, tekrar yapmaya gerek bırakmaz.",
+    steps: ["İlk öğrenme", "Kısa tekrar", "Bir gün sonra bak", "Üç gün sonra dene"],
+    table: [["İlk tekrar", "10-20 dk sonra", "Unutmayı yavaşlatır"], ["İkinci tekrar", "1 gün sonra", "Hatırlamayı güçlendirir"], ["Üçüncü tekrar", "3 gün sonra", "Kalıcı iz bırakır"], ["Genel tekrar", "1 hafta sonra", "Eksikleri gösterir"]],
+    quote: "Bilgi, doğru zamanda geri çağrılınca güçlenir."
+  },
+  {
+    title: "Bulutların Haritası",
+    field: "doğa ve hava gözlemi",
+    lead: "Bulutlar yalnız gökyüzünü süsleyen görüntüler değildir; hava değişimlerinin ipuçlarını taşır. Bir gözlem dosyasında bulutların şekli, yüksekliği ve rengi incelenerek hava hakkında yorum yapılabileceği anlatılır.",
+    main: "Bulutları gözlemlemek, hava olaylarını anlamaya yardımcı olur.",
+    detail: "bulutların şekli, yüksekliği ve renginin incelenmesi",
+    warning: "Tek bir buluta bakarak kesin hava tahmini yapmak doğru değildir.",
+    fact: "Koyu ve kalın bulutlar çoğu zaman yağış ihtimalinin arttığını gösterir.",
+    myth: "Bütün bulutlar aynı yükseklikte oluşur.",
+    steps: ["Şekle bak", "Rengi değerlendir", "Rüzgârı gözle", "Notlarını karşılaştır"],
+    table: [["Kümülüs", "Pamuksu", "Açık hava"], ["Sirüs", "İnce", "Yüksek seviye"], ["Stratus", "Gri tabaka", "Kapalı gökyüzü"], ["Nimbüs", "Koyu", "Yağış işareti"]],
+    quote: "Gökyüzünü okuyan, havanın sessiz notlarını fark eder."
+  },
+  {
+    title: "Artıklarla Barış Rehberi",
+    field: "israfı azaltma",
+    lead: "Evde artan yiyecekleri değerlendirmek için hazırlanan eğlenceli rehberde, kapların üzerine tarih yazmak, görünür raf kullanmak ve küçük porsiyonlar hazırlamak önerilir. Amaç, yiyecekleri unutulmuş eşya olmaktan çıkarıp planlı tüketime katmaktır.",
+    main: "Yiyecek israfını azaltmak, küçük düzenleme alışkanlıklarıyla mümkündür.",
+    detail: "kapların üzerine tarih yazılması ve görünür raf kullanılması",
+    warning: "Tarihsiz kaplar, yiyeceklerin unutulmasına ve bozulmasına yol açabilir.",
+    fact: "Küçük porsiyon hazırlamak, artan yiyecek miktarını azaltabilir.",
+    myth: "Artan yiyecekler mutlaka çöpe gitmelidir.",
+    steps: ["Tarihi yaz", "Görünür rafa koy", "Bir gün içinde planla", "Tüketemeyeceğini paylaş"],
+    table: [["Tarih etiketi", "Ne zaman hazırlandı?", "Unutmayı önler"], ["Şeffaf kap", "İçerik görünür", "Seçimi kolaylaştırır"], ["Küçük porsiyon", "Az artar", "İsrafı azaltır"], ["Arka raf", "Gözden kaçar", "Risklidir"]],
+    quote: "Küçük kaplar, büyük israfı durdurabilir."
+  },
+  {
+    title: "Dijital Denge Planı",
+    field: "teknoloji kullanımı",
+    lead: "Dijital denge planında ekran süresini tamamen yasaklamak yerine kullanım amacını belirlemek önerilir. Öğrenciler, ders, iletişim ve eğlence sürelerini ayırdığında teknolojiyi daha bilinçli kullanabilir.",
+    main: "Teknolojiyi bilinçli kullanmak, süre kadar amaç belirlemeyi de gerektirir.",
+    detail: "ders, iletişim ve eğlence sürelerinin ayrılması",
+    warning: "Amaçsız ekran kullanımı, zamanın fark edilmeden dağılmasına neden olabilir.",
+    fact: "Bildirimleri azaltmak, odaklanma süresini artırabilir.",
+    myth: "Teknolojiyi verimli kullanmak için bütün uygulamaları silmek gerekir.",
+    steps: ["Amacı yaz", "Süre belirle", "Bildirimleri azalt", "Kısa mola ver"],
+    table: [["Ders", "40 dk", "Öncelikli"], ["İletişim", "20 dk", "Sınırlı"], ["Oyun", "30 dk", "Planlı"], ["Amaçsız gezinme", "Azaltılmalı", "Dikkat dağıtır"]],
+    quote: "Ekranı yönetmek, zamanı yönetmenin bir parçasıdır."
+  },
+  {
+    title: "Su İzini Takip Et",
+    field: "su tasarrufu",
+    lead: "Bir çevre bülteni, su kullanımının yalnız musluğu kapatmakla sınırlı olmadığını anlatır. Gıda, kıyafet ve temizlik alışkanlıkları da dolaylı su tüketimini etkiler. Öğrencilerden günlük seçimlerinin su izini düşünmeleri istenir.",
+    main: "Su tasarrufu, doğrudan ve dolaylı tüketimi birlikte fark etmeyi gerektirir.",
+    detail: "gıda, kıyafet ve temizlik alışkanlıklarının dolaylı su tüketimini etkilemesi",
+    warning: "Yalnız musluğu kapatmak, su bilinci için yeterli görülmemelidir.",
+    fact: "Tamir edilmeyen küçük sızıntılar zamanla büyük su kaybına yol açabilir.",
+    myth: "Su tasarrufu yalnız banyoda yapılır.",
+    steps: ["Sızıntıyı kontrol et", "Gereksiz akışı durdur", "Alışverişi planla", "Tekrar kullanılabileni seç"],
+    table: [["Diş fırçalama", "Musluk kapalı", "Doğrudan tasarruf"], ["Sızıntı", "Onarım gerekli", "Sürekli kayıp"], ["Gıda israfı", "Azaltılmalı", "Dolaylı su"], ["Bilinçli alışveriş", "Planlı", "Kaynak koruma"]],
+    quote: "Suyun izi, günlük seçimlerin içinde saklıdır."
+  },
+  {
+    title: "Kompost Günlüğü",
+    field: "organik atık dönüşümü",
+    lead: "Okul bahçesinde başlatılan kompost çalışmasında meyve kabukları ve kuru yapraklar ayrı bir kutuda biriktirilmiştir. Öğrenciler, her organik atığın aynı hızda çözünmediğini ve dengenin koku oluşumunu etkilediğini gözlemlemiştir.",
+    main: "Kompost yapmak, organik atıkları doğru dengeyle toprağa kazandırmayı sağlar.",
+    detail: "meyve kabukları ve kuru yaprakların ayrı bir kutuda biriktirilmesi",
+    warning: "Denge kurulmazsa kompost kutusunda kötü koku oluşabilir.",
+    fact: "Kuru yapraklar, nemli atıklarla birlikte kullanıldığında karışım dengelenir.",
+    myth: "Kompost kutusuna her türlü atık atılabilir.",
+    steps: ["Organik atığı ayır", "Kuru malzeme ekle", "Ara sıra karıştır", "Toprak kokusunu kontrol et"],
+    table: [["Meyve kabuğu", "Uygun", "Nemli atık"], ["Kuru yaprak", "Uygun", "Denge sağlar"], ["Plastik", "Uygun değil", "Çözünmez"], ["Yağlı yemek", "Sınırlı", "Koku yapabilir"]],
+    quote: "Toprağa dönen atık, doğanın döngüsüne katılır."
+  },
+  {
+    title: "Şehirde Bisiklet Rotası",
+    field: "ulaşım ve güvenlik",
+    lead: "Bir ulaşım afişinde bisiklet kullanmanın çevreye katkısı anlatılırken güvenli rota seçmenin önemi de vurgulanmıştır. Kask takmak, görünür kıyafet seçmek ve araç trafiğinin yoğun olduğu yollardan kaçınmak temel öneriler arasındadır.",
+    main: "Bisiklet kullanımı, çevre yararı kadar güvenli rota planlaması da gerektirir.",
+    detail: "kask, görünür kıyafet ve güvenli rota seçiminin önerilmesi",
+    warning: "Yoğun trafikli yolda plansız sürüş risk oluşturabilir.",
+    fact: "Kısa mesafelerde bisiklet kullanmak karbon salımını azaltmaya yardımcı olur.",
+    myth: "Bisiklet güvenliği yalnız hızlı sürmemekle sağlanır.",
+    steps: ["Rotayı seç", "Kaskı tak", "Görünür ol", "Trafik işaretlerine uy"],
+    table: [["Kask", "Gerekli", "Baş koruma"], ["Reflektör", "Gerekli", "Görünürlük"], ["Yoğun yol", "Kaçınılmalı", "Risk"], ["Bisiklet yolu", "Tercih edilmeli", "Güvenli rota"]],
+    quote: "İyi rota, güvenli yolculuğun ilk adımıdır."
+  },
+  {
+    title: "Afet Çantası Listesi",
+    field: "hazırlık ve güvenlik",
+    lead: "Afet hazırlığı afişinde çantanın yalnız bir kez hazırlanıp unutulmaması gerektiği vurgulanır. Su, ilk yardım malzemesi, fener, düdük ve kişisel ilaçlar düzenli olarak kontrol edilmelidir.",
+    main: "Afet çantası, düzenli kontrol edildiğinde gerçek bir hazırlık aracına dönüşür.",
+    detail: "su, fener, düdük ve kişisel ilaçların düzenli kontrol edilmesi",
+    warning: "Tarihi geçmiş malzeme güven duygusu verse de ihtiyaç anında işe yaramayabilir.",
+    fact: "Düdük, sesin duyurulmasını kolaylaştıran küçük ama önemli bir araçtır.",
+    myth: "Afet çantası hazırlandıktan sonra bir daha kontrol edilmez.",
+    steps: ["Temel malzemeyi koy", "Tarihleri kontrol et", "Aileyle yerini paylaş", "Altı ayda bir yenile"],
+    table: [["Su", "Gerekli", "Tarih kontrolü"], ["Fener", "Gerekli", "Pil kontrolü"], ["Düdük", "Gerekli", "Ses verme"], ["Ağır eşya", "Sınırlı", "Taşımayı zorlaştırır"]],
+    quote: "Hazırlık, panik başlamadan önce yapılan sessiz plandır."
+  }
+];
+
+function contextQuestion(grade, index, difficulty, number) {
+  const dossier = contextDossiers[(index + grade) % contextDossiers.length];
+  const cycle = Math.floor(index / contextDossiers.length);
+  const depth = grade === 5 ? "kısa bilgi kartı" : grade === 6 ? "rehber metni" : grade === 7 ? "çok parçalı afiş" : "bağlam temelli dosya";
+  const applicationContexts = [
+    "Öğrenciler bu sayfayı sınıf panosu için sadeleştirirken ana mesajı korumaya çalışmıştır.",
+    "Okuma kulübü, sayfadaki bilgi kutularını afişin ana metniyle ilişkilendirerek kısa bir sunum hazırlamıştır.",
+    "Bir grup öğrenci, rehberdeki önerileri günlük yaşamda uygulanabilir olup olmadığına göre değerlendirmiştir.",
+    "Öğretmen, öğrencilerden yalnız dikkat çekici görsele değil, küçük notlara ve tabloya da bakmalarını istemiştir.",
+    "Sınıf tartışmasında bazı öğrenciler bilgi kutularının ana metni nasıl desteklediğini örneklerle açıklamıştır.",
+    "Çalışmanın sonunda öğrenciler, rehberdeki uyarıların hangi davranışı değiştirmeyi amaçladığını belirlemiştir.",
+    "Etkinlikte öğrenciler, metindeki kesin bilgi ile yorum gerektiren bölümleri farklı renklerle işaretlemiştir.",
+    "Okul bülteni için yapılan düzenlemede başlık, tablo ve rehber adımları birlikte değerlendirilmiştir.",
+    "Öğrenciler, bu dosyadan hareketle bir günlük uygulama planı çıkarıp hangi adımın önce geleceğini tartışmıştır.",
+    "Soru çözümünde öğrencilerden, metinde açıkça verilen bilgiyle kendi tahminlerini birbirinden ayırmaları istenmiştir."
+  ];
+  const application = applicationContexts[(index + cycle + grade) % applicationContexts.length];
+  const intro = `<p><strong>${dossier.title}</strong> adlı ${depth}, ${dossier.field} konusunda hazırlanmıştır. ${dossier.lead}</p><p>${application}</p>`;
+  const factCards = stimulusCards([
+    { title: "Bilgi", text: dossier.fact },
+    { title: "Uyarı", text: dossier.warning },
+    { title: "Söz", text: dossier.quote },
+    { title: "Odak", text: dossier.field }
+  ]);
+  const table = stimulusTable(["Başlık", "Bilgi", "Not"], dossier.table);
+  const steps = stimulusList(dossier.steps.map((step, stepIndex) => `${stepIndex + 1}. ${step}`));
+  const mode = (index + grade + cycle) % 6;
+  const common = {
+    grade,
+    topic: "Bağlam temelli yeni nesil okuma",
+    difficulty,
+    outcome: `Bağlam temelli okuma ve yorumlama sorusu ${number}.`,
+    strategy: "Parçaları ayrı ayrı oku; tablo, bilgi kutusu ve ana metnin aynı bilgiyi nasıl desteklediğini karşılaştır.",
+    hint: "Cevabı yalnız tek kutudan değil, bütün bağlamdan doğrula.",
+    wrong: "Yanlış seçenekler ya metinde olmayan bilgi ekler ya da yalnız bir ayrıntıyı genelleştirir."
+  };
+  if (mode === 0) {
+    const made = makeOptions(dossier.main, [
+      "Metindeki bütün bilgiler yalnız eğlenmek için verilmiştir.",
+      "Tablodaki her bilgi birbirinin aynısıdır.",
+      "Rehber, okurun hiçbir davranışını değiştirmeyi amaçlamaz."
+    ], index);
+    return buildQuestion({
+      ...common,
+      text: `${intro}${factCards}`,
+      stem: "Bu bağlamdan çıkarılabilecek ana düşünce aşağıdakilerden hangisidir?",
+      ...made,
+      solution: `Ana metin ve bilgi kutuları birlikte değerlendirildiğinde '${dossier.main}' yargısı desteklenir.`
+    });
+  }
+  if (mode === 1) {
+    const made = makeOptions(dossier.detail, [
+      "konunun yalnız tarihsel yönünün anlatıldığı",
+      "bütün önerilerin yasaklama biçiminde verildiği",
+      "okurun hiçbir gözlem yapmasına gerek olmadığı"
+    ], index);
+    return buildQuestion({
+      ...common,
+      text: `${intro}${table}`,
+      stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
+      ...made,
+      solution: `Metnin ilgili bölümünde '${dossier.detail}' bilgisi açıkça yer alır.`
+    });
+  }
+  if (mode === 2) {
+    const made = makeOptions(dossier.fact, [
+      dossier.myth,
+      "Tablodaki en düşük değer her zaman en önemli bilgidir.",
+      "Bilgi kutuları ana metinle ilişkisizdir."
+    ], index);
+    return buildQuestion({
+      ...common,
+      text: `${intro}${stimulusTable(["Mit", "Gerçek"], [[dossier.myth, dossier.fact], ["Tek başına tek yöntem yeterlidir.", dossier.warning]])}`,
+      stem: "Mit-gerçek tablosuna göre doğru bilgi aşağıdakilerden hangisidir?",
+      ...made,
+      solution: `Tabloda mitin karşısında verilen gerçek bilgi '${dossier.fact}' ifadesidir.`
+    });
+  }
+  if (mode === 3) {
+    const correct = dossier.steps.join(" → ");
+    const made = makeOptions(correct, [
+      [...dossier.steps].reverse().join(" → "),
+      [dossier.steps[1], dossier.steps[0], dossier.steps[2], dossier.steps[3]].join(" → "),
+      [dossier.steps[0], dossier.steps[2], dossier.steps[1], dossier.steps[3]].join(" → ")
+    ], index);
+    return buildQuestion({
+      ...common,
+      text: `${intro}<p>Rehberde önerilen uygulama sırası şöyledir:</p>${steps}`,
+      stem: "Bu rehbere göre adımların doğru sıralaması hangisidir?",
+      ...made,
+      solution: "Rehberdeki numaralı adımlar korunmalıdır; doğru sıra metindeki sırayla aynıdır."
+    });
+  }
+  if (mode === 4) {
+    const made = makeOptions(dossier.warning, [
+      "Bu konuda hiçbir risk bulunmadığı",
+      "Tablodaki bütün satırların aynı anlama geldiği",
+      "Rehberin yalnız görsel süsleme amacı taşıdığı"
+    ], index);
+    return buildQuestion({
+      ...common,
+      text: `${intro}${table}<p><strong>Dikkat kutusu:</strong> ${dossier.warning}</p>`,
+      stem: "Dikkat kutusuna göre okurun kaçınması gereken durum aşağıdakilerden hangisidir?",
+      ...made,
+      solution: `Dikkat kutusunda özellikle '${dossier.warning}' uyarısı yapılmıştır.`
+    });
+  }
+  const made = makeOptions(`Bu dosya ${dossier.field} konusunda bilinçli davranış geliştirmeyi amaçlar.`, [
+    "Dosya yalnız bir ürünün reklamını yapmaktadır.",
+    "Dosya okura hiçbir öneri sunmamaktadır.",
+    "Dosya bütün bilgilerin ezberlenmesini yeterli görmektedir."
+  ], index);
+  return buildQuestion({
+    ...common,
+    text: `${intro}${factCards}${table}`,
+    stem: "Bu bağlam temelli metnin hazırlanma amacı aşağıdakilerden hangisidir?",
+    ...made,
+    solution: `Metindeki rehber, tablo ve bilgi kutuları ${dossier.field} konusunda bilinçli davranış geliştirmeye yöneliktir.`
+  });
 }
 
 const gradeEightPassages = [
@@ -944,6 +1223,7 @@ function generatedQuestion(grade, topic, index) {
   };
   const note = variantNotes[grade][Math.floor(index / passageSeeds[grade].length) % variantNotes[grade].length];
   const extension = paragraphExtension(grade, seed, note, index);
+  if (topic === "Bağlam temelli yeni nesil okuma") return contextQuestion(grade, index, difficulty, number);
   const gradeEightQuestion = grade === 8 ? gradeEightSkillQuestion(topic, index, difficulty, number) : null;
   if (gradeEightQuestion) return gradeEightQuestion;
   const variedNewGen = variedNewGenerationQuestion(grade, topic, index, difficulty, number);
@@ -1208,7 +1488,8 @@ function balanceQuestionBank(baseQuestions) {
       "Hikâye unsurları": 20,
       "Çıkarım yapma": 35,
       "Tablo-grafik-görsel okuma": 25,
-      "Sözel mantık destekli paragraf soruları": 25
+      "Sözel mantık destekli paragraf soruları": 25,
+      "Bağlam temelli yeni nesil okuma": 100
     },
     6: {
       "Konu bulma": 40,
@@ -1219,7 +1500,8 @@ function balanceQuestionBank(baseQuestions) {
       "Karşılaştırma": 20,
       "Paragraf tamamlama": 25,
       "Tablo-grafik-görsel okuma": 25,
-      "Sözel mantık destekli paragraf soruları": 25
+      "Sözel mantık destekli paragraf soruları": 25,
+      "Bağlam temelli yeni nesil okuma": 100
     },
     7: {
       "Konu bulma": 30,
@@ -1232,7 +1514,8 @@ function balanceQuestionBank(baseQuestions) {
       "Anlatım biçimleri": 20,
       "Düşünceyi geliştirme yolları": 25,
       "Tablo-grafik-görsel okuma": 25,
-      "Sözel mantık destekli paragraf soruları": 25
+      "Sözel mantık destekli paragraf soruları": 25,
+      "Bağlam temelli yeni nesil okuma": 100
     },
     8: {
       "Konu bulma": 25,
@@ -1243,7 +1526,8 @@ function balanceQuestionBank(baseQuestions) {
       "Tablo-grafik-görsel okuma": 40,
       "Sözel mantık destekli paragraf soruları": 40,
       "Çıkarım yapma": 25,
-      "Zaman yönetimi": 20
+      "Zaman yönetimi": 20,
+      "Bağlam temelli yeni nesil okuma": 100
     }
   };
   [5, 6, 7, 8].forEach((grade) => {
@@ -2029,6 +2313,13 @@ function strategyDetails(topic) {
       steps: ["Kesin ifadeleri tabloya yaz.", "Olumsuz koşulları ayrı işaretle.", "Seçenekleri kalan ihtimallere göre ele."],
       trap: "Bir ihtimali kesin bilgi gibi yerleştirme.",
       example: "Ali pazartesi değilse önce pazartesi seçeneğinden çıkar, sonra diğer koşulları dene."
+    },
+    "Bağlam temelli yeni nesil okuma": {
+      tag: "Çok parçalı okuma",
+      summary: "Ana metin, tablo, bilgi kutusu ve rehber adımlarını birlikte yorumlama.",
+      steps: ["Önce başlık ve ana metni oku.", "Tablodaki kesin bilgileri işaretle.", "Mit-gerçek, uyarı ve adım kutularını ana fikirle ilişkilendir.", "Seçeneği bütün parçalarla doğrula."],
+      trap: "Yalnız görseldeki ya da tablodaki tek ayrıntıya göre genelleme yapma.",
+      example: "Bir rehberde hem uyarı hem tablo varsa cevap ikisinin birlikte desteklediği yargıdır."
     },
     "Zaman yönetimi": {
       tag: "Sınav temposu",
