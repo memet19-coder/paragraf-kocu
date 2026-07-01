@@ -1578,8 +1578,8 @@ function initParagraphMarker() {
     if (!drawing) return;
     const current = point(event);
     context.globalCompositeOperation = activeTool === "eraser" ? "destination-out" : "source-over";
-    context.strokeStyle = activeTool === "eraser" ? "rgba(0,0,0,1)" : "rgba(245, 207, 39, .55)";
-    context.lineWidth = activeTool === "eraser" ? 28 : 16;
+    context.strokeStyle = "#102030";
+    context.lineWidth = activeTool === "eraser" ? 18 : 2;
     context.lineTo(current.x, current.y);
     context.stroke();
   }
