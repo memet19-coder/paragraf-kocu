@@ -1155,7 +1155,8 @@ function renderMistakeBook() {
 
 function renderStrategies() {
   const gradeTopics = availableTopicsForGrade(state.grade);
-  $("#strategyGrid").innerHTML = gradeTopics.map((topic) => `
+  const displayTopics = ["Konu bulma", "Ana fikir", ...gradeTopics.filter((topic) => !["Konu bulma", "Ana düşünce"].includes(topic))];
+  $("#strategyGrid").innerHTML = displayTopics.map((topic) => `
     <article class="strategy-card">
       ${strategyCard(topic)}
     </article>
@@ -1188,16 +1189,23 @@ function strategyDetails(topic) {
     "Konu bulma": {
       tag: "Temel beceri",
       summary: "Metnin etrafında döndüğü ortak varlığı, olayı veya durumu bul.",
-      steps: ["Soru kökünde senden ne istendiğini belirle.", "Metinde tekrar eden kişi, olay ve kavramları işaretle.", "Seçeneklerden en geniş olanı seç."],
+      steps: ["Soru kökünde senden konunun istendiğini gör.", "Metinde tekrar eden kişi, olay ve kavramları işaretle.", "Bu tekrarların hangi ortak başlıkta toplandığını söyle.", "Seçeneklerden metnin tamamını kapsayanı seç."],
       trap: "Tek bir ayrıntıyı konu sanma; konu metnin tamamını kapsamalıdır.",
-      example: "Metinde fidan sulama, toprağı kontrol etme, yaprak çıkarma geçiyorsa konu fidan bakımıdır."
+      example: "Metinde Elif'in fidanı sulaması, toprağını kontrol etmesi ve yaprak çıkmasına sevinmesi anlatılıyorsa konu Elif'in fidan bakımıdır. Okul bahçesi sadece yer bilgisidir."
+    },
+    "Ana fikir": {
+      tag: "Ana mesaj",
+      summary: "Metnin okura vermek istediği temel dersi, düşünceyi veya sonucu bul.",
+      steps: ["Önce metnin konusunu kısaca belirle.", "Yazar bu konuda ne demek istiyor, kendine sor.", "Son cümledeki sonuç veya öğüt bildiren ifadeye bak.", "Seçeneğin sadece ayrıntı değil, metnin genel mesajı olmasına dikkat et."],
+      trap: "Ana fikir konu değildir. Konu 'kitap okumak' olabilir; ana fikir 'kitap okumak insanın düşünce dünyasını geliştirir' gibi yargı bildirir.",
+      example: "Metin, kitap okuyan kişinin farklı hayatları tanıdığını ve kelime hazinesinin geliştiğini söylüyorsa ana fikir 'Kitap okumak insanı düşünce ve dil yönünden geliştirir.' olur."
     },
     "Ana düşünce": {
       tag: "Mesaj bulma",
       summary: "Yazarın okura vermek istediği asıl mesajı yakala.",
-      steps: ["Son cümleye ve sonuç bildiren ifadelere bak.", "Metnin hangi düşünceyi desteklediğini bul.", "Seçeneğin bütün paragrafı kapsayıp kapsamadığını kontrol et."],
+      steps: ["Önce metnin konusunu kısaca belirle.", "Son cümleye ve sonuç bildiren ifadelere bak.", "Metnin hangi düşünceyi desteklediğini bul.", "Seçeneğin bütün paragrafı kapsayıp kapsamadığını kontrol et."],
       trap: "Sadece konu söyleyen seçenek ana düşünce değildir; ana düşünce bir yargı bildirir.",
-      example: "Konu kitap okumak olabilir; ana düşünce kitap okumanın insanı geliştirmesidir."
+      example: "Konu 'düzenli çalışmak' olabilir; ana düşünce 'Düzenli çalışan öğrenci zor konuları zamanla başarabilir.' biçiminde mesaj verir."
     },
     "Yardımcı düşünce": {
       tag: "Kanıt kontrolü",
