@@ -570,6 +570,7 @@ const CONTENT_VERSION = 5;
 let state = loadState();
 let selectedCount = 5;
 let activeTopic = topics[0];
+let pendingGrade = state.grade;
 let quiz = null;
 
 const $ = (selector) => document.querySelector(selector);
@@ -850,6 +851,15 @@ function syncCurrentStudent() {
   };
 }
 
+function resetStudentProgress(grade = state.grade) {
+  state.grade = String(grade || state.grade || "5");
+  state.stats = { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 };
+  state.topicStats = {};
+  state.mistakeBook = [];
+  state.questionTimes = [];
+  state.answers = [];
+}
+
 function applyStudentProfile(source) {
   if (source) {
     state.grade = String(source.grade || state.grade);
@@ -862,14 +872,18 @@ function applyStudentProfile(source) {
   }
 }
 
-function loadStudentProfile(name, code) {
+function loadStudentProfile(name, code, targetGrade = state.grade) {
   const cleanName = name.trim();
   const cleanCode = code.trim().toUpperCase();
-  const room = state.classrooms[cleanCode];
+  if (state.studentName?.trim()) syncCurrentStudent();
+  const room = ensureClassroom(cleanCode);
   const profile = room?.students?.[studentKey(cleanName, cleanCode)];
+  const selectedGrade = targetGrade || state.grade;
   state.studentName = cleanName;
   state.classCode = cleanCode;
-  applyStudentProfile(profile);
+  state.teacherClassCode = cleanCode;
+  if (profile) applyStudentProfile(profile);
+  else resetStudentProgress(selectedGrade);
   syncCurrentStudent();
   localStorage.setItem("paragrafKocuState", JSON.stringify(state));
   setSyncStatus(`${cleanName} ${cleanCode} sınıfına katıldı.`, "ok");
@@ -1056,6 +1070,7 @@ function renderStrategies() {
 
 function renderReport() {
   ensureReportDetails();
+  syncCurrentStudent();
   const accuracy = state.stats.solved ? Math.round((state.stats.correct / state.stats.solved) * 100) : 0;
   const avgTime = state.stats.solved ? Math.round(state.stats.seconds / state.stats.solved) : 0;
   const avgEightTime = (state.questionTimes || []).length ? Math.round(state.questionTimes.reduce((sum, item) => sum + item.spent, 0) / state.questionTimes.length) : 0;
@@ -1078,20 +1093,18 @@ function renderReport() {
     return `<div class="topic-bar"><strong>${topic}</strong><div class="bar-track"><span style="width:${percent}%"></span></div><span>${percent}%</span></div>`;
   }).join("");
 
-  const answers = [...(state.answers || [])].slice(-20).reverse();
-  const emptyAnswerMessage = state.stats.solved
-    ? "Bu öğrencinin özet sonucu var; ayrıntılı soru geçmişi bu güncellemeden sonraki antrenmanlarda tek tek görünecek."
-    : "Henüz çözüm kaydı yok. Bir antrenman bitirince burada hangi konudan ne çözdüğün görünecek.";
-  $("#answerRows").innerHTML = answers.length ? answers.map((answer) => `
+  const students = currentClassStudents();
+  $("#classSummaryRows").innerHTML = students.length ? students.map((student) => `
     <tr>
-      <td>${formatReportDate(answer.at)}</td>
-      <td>${state.studentName || "Adsız öğrenci"}</td>
-      <td>${answer.grade || state.grade}. sınıf</td>
-      <td>${answer.topic || "Konu yok"}</td>
-      <td>${answer.blank ? "Boş" : answer.correct ? "Doğru" : "Yanlış"}</td>
-      <td>${answer.spent || 0} sn</td>
+      <td>${student.name || "Adsız öğrenci"}</td>
+      <td>${student.grade || "-"}. sınıf</td>
+      <td>${student.stats?.solved || 0}</td>
+      <td>${student.stats?.correct || 0}</td>
+      <td>${student.stats?.wrong || 0}</td>
+      <td>${student.stats?.blank || 0}</td>
+      <td>${wrongTopicSummary(student)}</td>
     </tr>
-  `).join("") : `<tr><td colspan="6">${emptyAnswerMessage}</td></tr>`;
+  `).join("") : `<tr><td colspan="7">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
 }
 
 function ensureReportDetails() {
@@ -1100,35 +1113,46 @@ function ensureReportDetails() {
   if (!reportGrid || !topicBars) return;
   const reportToolbar = $("#reportView .toolbar div");
   if (reportToolbar && !$("#reportVersionNote")) {
-    reportToolbar.insertAdjacentHTML("beforeend", `<p class="report-version-note" id="reportVersionNote">Detaylı öğrenci raporu aktif</p>`);
+    reportToolbar.insertAdjacentHTML("beforeend", `<p class="report-version-note" id="reportVersionNote">Sınıf özeti aktif</p>`);
   }
   if (!$("#reportIdentity")) {
     reportGrid.insertAdjacentHTML("afterend", `<div class="report-identity" id="reportIdentity"></div>`);
   }
-  if (!$("#answerRows")) {
-    const topicPanel = topicBars.closest(".chart-panel");
-    const details = `
-      <div class="chart-panel">
-        <h3>Son çözümler</h3>
-        <div class="student-table-wrap compact-table">
-          <table class="student-table">
-            <thead>
-              <tr>
-                <th>Tarih</th>
-                <th>Öğrenci</th>
-                <th>Sınıf</th>
-                <th>Konu</th>
-                <th>Sonuç</th>
-                <th>Süre</th>
-              </tr>
-            </thead>
-            <tbody id="answerRows"></tbody>
-          </table>
-        </div>
-      </div>
-    `;
-    (topicPanel || reportGrid).insertAdjacentHTML("afterend", details);
+  const oldRows = $("#answerRows");
+  if (oldRows && !$("#classSummaryRows")) oldRows.id = "classSummaryRows";
+  if ($("#classSummaryRows")) {
+    const panel = $("#classSummaryRows").closest(".chart-panel");
+    const title = panel?.querySelector("h3");
+    if (title) title.textContent = "Sınıf kayıtları";
+    const header = panel?.querySelector("thead tr");
+    if (header) {
+      header.innerHTML = "<th>Öğrenci</th><th>Sınıf</th><th>Toplam</th><th>Doğru</th><th>Yanlış</th><th>Boş</th><th>Yanlış konuları</th>";
+    }
+    return;
   }
+  const topicPanel = topicBars.closest(".chart-panel");
+  const details = `
+    <div class="chart-panel">
+      <h3>Sınıf kayıtları</h3>
+      <div class="student-table-wrap compact-table">
+        <table class="student-table">
+          <thead>
+            <tr>
+              <th>Öğrenci</th>
+              <th>Sınıf</th>
+              <th>Toplam</th>
+              <th>Doğru</th>
+              <th>Yanlış</th>
+              <th>Boş</th>
+              <th>Yanlış konuları</th>
+            </tr>
+          </thead>
+          <tbody id="classSummaryRows"></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  (topicPanel || reportGrid).insertAdjacentHTML("afterend", details);
 }
 
 function formatReportDate(value) {
@@ -1136,6 +1160,20 @@ function formatReportDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "-";
   return date.toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+}
+
+function currentClassStudents(code = state.classCode || state.teacherClassCode) {
+  const room = ensureClassroom(code || state.teacherClassCode);
+  return Object.values(room.students || {}).sort((a, b) => (a.name || "").localeCompare(b.name || "", "tr-TR"));
+}
+
+function wrongTopicSummary(student) {
+  const wrongTopics = Object.entries(student.topicStats || {})
+    .map(([topic, stat]) => ({ topic, wrong: stat?.wrong || 0 }))
+    .filter((item) => item.wrong > 0)
+    .sort((a, b) => b.wrong - a.wrong);
+  if (!wrongTopics.length) return (student.stats?.solved || 0) ? "Yanlış yok" : "Veri yok";
+  return wrongTopics.map((item) => `${item.topic} (${item.wrong})`).join(", ");
 }
 
 function renderAssignments() {
@@ -1170,13 +1208,15 @@ function downloadStudentReport() {
     const percent = total ? Math.round(((stat.correct || 0) / total) * 100) : 0;
     return `<tr><td>${topic}</td><td>${stat.correct || 0}</td><td>${stat.wrong || 0}</td><td>${percent}%</td></tr>`;
   }).join("");
-  const answerRows = [...(state.answers || [])].slice(-30).reverse().map((answer) => `
+  const classRows = currentClassStudents().map((student) => `
     <tr>
-      <td>${formatReportDate(answer.at)}</td>
-      <td>${answer.grade || state.grade}. sınıf</td>
-      <td>${answer.topic || "Konu yok"}</td>
-      <td>${answer.blank ? "Boş" : answer.correct ? "Doğru" : "Yanlış"}</td>
-      <td>${answer.spent || 0} sn</td>
+      <td>${student.name || "Adsız öğrenci"}</td>
+      <td>${student.grade || "-"}. sınıf</td>
+      <td>${student.stats?.solved || 0}</td>
+      <td>${student.stats?.correct || 0}</td>
+      <td>${student.stats?.wrong || 0}</td>
+      <td>${student.stats?.blank || 0}</td>
+      <td>${wrongTopicSummary(student)}</td>
     </tr>
   `).join("");
   const timeRows = (state.questionTimes || []).slice(-20).map((item) => `<tr><td>${item.topic}</td><td>${item.spent} sn</td><td>${item.correct ? "Doğru" : "Yanlış"}</td></tr>`).join("");
@@ -1191,7 +1231,7 @@ function downloadStudentReport() {
       <p><strong>Zorlandığı konu:</strong> ${weak}</p>
       <h2>Önerilen çalışma</h2><ul>${suggestions}</ul>
       <h2>Konu bazlı başarı</h2><table><thead><tr><th>Konu</th><th>Doğru</th><th>Yanlış</th><th>Başarı</th></tr></thead><tbody>${topicRows || "<tr><td colspan='4'>Veri yok</td></tr>"}</tbody></table>
-      <h2>Son çözümler</h2><table><thead><tr><th>Tarih</th><th>Sınıf</th><th>Konu</th><th>Sonuç</th><th>Süre</th></tr></thead><tbody>${answerRows || "<tr><td colspan='5'>Çözüm kaydı yok</td></tr>"}</tbody></table>
+      <h2>Sınıf kayıtları</h2><table><thead><tr><th>Öğrenci</th><th>Sınıf</th><th>Toplam</th><th>Doğru</th><th>Yanlış</th><th>Boş</th><th>Yanlış konuları</th></tr></thead><tbody>${classRows || "<tr><td colspan='7'>Sınıf kaydı yok</td></tr>"}</tbody></table>
       ${state.grade === "8" ? `<h2>8. sınıf süre takibi</h2><table><thead><tr><th>Konu</th><th>Süre</th><th>Sonuç</th></tr></thead><tbody>${timeRows || "<tr><td colspan='3'>Süre verisi yok</td></tr>"}</tbody></table>` : ""}
       <script>window.print();</script>
     </body></html>
@@ -1234,7 +1274,7 @@ function renderTeacher() {
     const weak = weakestTopicFor(student.topicStats || {});
     const correct = student.stats?.correct || 0;
     const wrong = student.stats?.wrong || 0;
-    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${studentLastAnswer(student)}</td></tr>`;
+    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
   }).join("") : `<tr><td colspan="6">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
   $("#assignStudent").innerHTML = students.length ? students.map((student) => `<option>${student.name}</option>`).join("") : `<option>Genel ödev</option>`;
   updateAssignmentTopics();
@@ -1254,23 +1294,17 @@ async function refreshRemoteTeacherPanel() {
     const weak = weakestTopicFor(student.topicStats || {});
     const correct = student.stats?.correct || 0;
     const wrong = student.stats?.wrong || 0;
-    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${studentLastAnswer(student)}</td></tr>`;
+    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
   }).join("");
   $("#assignStudent").innerHTML = students.map((student) => `<option>${student.name}</option>`).join("");
 }
 
 function ensureTeacherDetails() {
-  const header = document.querySelector(".student-table thead tr");
+  const header = document.querySelector("#teacherView .student-table thead tr");
   if (!header) return;
-  const hasLastSolved = Array.from(header.children).some((cell) => cell.textContent.trim() === "Son çözdüğü");
-  if (!hasLastSolved) header.insertAdjacentHTML("beforeend", "<th>Son çözdüğü</th>");
-}
-
-function studentLastAnswer(student) {
-  const last = [...(student.answers || [])].filter(Boolean).pop();
-  if (!last) return "Henüz kayıt yok";
-  const result = last.blank ? "Boş" : last.correct ? "Doğru" : "Yanlış";
-  return `${last.topic || "Konu"} · ${result} · ${last.spent || 0} sn`;
+  const cells = Array.from(header.children);
+  const lastCell = cells[cells.length - 1];
+  if (lastCell) lastCell.textContent = "Yanlış konuları";
 }
 
 function updateAssignmentTopics() {
@@ -1301,6 +1335,7 @@ function weakestTopicFor(topicStats) {
 }
 
 function renderAll() {
+  pendingGrade = state.grade;
   $("#studentNameInput").value = state.studentName || "";
   $("#classCodeInput").value = state.classCode || "";
   $("#gradeSelect").value = state.grade;
@@ -1473,7 +1508,7 @@ function bindEvents() {
   $("#studentNameInput").addEventListener("change", (event) => {
     const name = event.target.value.trim();
     if (!name) return;
-    loadStudentProfile(name, state.classCode || state.teacherClassCode);
+    loadStudentProfile(name, state.classCode || state.teacherClassCode, $("#gradeSelect").value || pendingGrade);
     saveState();
     renderAll();
   });
@@ -1487,7 +1522,7 @@ function bindEvents() {
     }
     joinButton.disabled = true;
     joinButton.textContent = "Katıldı";
-    loadStudentProfile(name, code);
+    loadStudentProfile(name, code, $("#gradeSelect").value || pendingGrade);
     remoteLoadCustomQuestions().then(() => {
       saveState();
       renderAll();
@@ -1505,6 +1540,12 @@ function bindEvents() {
     if (event.key === "Enter") joinButton.click();
   });
   $("#gradeSelect").addEventListener("change", (event) => {
+    pendingGrade = event.target.value;
+    const typedName = $("#studentNameInput").value.trim();
+    if (typedName && typedName.toLocaleLowerCase("tr-TR") !== (state.studentName || "").trim().toLocaleLowerCase("tr-TR")) {
+      activeTopic = gradePlan[pendingGrade].focus[0];
+      return;
+    }
     state.grade = event.target.value;
     activeTopic = gradePlan[state.grade].focus[0];
     saveState();
