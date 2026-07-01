@@ -407,6 +407,68 @@ h3 {
   padding: 16px;
 }
 
+.strategy-card {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.strategy-head {
+  display: grid;
+  gap: 6px;
+}
+
+.strategy-head span {
+  color: var(--teal-dark);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.strategy-head strong {
+  font-size: 18px;
+}
+
+.strategy-card p {
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.strategy-block {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.strategy-block b,
+.strategy-note b,
+.strategy-example b {
+  color: var(--ink);
+}
+
+.strategy-block ol {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  line-height: 1.55;
+}
+
+.strategy-note,
+.strategy-example {
+  border-radius: 8px;
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+
+.strategy-note {
+  background: var(--soft-coral);
+  color: #73352c;
+}
+
+.strategy-example {
+  background: var(--soft-teal);
+  color: #164d50;
+}
+
 .stat-card span, .analysis-card span, .report-card span {
   color: var(--muted);
   font-size: 13px;

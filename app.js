@@ -1154,36 +1154,192 @@ function renderMistakeBook() {
 }
 
 function renderStrategies() {
-  const strategies = {
-    "Konu bulma": "Metinde en çok neyin anlatıldığına bak; ayrıntıları değil ortak konuyu seç.",
-    "Ana düşünce": "Önce sonuç cümlesine ve yazarın vermek istediği mesaja odaklan.",
-    "Yardımcı düşünce": "Seçenekleri metindeki cümlelerle tek tek eşleştir.",
-    "Başlık bulma": "Başlık metnin tamamını kapsamalı, tek ayrıntıya sıkışmamalı.",
-    "Hikâye unsurları": "Kim, nerede, ne zaman, ne yaptı sorularını sırayla sor.",
-    "Çıkarım yapma": "Metinde açıkça yazmayan ama ipuçlarıyla desteklenen sonucu seç.",
-    "Metnin amacı": "Yazar okuru bilgilendirmek, uyarmak veya ikna etmek mi istiyor?",
-    "Neden-sonuç": "Çünkü, için, bu yüzden gibi bağlaçların iki tarafını kontrol et.",
-    "Karşılaştırma": "İki varlık ya da durumun hangi özelliklerle yan yana getirildiğini bul.",
-    "Paragraf tamamlama": "Boşluktan önceki düşünce yönünü ve son cümlenin tonunu koru.",
-    "Örtülü anlam": "Doğrudan söylenmeyen anlamı metindeki davranış ve sonuçlardan çıkar.",
-    "Yorumlama": "Metnin desteklemediği aşırı genellemeleri ele.",
-    "Cümle sıralama": "Giriş cümlesini, işlem basamaklarını ve sonuç cümlesini ayır.",
-    "Düşüncenin akışını bozan cümle": "Konu zincirinden kopan cümleyi bul.",
-    "Anlatım biçimleri": "Betimleme sahne çizer; açıklama bilgi verir; tartışma görüş savunur.",
-    "Düşünceyi geliştirme yolları": "Örneğin varsa örneklendirme, sayı varsa sayısal veri, uzman görüşü varsa tanık gösterme ara.",
-    "LGS tarzı yeni nesil paragraf soruları": "Soru kökünü önce oku, uzun metinde aradığın bilgiyi işaretle.",
-    "Metinler arası karşılaştırma": "Her metnin ana düşüncesini ayrı çıkar, sonra ortak/farklı yönü bul.",
-    "Tablo-grafik-görsel okuma": "Önce en yüksek, en düşük ve eşit olmayan verileri belirle.",
-    "Sözel mantık destekli paragraf soruları": "Kesin bilgileri yerleştir, sonra koşulları sırayla dene.",
-    "Zaman yönetimi": "Zorlandığın soru tipine ayırdığın süreyi fark et ve planını buna göre düzenle."
-  };
   const gradeTopics = availableTopicsForGrade(state.grade);
   $("#strategyGrid").innerHTML = gradeTopics.map((topic) => `
     <article class="strategy-card">
-      <strong>${topic}</strong>
-      <p>${strategies[topic] || "Önce soru kökünü oku, metindeki anahtar ifadeleri işaretle, seçenekleri metne göre ele."}</p>
+      ${strategyCard(topic)}
     </article>
   `).join("");
+}
+
+function strategyCard(topic) {
+  const strategy = strategyDetails(topic);
+  return `
+    <div class="strategy-head">
+      <span>${strategy.tag}</span>
+      <strong>${topic}</strong>
+    </div>
+    <p>${strategy.summary}</p>
+    <div class="strategy-block">
+      <b>Çözüm yolu</b>
+      <ol>${strategy.steps.map((step) => `<li>${step}</li>`).join("")}</ol>
+    </div>
+    <div class="strategy-note">
+      <b>Dikkat:</b> ${strategy.trap}
+    </div>
+    <div class="strategy-example">
+      <b>Mini örnek:</b> ${strategy.example}
+    </div>
+  `;
+}
+
+function strategyDetails(topic) {
+  const library = {
+    "Konu bulma": {
+      tag: "Temel beceri",
+      summary: "Metnin etrafında döndüğü ortak varlığı, olayı veya durumu bul.",
+      steps: ["Soru kökünde senden ne istendiğini belirle.", "Metinde tekrar eden kişi, olay ve kavramları işaretle.", "Seçeneklerden en geniş olanı seç."],
+      trap: "Tek bir ayrıntıyı konu sanma; konu metnin tamamını kapsamalıdır.",
+      example: "Metinde fidan sulama, toprağı kontrol etme, yaprak çıkarma geçiyorsa konu fidan bakımıdır."
+    },
+    "Ana düşünce": {
+      tag: "Mesaj bulma",
+      summary: "Yazarın okura vermek istediği asıl mesajı yakala.",
+      steps: ["Son cümleye ve sonuç bildiren ifadelere bak.", "Metnin hangi düşünceyi desteklediğini bul.", "Seçeneğin bütün paragrafı kapsayıp kapsamadığını kontrol et."],
+      trap: "Sadece konu söyleyen seçenek ana düşünce değildir; ana düşünce bir yargı bildirir.",
+      example: "Konu kitap okumak olabilir; ana düşünce kitap okumanın insanı geliştirmesidir."
+    },
+    "Yardımcı düşünce": {
+      tag: "Kanıt kontrolü",
+      summary: "Metinde açıkça bulunan destekleyici bilgileri ayırt et.",
+      steps: ["Her seçeneği metindeki bir cümleyle eşleştir.", "Metinde karşılığı olmayan seçeneği ele.", "Değinilmemiştir sorularında özellikle olmayan bilgiyi ara."],
+      trap: "Doğru görünen ama metinde geçmeyen bilgi çeldiricidir.",
+      example: "Metin bisikletin çevreye katkısını söylüyorsa bu yardımcı düşüncedir; yarış kuralları geçmiyorsa değildir."
+    },
+    "Başlık bulma": {
+      tag: "Kapsam seçimi",
+      summary: "Metnin tamamını kısa ve doğru biçimde kapsayan ifadeyi seç.",
+      steps: ["Metnin konusunu bul.", "Başlığın çok dar mı çok genel mi olduğunu denetle.", "Metnin ana olayını veya ana düşüncesini karşılayan başlığı seç."],
+      trap: "Metindeki ilginç bir ayrıntı başlık gibi görünse de tüm metni kapsamayabilir.",
+      example: "Sadece 'Teneffüs' değil, 'Düzenlenen Sınıf Kitaplığı' daha kapsayıcı olabilir."
+    },
+    "Hikâye unsurları": {
+      tag: "Kim, nerede?",
+      summary: "Olay, kişi, yer ve zaman bilgilerini düzenli biçimde çıkar.",
+      steps: ["Kim var? sorusunu sor.", "Olay nerede ve ne zaman geçiyor, bul.", "Kişinin ne yaptığına bakarak olayı özetle."],
+      trap: "Mekânı, sadece adı geçen ama olayın geçmediği yerle karıştırma.",
+      example: "Ayşe dedesiyle köy yolundaysa yer köy yoludur."
+    },
+    "Çıkarım yapma": {
+      tag: "İpucu okuma",
+      summary: "Metinde yazmayan ama ipuçlarıyla kesinleşen sonucu bul.",
+      steps: ["Metindeki davranış ve değişimleri işaretle.", "Bu davranışın ne gösterdiğini düşün.", "Aşırı kesin veya metne aykırı seçenekleri ele."],
+      trap: "Tahmin ile çıkarımı karıştırma; çıkarım metinden destek almalıdır.",
+      example: "Kutular başta boşken sonra doluyorsa öğrencilerin bilinçlendiği çıkarılabilir."
+    },
+    "Metnin amacı": {
+      tag: "Yazar niyeti",
+      summary: "Yazarın bilgilendirmek, uyarmak, ikna etmek veya düşündürmek isteyip istemediğini bul.",
+      steps: ["Metindeki emir, öneri ve uyarı ifadelerini ara.", "Yazar okurdan bir davranış bekliyor mu, kontrol et.", "Amaç seçeneğini metnin tonu ile eşleştir."],
+      trap: "Konu ile amacı karıştırma; konu ne anlatıldığı, amaç neden anlatıldığıdır.",
+      example: "Koridorda koşmanın tehlikesi anlatılıyorsa amaç uyarmaktır."
+    },
+    "Neden-sonuç": {
+      tag: "Bağ kurma",
+      summary: "Bir olayın sebebini ve ortaya çıkan sonucu ayır.",
+      steps: ["Çünkü, için, bu yüzden, dolayısıyla gibi bağlaçları işaretle.", "Neden? sorusuna cevap veren bölümü bul.", "Sonuç cümlesiyle karıştırmadığından emin ol."],
+      trap: "Sonradan yapılan davranış neden olmayabilir; önce sebep, sonra sonuç gelir.",
+      example: "Çantasını acele hazırladığı için defterini unutmuştur."
+    },
+    "Karşılaştırma": {
+      tag: "Benzer-farklı",
+      summary: "İki varlık, durum veya düşüncenin hangi yönlerden yan yana getirildiğini gör.",
+      steps: ["Metindeki iki unsuru belirle.", "Daha, ise, kadar, farklı olarak gibi ipuçlarını ara.", "Seçenekte iki unsurun da bulunmasına dikkat et."],
+      trap: "Sadece bir unsurdan söz eden seçenek karşılaştırmayı karşılamaz.",
+      example: "Elektronik kitap ve basılı kitap özellikleri birlikte verilmişse karşılaştırılanlar bunlardır."
+    },
+    "Paragraf tamamlama": {
+      tag: "Akış tamamlama",
+      summary: "Boşluktan önceki düşüncenin yönünü koruyan cümleyi seç.",
+      steps: ["Boşluktan önce olumlu mu olumsuz mu ilerliyor, belirle.", "Cümlenin özne ve konu zincirine uyup uymadığını kontrol et.", "Son cümle gibi davranıyorsa sonuç anlamı taşımalı."],
+      trap: "Dil olarak güzel ama akışa uymayan cümle doğru değildir.",
+      example: "Bağ kurulmadığında ifadesinden sonra olumsuz bir sonuç beklenir."
+    },
+    "Örtülü anlam": {
+      tag: "Saklı mesaj",
+      summary: "Doğrudan söylenmeyen anlamı davranış ve sonuçlardan çıkar.",
+      steps: ["Kişinin ne yaptığına bak.", "Bu davranışın hangi duyguyu veya düşünceyi gösterdiğini bul.", "Metnin söylemediği kesin yargılardan kaçın."],
+      trap: "Hiç, herkes, daima gibi kesin ifadeler çoğu zaman tuzaktır.",
+      example: "Sınav öncesi tekrar yapan ve sakin kalan öğrencinin başarısında hazırlık etkilidir."
+    },
+    "Yorumlama": {
+      tag: "Metne bağlı kal",
+      summary: "Metinden destek alan yorumu seç, metni aşan genellemeleri ele.",
+      steps: ["Seçenekteki yargının metinde dayanağını ara.", "Aşırı genelleme var mı kontrol et.", "Yazarın tutumuyla çelişmeyen seçeneği seç."],
+      trap: "Kendi düşünceni değil, metnin izin verdiği yorumu seçmelisin.",
+      example: "Bir örnekten bütün insanlar hakkında kesin sonuç çıkarılamaz."
+    },
+    "Cümle sıralama": {
+      tag: "Paragraf kurma",
+      summary: "Giriş, gelişme ve sonuç cümlelerini mantıklı sıraya koy.",
+      steps: ["Tanıtıcı/giriş cümlesini bul.", "Sonra işlem veya olay basamaklarını sırala.", "Sonuç bildiren cümleyi sona yerleştir."],
+      trap: "Sonuç cümlesini başa almak paragrafı bozar.",
+      example: "Önce çalışma konusu, sonra hazırlık, en son sergi oluşması gelir."
+    },
+    "Düşüncenin akışını bozan cümle": {
+      tag: "Konu zinciri",
+      summary: "Metnin konu zincirinden kopan cümleyi belirle.",
+      steps: ["Her cümlenin ortak konuya bağlanıp bağlanmadığını kontrol et.", "Farklı alana geçen cümleyi işaretle.", "Önceki ve sonraki cümleyle bağ kurmayanı seç."],
+      trap: "Bilgi doğru olsa bile paragrafın konusu dışındaysa akışı bozar.",
+      example: "Komşuluk metninde güneş paneli cümlesi konu dışıdır."
+    },
+    "Anlatım biçimleri": {
+      tag: "Metin tonu",
+      summary: "Metnin anlatma, betimleme, açıklama veya tartışma amacı taşıdığını ayırt et.",
+      steps: ["Metin sahne mi çiziyor, bilgi mi veriyor, görüş mü savunuyor?", "Duyulara seslenen ayrıntıları ara.", "Yazar karşı görüşe cevap veriyorsa tartışma olabilir."],
+      trap: "Her olay anlatımı öyküleme değildir; olay akışı belirgin olmalıdır.",
+      example: "Sis, sazlar, kuş sesleri gibi ayrıntılar betimleyici anlatımı gösterir."
+    },
+    "Düşünceyi geliştirme yolları": {
+      tag: "Destek bulma",
+      summary: "Yazarın düşüncesini nasıl güçlendirdiğini belirle.",
+      steps: ["Örnek varsa örneklendirme olabilir.", "Sayı, oran, yüzde varsa sayısal veri aranır.", "Uzman veya tanınmış kişi sözü varsa tanık gösterme olabilir."],
+      trap: "Tanım cümlesi ile örnek cümlesini karıştırma.",
+      example: "Yüzde 60 ifadesi sayısal veriden yararlanmadır."
+    },
+    "LGS tarzı yeni nesil paragraf soruları": {
+      tag: "Uzun metin",
+      summary: "Uzun metinde önce aradığın bilgiyi belirle, sonra metni hedefli oku.",
+      steps: ["Soru kökünü önce oku.", "Metinde kişi, zaman, koşul, karşılaştırma gibi anahtarları işaretle.", "Seçenekleri tek tek metne geri dönerek ele."],
+      trap: "Metni bir kez okuyup hafızadan cevaplamak uzun sorularda hata yaptırır.",
+      example: "Grafik, metin ve seçenek birlikteyse önce soru kökünün istediği bilgiyi bul."
+    },
+    "Metinler arası karşılaştırma": {
+      tag: "İki metin",
+      summary: "Her metnin ana düşüncesini ayrı çıkar, sonra ortak ve farklı yönleri karşılaştır.",
+      steps: ["Birinci metnin mesajını kısa yaz.", "İkinci metnin mesajını kısa yaz.", "Seçeneklerde ortak/farklı yönün doğru verilip verilmediğini kontrol et."],
+      trap: "Bir metinde olan bilgiyi diğer metinde de varmış gibi kabul etme.",
+      example: "İki metin de doğa sevgisini anlatabilir ama biri bilgi, diğeri duygu ağırlıklı olabilir."
+    },
+    "Tablo-grafik-görsel okuma": {
+      tag: "Veri okuma",
+      summary: "Görseldeki verileri metne çevirmeden yorum yapma.",
+      steps: ["Başlık ve birimleri oku.", "En yüksek, en düşük, eşit ve değişen değerleri belirle.", "Seçenekleri veriye göre doğrula."],
+      trap: "Grafikte olmayan yorumu doğru kabul etme.",
+      example: "En çok kitap okunan ay mayıssa seçenek bunu farklı söylüyorsa yanlıştır."
+    },
+    "Sözel mantık destekli paragraf soruları": {
+      tag: "Koşul yerleştirme",
+      summary: "Kesin bilgileri yerleştir, ihtimalleri sırayla dene.",
+      steps: ["Kesin ifadeleri tabloya yaz.", "Olumsuz koşulları ayrı işaretle.", "Seçenekleri kalan ihtimallere göre ele."],
+      trap: "Bir ihtimali kesin bilgi gibi yerleştirme.",
+      example: "Ali pazartesi değilse önce pazartesi seçeneğinden çıkar, sonra diğer koşulları dene."
+    },
+    "Zaman yönetimi": {
+      tag: "Sınav temposu",
+      summary: "Zorlandığın soru tipinde süreyi fark et ve ikinci tur stratejisi kullan.",
+      steps: ["Soru kökünü hızlıca oku.", "İlk 40-50 saniyede yön bulamadıysan işaretleyip geç.", "Dönüşte metindeki anahtar yerleri tekrar kontrol et."],
+      trap: "Tek soruya uzun süre takılmak toplam doğru sayısını düşürür.",
+      example: "Uzun metinde önce soru kökü, sonra ilgili paragraf bölümü okunur."
+    }
+  };
+  return library[topic] || {
+    tag: "Genel strateji",
+    summary: "Soru kökünü önce oku, metindeki kanıtı işaretle ve seçenekleri metne bağlı kalarak ele.",
+    steps: ["Soru kökünün istediği bilgiyi belirle.", "Metinde anahtar kelimeleri işaretle.", "Seçenekleri metindeki kanıtla karşılaştır."],
+    trap: "Metinde bulunmayan bilgiyi doğru kabul etme.",
+    example: "Seçeneği seçmeden önce metinde hangi cümleye dayandığını bul."
+  };
 }
 
 function renderReport() {
