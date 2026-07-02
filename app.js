@@ -9,7 +9,9 @@ const topics = [
   "Düşünceyi geliştirme yolları", "Anlatım biçimleri", "Açıklayıcı anlatım", "Öyküleyici anlatım",
   "Betimleyici anlatım", "Tartışmacı anlatım", "Metinler arası karşılaştırma",
   "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları",
-  "MEB 6. sınıf Türkçe çalışma soruları", "MEB 7. sınıf Türkçe çalışma soruları"
+  "MEB 6. sınıf Türkçe çalışma soruları", "MEB 7. sınıf Türkçe çalışma soruları",
+  "8. sınıf paragraf ek seti - Parçada anlam", "8. sınıf paragraf ek seti - Metin türleri",
+  "8. sınıf paragraf ek seti - Görsel ve grafik okuma", "8. sınıf paragraf ek seti - Sözel mantık"
 ];
 
 const gradePlan = {
@@ -31,7 +33,7 @@ const gradePlan = {
   8: {
     headline: "8. sınıf için LGS düzeyi yeni nesil tempo",
     subline: "Uzun paragraf, görsel okuma, sözel mantık ve güçlü çeldiricilerle çalışılır.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "LGS tarzı yeni nesil paragraf soruları", "Metinler arası karşılaştırma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Çıkarım yapma", "Zaman yönetimi"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "LGS tarzı yeni nesil paragraf soruları", "8. sınıf paragraf ek seti - Parçada anlam", "8. sınıf paragraf ek seti - Metin türleri", "8. sınıf paragraf ek seti - Görsel ve grafik okuma", "8. sınıf paragraf ek seti - Sözel mantık", "Metinler arası karşılaştırma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Çıkarım yapma", "Zaman yönetimi"]
   }
 };
 
@@ -1854,7 +1856,11 @@ function balanceQuestionBank(baseQuestions) {
       "Tablo-grafik-görsel okuma": 40,
       "Sözel mantık destekli paragraf soruları": 40,
       "Çıkarım yapma": 35,
-      "Zaman yönetimi": 20
+      "Zaman yönetimi": 20,
+      "8. sınıf paragraf ek seti - Parçada anlam": 50,
+      "8. sınıf paragraf ek seti - Metin türleri": 35,
+      "8. sınıf paragraf ek seti - Görsel ve grafik okuma": 35,
+      "8. sınıf paragraf ek seti - Sözel mantık": 30
     }
   };
   [5, 6, 7, 8].forEach((grade) => {
@@ -1878,6 +1884,10 @@ if (Array.isArray(window.MEB6_WORKBOOK_QUESTIONS)) {
 
 if (Array.isArray(window.MEB7_WORKBOOK_QUESTIONS)) {
   questionBank.push(...window.MEB7_WORKBOOK_QUESTIONS);
+}
+
+if (Array.isArray(window.ISEM8_PARAGRAPH_QUESTIONS)) {
+  questionBank.push(...window.ISEM8_PARAGRAPH_QUESTIONS);
 }
 
 questionBank = distributeAnswersEvenly(balanceQuestionBank(questionBank)).map((question) => ({ ...question, id: makeQuestionId(question) }));
