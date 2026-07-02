@@ -8,30 +8,29 @@ const topics = [
   "Örneklendirme", "Tanımlama", "Sayısal verilerden yararlanma", "Tanık gösterme",
   "Düşünceyi geliştirme yolları", "Anlatım biçimleri", "Açıklayıcı anlatım", "Öyküleyici anlatım",
   "Betimleyici anlatım", "Tartışmacı anlatım", "Metinler arası karşılaştırma",
-  "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları",
-  "Bağlam temelli yeni nesil okuma"
+  "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları"
 ];
 
 const gradePlan = {
   5: {
     headline: "5. sınıf için kısa ve net paragraf antrenmanı",
     subline: "Konu bulma, ana düşünce, başlık ve basit çıkarım soruları ağırlıklı gelir.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Başlık bulma", "Çıkarım yapma", "Bağlam temelli yeni nesil okuma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Hikâye unsurları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Başlık bulma", "Çıkarım yapma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Hikâye unsurları"]
   },
   6: {
     headline: "6. sınıf için ipucu yakalama çalışması",
     subline: "Ana fikir, yardımcı fikir, metnin amacı ve anlam bütünlüğü birlikte çalışılır.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "Bağlam temelli yeni nesil okuma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
   },
   7: {
     headline: "7. sınıf için yorumlama ve akışı koruma",
     subline: "Örtülü anlam, cümle sıralama, anlatım biçimleri ve akışı bozan cümleler öne çıkar.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "Bağlam temelli yeni nesil okuma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
   },
   8: {
     headline: "8. sınıf için LGS düzeyi yeni nesil tempo",
     subline: "Uzun paragraf, görsel okuma, sözel mantık ve güçlü çeldiricilerle çalışılır.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Bağlam temelli yeni nesil okuma", "LGS tarzı yeni nesil paragraf soruları", "Metinler arası karşılaştırma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Çıkarım yapma", "Zaman yönetimi"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "LGS tarzı yeni nesil paragraf soruları", "Metinler arası karşılaştırma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Çıkarım yapma", "Zaman yönetimi"]
   }
 };
 
@@ -528,165 +527,6 @@ const contextDossiers = [
     quote: "Hazırlık, panik başlamadan önce yapılan sessiz plandır."
   }
 ];
-
-function contextQuestion(grade, index, difficulty, number) {
-  const dossier = contextDossiers[(index + grade) % contextDossiers.length];
-  const cycle = Math.floor(index / contextDossiers.length);
-  const intro = `<p>${dossier.lead}</p>`;
-  const factCards = stimulusCards([
-    { title: "Kesin bilgi", text: dossier.fact },
-    { title: "Uyarı", text: dossier.warning },
-    { title: "Kısa not", text: dossier.quote }
-  ]);
-  const table = stimulusTable(["Başlık", "Bilgi", "Not"], dossier.table);
-  const steps = stimulusList(dossier.steps.map((step, stepIndex) => `${stepIndex + 1}. ${step}`));
-  const mode = (index + grade + cycle) % 10;
-  const common = {
-    grade,
-    topic: "Bağlam temelli yeni nesil okuma",
-    difficulty,
-    outcome: `Bağlam temelli okuma ve yorumlama sorusu ${number}.`,
-    strategy: "Önce metnin ana fikrini bul, sonra tablo ve kutulardaki bilgiyi metinle karşılaştır.",
-    hint: "Cevabı metindeki açık bilgiyle veya bütün parçaların ortak mesajıyla doğrula.",
-    wrong: "Yanlış seçenekler metni dar yorumlar, metinde olmayan bilgi ekler ya da verilen sırayı bozar."
-  };
-  if (mode === 0) {
-    const made = makeOptions(dossier.main, [
-      `${dossier.field} konusunda tek bir ayrıntıyı bilmek yeterlidir.`,
-      "Metindeki öneriler günlük yaşamla ilişkilendirilemez.",
-      "Metinde verilen örnekler ana düşünceyle bağlantı kurmaz."
-    ], index);
-    return buildQuestion({
-      ...common,
-      text: `${intro}${factCards}`,
-      stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
-      ...made,
-      solution: `Metin ve bilgi kutuları birlikte değerlendirildiğinde '${dossier.main}' düşüncesi desteklenir.`
-    });
-  }
-  if (mode === 1) {
-    const made = makeOptions(dossier.detail, [
-      "konunun yalnız geçmişteki örneklerle açıklandığı",
-      "önerilerin tamamının bir yasaklama biçiminde verildiği",
-      "okurun hiçbir davranışı değiştirmesine gerek görülmediği"
-    ], index);
-    return buildQuestion({
-      ...common,
-      text: intro,
-      stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
-      ...made,
-      solution: `Metnin ilgili bölümünde '${dossier.detail}' bilgisi açıkça yer alır.`
-    });
-  }
-  if (mode === 2) {
-    const firstRow = dossier.table[0];
-    const made = makeOptions(`${firstRow[0]} için verilen bilgi '${firstRow[1]}', not ise '${firstRow[2]}' şeklindedir.`, [
-      `${dossier.table[1][0]} için verilen bilgi '${firstRow[1]}' olarak gösterilmiştir.`,
-      `${dossier.table[2][0]} ile ilgili not '${firstRow[2]}' biçiminde verilmiştir.`,
-      `${dossier.table[3][0]} tablonun en olumlu örneği olarak gösterilmiştir.`
-    ], index);
-    return buildQuestion({
-      ...common,
-      text: `${intro}${table}`,
-      stem: "Tablodaki bilgilere göre aşağıdakilerden hangisi doğrudur?",
-      ...made,
-      solution: "Doğru seçenek tablonun aynı satırındaki bilgileri yer değiştirmeden verir."
-    });
-  }
-  if (mode === 3) {
-    const correct = dossier.steps.join(" → ");
-    const made = makeOptions(correct, [
-      [...dossier.steps].reverse().join(" → "),
-      [dossier.steps[1], dossier.steps[0], dossier.steps[2], dossier.steps[3]].join(" → "),
-      [dossier.steps[0], dossier.steps[2], dossier.steps[1], dossier.steps[3]].join(" → ")
-    ], index);
-    return buildQuestion({
-      ...common,
-      text: `${intro}<p>Önerilen uygulama sırası:</p>${steps}`,
-      stem: "Numaralanmış adımların doğru sıralaması aşağıdakilerden hangisidir?",
-      ...made,
-      solution: "Numaralı adımlar korunmalıdır; doğru sıra metindeki sırayla aynıdır."
-    });
-  }
-  if (mode === 4) {
-    const made = makeOptions(dossier.warning, [
-      `${dossier.fact} bilgisinin bütünüyle yanlış olduğu`,
-      `${dossier.detail} bilgisinin metinde hiç yer almadığı`,
-      `${dossier.field} konusunda hiçbir önlem gerekmediği`
-    ], index);
-    return buildQuestion({
-      ...common,
-      text: `${intro}${table}<p><strong>Dikkat:</strong> ${dossier.warning}</p>`,
-      stem: "Metindeki uyarıya göre kaçınılması gereken durum aşağıdakilerden hangisidir?",
-      ...made,
-      solution: `Metinde özellikle '${dossier.warning}' uyarısı yapılmıştır.`
-    });
-  }
-  if (mode === 5) {
-    const made = makeOptions(dossier.fact, [
-      dossier.myth,
-      `${dossier.warning} uyarısının gereksiz olduğu`,
-      `${dossier.field} konusunda tek bir yöntemin herkese aynı sonucu verdiği`
-    ], index);
-    return buildQuestion({
-      ...common,
-      text: `${intro}${factCards}`,
-      stem: "Metindeki kesin bilgi aşağıdakilerden hangisidir?",
-      ...made,
-      solution: `Bilgi kutusunda '${dossier.fact}' yargısı kesin bilgi olarak verilmiştir.`
-    });
-  }
-  if (mode === 6) {
-    const made = makeOptions(dossier.myth, [dossier.fact, dossier.main, dossier.detail], index);
-    return buildQuestion({
-      ...common,
-      text: `${intro}<p><strong>Yanlış bilinen:</strong> ${dossier.myth}</p><p><strong>Doğrusu:</strong> ${dossier.fact}</p>`,
-      stem: "Bu metne göre aşağıdakilerden hangisi yanlış bir yorumdur?",
-      ...made,
-      solution: `Metin '${dossier.myth}' yargısını desteklemez; bunun yerine '${dossier.fact}' bilgisini verir.`
-    });
-  }
-  if (mode === 7) {
-    const made = makeOptions(`${dossier.field} konusunda daha bilinçli davranmaya yönlendirmek`, [
-      "Bir olayın kahramanlarını tanıtmak",
-      "Okura yalnız sanatsal bir betimleme sunmak",
-      "Bir yerin tarihini kronolojik sırayla anlatmak"
-    ], index);
-    return buildQuestion({
-      ...common,
-      text: `${intro}${factCards}`,
-      stem: "Bu metnin yazılış amacı aşağıdakilerden hangisidir?",
-      ...made,
-      solution: `Metin, ${dossier.field} konusunda okuru bilinçlendirmeye ve günlük davranışlarını düzenlemeye yöneltir.`
-    });
-  }
-  if (mode === 8) {
-    const made = makeOptions(`Metinde ${dossier.field} konusuyla ilgili öneri, uyarı ve örneklere yer verilmiştir.`, [
-      "Metin yalnızca kişisel bir anıyı olay sırasıyla anlatmaktadır.",
-      "Metinde konu, karşılıklı konuşmalarla ilerletilmiştir.",
-      "Metinde hiçbir açıklayıcı bilgiye yer verilmemiştir."
-    ], index);
-    return buildQuestion({
-      ...common,
-      text: `${intro}${table}`,
-      stem: "Bu metnin içeriğiyle ilgili aşağıdakilerden hangisi söylenebilir?",
-      ...made,
-      solution: "Ana metin, tablo ve kısa bilgiler aynı konuyu farklı yönlerden destekler."
-    });
-  }
-  const made = makeOptions(dossier.inference || dossier.main, [
-    "Metindeki bilgiler tek bir ayrıntıya indirgenmelidir.",
-    "Tablo ve kısa notlar metnin ana düşüncesiyle çelişmektedir.",
-    "Metin, okurun konuyla ilgili hiçbir değerlendirme yapmasını istemez."
-  ], index);
-  return buildQuestion({
-    ...common,
-    text: `${intro}${factCards}${table}`,
-    stem: "Bu metinden aşağıdakilerden hangisine ulaşılabilir?",
-    ...made,
-    solution: "Metindeki açıklamalar, tablo ve kısa bilgiler birlikte değerlendirildiğinde doğru çıkarıma ulaşılır."
-  });
-}
 
 const lgsPdfContexts = [
   {
@@ -1680,7 +1520,6 @@ function generatedQuestion(grade, topic, index) {
   };
   const note = variantNotes[grade][Math.floor(index / passageSeeds[grade].length) % variantNotes[grade].length];
   const extension = paragraphExtension(grade, seed, note, index);
-  if (topic === "Bağlam temelli yeni nesil okuma") return contextQuestion(grade, index, difficulty, number);
   const gradeEightQuestion = grade === 8 ? gradeEightSkillQuestion(topic, index, difficulty, number) : null;
   if (gradeEightQuestion) return gradeEightQuestion;
   const variedNewGen = variedNewGenerationQuestion(grade, topic, index, difficulty, number);
@@ -1969,53 +1808,49 @@ function balanceQuestionBank(baseQuestions) {
   const balanced = [];
   const weightedTargets = {
     5: {
-      "Konu bulma": 55,
-      "Ana düşünce": 60,
-      "Yardımcı düşünce": 50,
+      "Konu bulma": 80,
+      "Ana düşünce": 90,
+      "Yardımcı düşünce": 75,
       "Başlık bulma": 30,
       "Hikâye unsurları": 20,
-      "Çıkarım yapma": 35,
+      "Çıkarım yapma": 55,
       "Tablo-grafik-görsel okuma": 25,
-      "Sözel mantık destekli paragraf soruları": 25,
-      "Bağlam temelli yeni nesil okuma": 100
+      "Sözel mantık destekli paragraf soruları": 25
     },
     6: {
-      "Konu bulma": 40,
-      "Ana düşünce": 55,
-      "Yardımcı düşünce": 55,
-      "Metnin amacı": 30,
+      "Konu bulma": 60,
+      "Ana düşünce": 85,
+      "Yardımcı düşünce": 85,
+      "Metnin amacı": 40,
       "Neden-sonuç": 25,
       "Karşılaştırma": 20,
-      "Paragraf tamamlama": 25,
+      "Paragraf tamamlama": 35,
       "Tablo-grafik-görsel okuma": 25,
-      "Sözel mantık destekli paragraf soruları": 25,
-      "Bağlam temelli yeni nesil okuma": 100
+      "Sözel mantık destekli paragraf soruları": 25
     },
     7: {
-      "Konu bulma": 30,
-      "Ana düşünce": 40,
-      "Yardımcı düşünce": 40,
-      "Örtülü anlam": 30,
-      "Yorumlama": 25,
+      "Konu bulma": 50,
+      "Ana düşünce": 70,
+      "Yardımcı düşünce": 70,
+      "Örtülü anlam": 40,
+      "Yorumlama": 35,
       "Cümle sıralama": 20,
       "Düşüncenin akışını bozan cümle": 20,
       "Anlatım biçimleri": 20,
       "Düşünceyi geliştirme yolları": 25,
       "Tablo-grafik-görsel okuma": 25,
-      "Sözel mantık destekli paragraf soruları": 25,
-      "Bağlam temelli yeni nesil okuma": 100
+      "Sözel mantık destekli paragraf soruları": 25
     },
     8: {
-      "Konu bulma": 25,
-      "Ana düşünce": 35,
-      "Yardımcı düşünce": 35,
-      "LGS tarzı yeni nesil paragraf soruları": 50,
+      "Konu bulma": 45,
+      "Ana düşünce": 65,
+      "Yardımcı düşünce": 65,
+      "LGS tarzı yeni nesil paragraf soruları": 60,
       "Metinler arası karşılaştırma": 30,
       "Tablo-grafik-görsel okuma": 40,
       "Sözel mantık destekli paragraf soruları": 40,
-      "Çıkarım yapma": 25,
-      "Zaman yönetimi": 20,
-      "Bağlam temelli yeni nesil okuma": 100
+      "Çıkarım yapma": 35,
+      "Zaman yönetimi": 20
     }
   };
   [5, 6, 7, 8].forEach((grade) => {
@@ -2943,13 +2778,6 @@ function strategyDetails(topic) {
       trap: "Bir ihtimali kesin bilgi gibi yerleştirme.",
       example: "Ali pazartesi değilse önce pazartesi seçeneğinden çıkar, sonra diğer koşulları dene."
     },
-    "Bağlam temelli yeni nesil okuma": {
-      tag: "Çok parçalı okuma",
-      summary: "Ana metin, tablo, bilgi kutusu ve rehber adımlarını birlikte yorumlama.",
-      steps: ["Önce ana metni oku.", "Tablodaki kesin bilgileri işaretle.", "Yanlış bilinen-doğrusu, uyarı ve adım kutularını ana fikirle ilişkilendir.", "Seçeneği bütün parçalarla doğrula."],
-      trap: "Yalnız görseldeki ya da tablodaki tek ayrıntıya göre genelleme yapma.",
-      example: "Bir metinde hem uyarı hem tablo varsa cevap ikisinin birlikte desteklediği yargıdır."
-    },
     "Zaman yönetimi": {
       tag: "Sınav temposu",
       summary: "Zorlandığın soru tipinde süreyi fark et ve ikinci tur stratejisi kullan.",
@@ -3627,7 +3455,6 @@ async function bootstrapRemoteData() {
 
 function startPracticeMode(mode) {
   const newGenerationTopics = [
-    "Bağlam temelli yeni nesil okuma",
     "Tablo-grafik-görsel okuma",
     "Sözel mantık destekli paragraf soruları",
     "LGS tarzı yeni nesil paragraf soruları"
