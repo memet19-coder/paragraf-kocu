@@ -2,8 +2,11 @@ create table if not exists public.classes (
   id uuid primary key default gen_random_uuid(),
   class_code text not null unique,
   teacher_name text,
+  daily_task jsonb,
   created_at timestamptz not null default now()
 );
+
+alter table public.classes add column if not exists daily_task jsonb;
 
 create table if not exists public.students (
   id uuid primary key default gen_random_uuid(),

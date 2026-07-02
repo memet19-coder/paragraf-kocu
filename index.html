@@ -71,7 +71,6 @@
         <button class="nav-item" data-view="strategies"><i data-lucide="lightbulb"></i><span>Stratejiler</span></button>
         <button class="nav-item" data-view="mistakes"><i data-lucide="scan-search"></i><span>Yanlışlarım</span></button>
         <button class="nav-item" data-view="report"><i data-lucide="chart-no-axes-combined"></i><span>Gelişim Raporum</span></button>
-        <button class="nav-item" data-view="assignments"><i data-lucide="clipboard-list"></i><span>Ödevlerim</span></button>
         <button class="nav-item" data-view="questionBank"><i data-lucide="library-big"></i><span>Soru Havuzu</span></button>
         <button class="nav-item" data-view="teacher"><i data-lucide="users-round"></i><span>Öğretmen Paneli</span></button>
       </nav>
@@ -242,18 +241,6 @@
         </div>
       </section>
 
-      <section class="view" id="assignmentsView" aria-labelledby="viewTitle">
-        <div class="section-band">
-          <div class="toolbar">
-            <div>
-              <p class="eyebrow">Ödevlerim</p>
-              <h2>Öğrenciye özel çalışma planı</h2>
-            </div>
-          </div>
-          <div class="assignment-list" id="assignmentList"></div>
-        </div>
-      </section>
-
       <section class="view" id="questionBankView" aria-labelledby="viewTitle">
         <div class="section-band">
           <div class="toolbar">
@@ -308,7 +295,7 @@
           <div class="toolbar">
             <div>
               <p class="eyebrow">Öğretmen paneli</p>
-              <h2>Sınıf takibi ve ödev atama</h2>
+              <h2>Sınıf takibi ve günün görevi</h2>
             </div>
             <button class="secondary-action" id="addStudent"><i data-lucide="user-plus"></i><span>Öğrenci ekle</span></button>
           </div>
@@ -332,14 +319,15 @@
                 <tbody id="studentRows"></tbody>
               </table>
             </div>
-            <form class="assignment-form" id="teacherAssignmentForm">
-              <h3>Ödev ata</h3>
-              <label>Öğrenci<select id="assignStudent"></select></label>
-              <label>Sınıf<select id="assignGrade"><option>5</option><option>6</option><option>7</option><option>8</option></select></label>
-              <label>Konu<select id="assignTopic"></select></label>
-              <label>Soru sayısı<input id="assignCount" type="number" min="5" max="40" step="5" value="10"></label>
-              <label>Zorluk<select id="assignDifficulty"><option>Kolay</option><option>Orta</option><option>Zor</option></select></label>
-              <button class="primary-action" type="submit"><i data-lucide="send"></i><span>Ödevi kaydet</span></button>
+            <form class="assignment-form" id="dailyTaskForm">
+              <h3>Günün görevini yayınla</h3>
+              <label>Başlık<input id="dailyTaskTitle" type="text" placeholder="Bugün herkes 15 paragraf çözecek"></label>
+              <label>Duyuru<textarea id="dailyTaskText" rows="4" placeholder="Kısa bir açıklama veya yönlendirme yaz"></textarea></label>
+              <label>Soru sayısı<input id="dailyTaskCount" type="number" min="5" max="40" step="5" value="15"></label>
+              <div class="daily-task-actions">
+                <button class="primary-action" type="submit"><i data-lucide="send"></i><span>Yayınla</span></button>
+                <button class="secondary-action" id="clearDailyTask" type="button"><i data-lucide="rotate-ccw"></i><span>Varsayılana dön</span></button>
+              </div>
             </form>
           </div>
           <form class="question-form" id="customQuestionForm">

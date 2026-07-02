@@ -1762,15 +1762,39 @@ async function pushQueuedRecord(item) {
   if (item.type === "customQuestion") {
     return Boolean(await remoteTry(() => remoteDb.from("custom_questions").upsert(item.payload), null));
   }
+  if (item.type === "class") {
+    return Boolean(await remoteTry(() => remoteDb.from("classes").upsert(item.payload, { onConflict: "class_code" }), null));
+  }
   return true;
 }
 
-async function remoteUpsertClass() {
+async function remoteUpsertClassLegacy() {
   if (!isRemoteReady()) return;
   await remoteTry(() => remoteDb.from("classes").upsert({
     class_code: state.teacherClassCode,
     teacher_name: "Öğretmen"
   }, { onConflict: "class_code" }));
+}
+
+async function remoteUpsertClass() {
+  if (!isRemoteReady()) return;
+  const payload = {
+    class_code: state.teacherClassCode,
+    teacher_name: "Öğretmen",
+    daily_task: state.dailyTask || null
+  };
+  const result = await remoteTry(() => remoteDb.from("classes").upsert(payload, { onConflict: "class_code" }), null);
+  if (!result) queueSync("class", payload, `class:${payload.class_code}`);
+}
+
+async function remoteLoadDailyTask(code = state.classCode || state.teacherClassCode) {
+  if (!isRemoteReady() || !code) return null;
+  const result = await remoteTry(() => remoteDb.from("classes").select("daily_task").eq("class_code", code).maybeSingle(), null);
+  const task = result?.data?.daily_task;
+  if (!task) return null;
+  state.dailyTask = task;
+  persistStateOnly();
+  return task;
 }
 
 async function remoteUpsertStudent() {
@@ -2003,6 +2027,7 @@ function loadState() {
     topicStats: {},
     answers: [],
     syncQueue: [],
+    dailyTask: null,
     assignments: []
   };
 
@@ -2137,6 +2162,7 @@ function loadStudentProfile(name, code, targetGrade = state.grade) {
   localStorage.setItem("paragrafKocuState", JSON.stringify(state));
   setSyncStatus(`${cleanName} ${cleanCode} sınıfına katıldı.`, "ok");
 
+  remoteLoadDailyTask(cleanCode).then(() => renderDashboard());
   remoteLoadStudent(cleanName, cleanCode).then((remoteProfile) => {
     if (studentKey(state.studentName, state.classCode) !== studentKey(cleanName, cleanCode)) return;
     if (remoteProfile) {
@@ -2167,17 +2193,34 @@ function setView(view) {
     strategies: "Stratejiler",
     mistakes: "Yanlışlarım",
     report: "Gelişim Raporum",
-    assignments: "Ödevlerim",
     questionBank: "Soru Havuzu",
     teacher: "Öğretmen Paneli"
   };
   $("#viewTitle").textContent = titles[view];
 }
 
+function activeDailyTask() {
+  const task = state.dailyTask || {};
+  if (!task.title?.trim() && !task.text?.trim()) return null;
+  return task;
+}
+
+function syncCountButtons(count) {
+  const targetCount = Number(count) || selectedCount;
+  selectedCount = targetCount;
+  $$(".segmented").forEach((button) => {
+    button.classList.toggle("is-selected", Number(button.dataset.count) === targetCount);
+  });
+}
+
 function renderDashboard() {
   const plan = gradePlan[state.grade];
-  $("#dailyHeadline").textContent = plan.headline;
-  $("#dailySubline").textContent = plan.subline;
+  const teacherTask = activeDailyTask();
+  $("#dailyHeadline").textContent = teacherTask?.title || plan.headline;
+  $("#dailySubline").textContent = teacherTask?.text || plan.subline;
+  const pill = document.querySelector(".hero-copy .pill");
+  if (pill) pill.textContent = teacherTask ? "Öğretmen duyurusu" : "Bugün";
+  if (teacherTask?.count) syncCountButtons(teacherTask.count);
   const accuracy = state.stats.solved ? Math.round((state.stats.correct / state.stats.solved) * 100) : 0;
   const avgTime = state.stats.solved ? Math.round(state.stats.seconds / state.stats.solved) : 0;
 
@@ -2877,10 +2920,12 @@ function renderTeacher() {
     const wrong = student.stats?.wrong || 0;
     return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
   }).join("") : `<tr><td colspan="6">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
-  $("#assignStudent").innerHTML = students.length ? students.map((student) => `<option>${student.name}</option>`).join("") : `<option>Genel ödev</option>`;
-  $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
+  if ($("#assignStudent")) {
+    $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
+  }
   updateAssignmentTopics();
   updateCustomTopics();
+  renderDailyTaskForm();
   refreshRemoteTeacherPanel();
 }
 
@@ -2899,7 +2944,9 @@ async function refreshRemoteTeacherPanel() {
     return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
   }).join("");
   const studentEntries = currentClassStudentEntries(state.teacherClassCode);
-  $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
+  if ($("#assignStudent")) {
+    $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
+  }
 }
 
 function ensureTeacherDetails() {
@@ -2913,12 +2960,56 @@ function ensureTeacherDetails() {
 function updateAssignmentTopics() {
   const grade = $("#assignGrade")?.value || state.grade;
   const gradeTopics = availableTopicsForGrade(grade);
-  $("#assignTopic").innerHTML = gradeTopics.map((topic) => `<option>${topic}</option>`).join("");
+  const topicSelect = $("#assignTopic");
+  if (!topicSelect) return;
+  topicSelect.innerHTML = gradeTopics.map((topic) => `<option>${topic}</option>`).join("");
 }
 
 function updateCustomTopics() {
   const grade = $("#customGrade")?.value || state.grade;
   $("#customTopic").innerHTML = availableTopicsForGrade(grade).map((topic) => `<option>${topic}</option>`).join("");
+}
+
+function renderDailyTaskForm() {
+  const task = state.dailyTask || {};
+  const titleInput = $("#dailyTaskTitle");
+  const textInput = $("#dailyTaskText");
+  const countInput = $("#dailyTaskCount");
+  if (!titleInput || !textInput || !countInput) return;
+  titleInput.value = task.title || "";
+  textInput.value = task.text || "";
+  countInput.value = task.count || 15;
+}
+
+function publishDailyTask() {
+  const title = ($("#dailyTaskTitle")?.value || "").trim();
+  const text = ($("#dailyTaskText")?.value || "").trim();
+  const count = Number($("#dailyTaskCount")?.value || 15);
+  if (!title && !text) {
+    alert("Günün görevi için başlık ya da duyuru yazmalısın.");
+    return;
+  }
+  state.dailyTask = {
+    title: title || "Bugünkü paragraf görevi",
+    text: text || `${count} paragraf sorusu çöz.`,
+    count,
+    classCode: state.teacherClassCode,
+    updatedAt: new Date().toISOString()
+  };
+  persistStateOnly();
+  remoteUpsertClass();
+  renderDashboard();
+  renderDailyTaskForm();
+  setSyncStatus("Günün görevi yayınlandı.", "ok");
+}
+
+function clearDailyTask() {
+  state.dailyTask = null;
+  persistStateOnly();
+  remoteUpsertClass();
+  renderDashboard();
+  renderDailyTaskForm();
+  setSyncStatus("Günün görevi varsayılan plana döndü.", "ok");
 }
 
 function weakestTopicFor(topicStats) {
@@ -2947,7 +3038,6 @@ function renderAll() {
   renderStrategies();
   renderMistakes();
   renderReport();
-  renderAssignments();
   renderQuestionBank();
   renderTeacher();
 }
@@ -2957,6 +3047,7 @@ async function bootstrapRemoteData() {
     updatePendingSyncStatus();
     return;
   }
+  await remoteLoadDailyTask(state.classCode || state.teacherClassCode);
   await remoteUpsertClass();
   await syncQueuedRecords();
   await remoteLoadCustomQuestions();
@@ -3382,9 +3473,9 @@ function bindEvents() {
     saveState();
     renderTeacher();
   });
-  $("#assignGrade").addEventListener("change", updateAssignmentTopics);
+  $("#assignGrade")?.addEventListener("change", updateAssignmentTopics);
   $("#customGrade").addEventListener("change", updateCustomTopics);
-  $("#assignmentList").addEventListener("click", (event) => {
+  $("#assignmentList")?.addEventListener("click", (event) => {
     const button = event.target.closest(".start-assignment");
     if (!button) return;
     const assignment = state.assignments[Number(button.dataset.index)];
@@ -3398,10 +3489,16 @@ function bindEvents() {
       `${assignment.grade}. sınıf ödevi`
     );
   });
-  $("#teacherAssignmentForm").addEventListener("submit", (event) => {
+  $("#teacherAssignmentForm")?.addEventListener("submit", (event) => {
     event.preventDefault();
     if (assignHomework()) alert("Ödev kaydedildi.");
   });
+  $("#dailyTaskForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    publishDailyTask();
+    alert("Günün görevi yayınlandı.");
+  });
+  $("#clearDailyTask")?.addEventListener("click", clearDailyTask);
   $("#customQuestionForm").addEventListener("submit", (event) => {
     event.preventDefault();
     addCustomQuestion();

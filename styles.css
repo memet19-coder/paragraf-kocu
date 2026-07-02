@@ -1200,6 +1200,12 @@ h3 {
   font-size: 13px;
 }
 
+.daily-task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 @media (max-width: 980px) {
   .app-shell {
     grid-template-columns: 1fr;
