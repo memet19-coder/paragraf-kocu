@@ -830,6 +830,188 @@ const mebGradeEightPassages = [
   }
 ];
 
+const mebDistractorBank = {
+  "Sabahın İlk Sesi": {
+    topic: [
+      "yalnızca sabah saatlerinde duyulan hayvan sesleri",
+      "aynaya bakma anındaki fiziksel görünüm ayrıntıları",
+      "çevredeki canlılığın yaşlılık duygusundan bağımsız anlatılması"
+    ],
+    main: [
+      "Sabahın canlılığı insanın geçmişi düşünmesini bütünüyle engeller.",
+      "İnsan ancak kalabalık ortamlarda hayatın değerini fark edebilir.",
+      "Doğadaki sesler, yaşlı bir kişide yalnızca huzursuzluk uyandırır."
+    ],
+    detail: [
+      "Kahramanın çocukluk anılarını ayrıntılı biçimde anlatması",
+      "Mahalledeki insanların karşılıklı konuşmalarına yer verilmesi",
+      "Günün akşam saatlerindeki sessizliğin betimlenmesi"
+    ],
+    inference: [
+      "Kahraman sabah seslerinden rahatsız olup çevresinden uzaklaşmak istemektedir.",
+      "Metinde sabah, yalnızca saat bilgisi vermek için kullanılmıştır.",
+      "Kahraman aynaya baktığında yaşadığı zaman duygusundan tamamen kopmaktadır."
+    ],
+    style: ["açıklayıcı anlatım", "tartışmacı anlatım", "kanıtlayıcı anlatım"]
+  },
+  "Çizgi Romanın Çekimi": {
+    topic: [
+      "yalnızca çizgi romanlardaki çizimlerin estetik görünümü",
+      "çizgi roman türlerinin adlarının sıralanması",
+      "okurların çizgi romanı aynı nedenle sevmesi"
+    ],
+    main: [
+      "Çizgi romanı değerli kılan tek unsur çizimlerin güzel olmasıdır.",
+      "Okurların çizgi romanı sevme nedenleri tek bir başlıkta toplanabilir.",
+      "Çizgi roman yalnızca popüler kahraman serilerinden oluşan sınırlı bir türdür."
+    ],
+    detail: [
+      "Çizgi roman okurlarının tamamının aynı gerekçeyi öne sürmesi",
+      "Manga ve deneysel çalışmaların çizgi roman dışında tutulması",
+      "Çizgi romanların okuma deneyiminden bağımsız ele alınması"
+    ],
+    inference: [
+      "Metin, çizgi romanların okur üzerindeki etkisini tek bir nedene bağlamaktadır.",
+      "Çizgi roman çeşitliliği, bu türü anlamayı daha yüzeysel hâle getirir.",
+      "Okurların farklı yanıtlar vermesi, çizgi romanın etkisinin sınırlı olduğunu gösterir."
+    ],
+    style: ["betimleyici anlatım", "öyküleyici anlatım", "söyleşmeye bağlı anlatım"]
+  },
+  "Minyatürün Sabırlı Eli": {
+    topic: [
+      "minyatürde yalnız renk ve süsleme kullanımının anlatılması",
+      "savaş sahnelerindeki atların estetik görünümü",
+      "minyatür sanatçılarının kişisel yaşamlarının tanıtılması"
+    ],
+    main: [
+      "Minyatürde ayrıntılar yalnızca süsleme amacıyla kullanılır.",
+      "Bir minyatürü anlamak için çizgilerin taşıdığı kültürel ipuçları önemsenmemelidir.",
+      "Minyatürler döneminin yaşam biçimi hakkında bilgi vermez."
+    ],
+    detail: [
+      "Minyatürde yalnızca sanatçının adının önemli görülmesi",
+      "Savaş ve şenlik sahnelerinin hiçbir bilgi değeri taşımaması",
+      "Ayrıntıların metinde süsleme dışında değerlendirilmemesi"
+    ],
+    inference: [
+      "Metin, minyatürü yalnızca göze hoş gelen bir süsleme olarak görmektedir.",
+      "Minyatürdeki tarihî işaretlere ulaşmak için ayrıntılara bakmak gerekmez.",
+      "Küçük çizgiler, metne göre izleyiciyi dönem hakkında yanıltmak için kullanılır."
+    ],
+    style: ["öyküleyici anlatım", "tartışmacı anlatım", "betimleyici anlatım"]
+  },
+  "Araştırmacının Sessizliği": {
+    topic: [
+      "eski belgelerin yalnız fiziksel özelliklerinin tanıtılması",
+      "arşiv raflarının düzenlenme biçimi",
+      "araştırmacının ulaştığı tek bir hazır bilginin aktarılması"
+    ],
+    main: [
+      "Tarih araştırması, yalnızca hazır bilgileri hızlıca kopyalamaktan ibarettir.",
+      "Araştırmacı, belgeler arasındaki küçük ilişkileri dikkate almadan sonuca ulaşır.",
+      "Eski belgelerdeki ayrıntılar geçmişi anlamada işe yaramaz."
+    ],
+    detail: [
+      "Araştırmacının belgeleri incelemeden sonuca vardığı",
+      "Geçmişe ait her bilginin tek bir kaynakta açıkça bulunduğu",
+      "Araştırmada sabır ve kuşkunun gereksiz görüldüğü"
+    ],
+    inference: [
+      "Araştırmacı için önemli olan, belgeleri ilişkilendirmekten çok hızlı karar vermektir.",
+      "Metin, geçmişe ulaşmanın kolay ve kısa bir işlem olduğunu savunmaktadır.",
+      "Belgelerdeki küçük işaretler araştırmacıyı doğru bilgiden uzaklaştırır."
+    ],
+    style: ["öyküleyici anlatım", "tartışmacı anlatım", "söyleşmeye bağlı anlatım"]
+  },
+  "Kısa Öykünün Kapısı": {
+    topic: [
+      "kısa öyküde yalnız olay örgüsünün sıralanması",
+      "yazarın bütün anlamları açıkça vermesi",
+      "okurun metindeki boşluklardan uzak tutulması"
+    ],
+    main: [
+      "Kısa öykü, okura hiçbir yorum alanı bırakmayan bir türdür.",
+      "İyi bir kısa öyküde yazar bütün anlamları ayrıntılı biçimde açıklamalıdır.",
+      "Kısa öykü, bittiği anda okurun zihnindeki etkisini tamamen yitirir."
+    ],
+    detail: [
+      "Yazarın her ayrıntıyı tek tek açıklamak zorunda olduğu",
+      "Kısa öyküde okurun sezgisine hiç yer verilmediği",
+      "Bir bakış ya da yarım cümlenin anlam kurmada etkisiz olduğu"
+    ],
+    inference: [
+      "Kısa öyküde boşluk bırakmak, okurun metinden uzaklaşmasına neden olur.",
+      "Metin, kısa öykünün yalnız olay aktarmaya dayandığını savunmaktadır.",
+      "Okurun sezgisi, kısa öyküyü anlamada gereksiz bir unsurdur."
+    ],
+    style: ["öyküleyici anlatım", "betimleyici anlatım", "karşılaştırmalı anlatım"]
+  },
+  "Yağmurdan Sonra": {
+    topic: [
+      "yağmurun neden olduğu ulaşım sorunları",
+      "sokaktaki insanların karşılıklı konuşmaları",
+      "çocuğun uzun bir yolculuğa çıkma hazırlığı"
+    ],
+    main: [
+      "Yağmurdan sonra sokak bütün canlılığını yitirir ve sıradanlaşır.",
+      "Çevreyi anlamak için yalnız görme duyusundan yararlanmak yeterlidir.",
+      "Günlük yaşamda karşılaşılan küçük görüntüler metne konu olamaz."
+    ],
+    detail: [
+      "Sokakta uzun bir yolculuğa çıkan kalabalığın anlatılması",
+      "Yağmurun hiç dinmeden devam ettiğinin belirtilmesi",
+      "Çocuğun sokaktaki bütün insanlarla konuşması"
+    ],
+    inference: [
+      "Metinde olay örgüsü, duyusal ayrıntılardan daha çok öne çıkarılmıştır.",
+      "Yağmur sonrası çevre, metinde kasvetli ve hareketsiz bir yer olarak verilmiştir.",
+      "Anlatıcı, sokağın kokusunu ve görüntüsünü özellikle dışarıda bırakmıştır."
+    ],
+    style: ["açıklayıcı anlatım", "tartışmacı anlatım", "öğretici anlatım"]
+  },
+  "Eleştirinin Ölçüsü": {
+    topic: [
+      "eleştiride yalnız kusurları sıralama gereği",
+      "bir eserin türünü belirleme yöntemleri",
+      "eleştirmenin kişisel beğenisini tek ölçüt sayması"
+    ],
+    main: [
+      "Eleştirinin görevi, bir eserde yalnız kusur aramaktır.",
+      "İyi eleştirmen, eseri anlamadan kesin hükümler vermelidir.",
+      "Bir metnin güçlü yönlerini görmek eleştirinin niteliğini azaltır."
+    ],
+    detail: [
+      "Eleştirmenin eserin hangi gelenekle ilişkili olduğunu göz ardı etmesi",
+      "Eleştiride yalnız kişisel beğenilerin yeterli sayılması",
+      "Eserin güçlü ve eksik yönlerinin birlikte değerlendirilmemesi"
+    ],
+    inference: [
+      "Eleştiri, metni anlamadan hüküm vermeyi önceleyen bir uğraştır.",
+      "Metne göre eserin kendi dünyasına girmek eleştirmeni yanıltır.",
+      "Nitelikli eleştiri, yalnız olumsuz yargılar sıralayarak yapılır."
+    ],
+    style: ["öyküleyici anlatım", "betimleyici anlatım", "açıklayıcı anlatım"]
+  }
+};
+
+const fallbackMebDistractors = {
+  topic: ["metindeki ayrıntıların yalnız biçimsel yönü", "konunun tek bir örnekle sınırlanması", "anlatılan durumun sonuçtan bağımsız kalması"],
+  main: ["Metindeki örnekler ana düşünceyle bağlantı kurmaz.", "Yazar yalnızca ayrıntıları sıralayıp herhangi bir sonuca ulaşmaz.", "Metinde vurgulanan düşünce kişisel izlenimlerden tamamen uzaktır."],
+  detail: ["Metinde konuya bağlı hiçbir örneğe yer verilmemesi", "Anlatımda bütün ayrıntıların konu dışı bırakılması", "Yazarın düşüncesini destekleyen bilgi kullanmaması"],
+  inference: ["Metin, konuya ilişkin bütün ipuçlarını dışarıda bırakmaktadır.", "Anlatılan ayrıntılar okuru ana düşünceden tamamen uzaklaştırmaktadır.", "Yazarın verdiği örnekler metnin sonucuyla çelişmektedir."],
+  style: ["açıklayıcı anlatım", "betimleyici anlatım", "tartışmacı anlatım"]
+};
+
+function mebCloseOptions(passage, kind, correct, correctIndex = 1) {
+  const source = mebDistractorBank[passage.title]?.[kind] || fallbackMebDistractors[kind] || [];
+  const fallback = fallbackMebDistractors[kind] || [];
+  const distractors = [...source, ...fallback].filter((item, itemIndex, list) => item !== correct && list.indexOf(item) === itemIndex).slice(0, 3);
+  while (distractors.length < 3) distractors.push(fallback[distractors.length] || "Metinde bu yargıyı doğrudan destekleyen bir bilgi yoktur.");
+  const options = [...distractors];
+  options.splice(correctIndex, 0, correct);
+  return options.slice(0, 4);
+}
+
 function mebLgsQuestion(common, index) {
   const passage = mebGradeEightPassages[index % mebGradeEightPassages.length];
   const mode = index % 6;
@@ -859,7 +1041,7 @@ function mebLgsQuestion(common, index) {
       ...common,
       text: passage.text,
       stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
-      options: ["Bir sınavın uygulanma biçimi", passage.topic, "Okul kurallarının tarihçesi", "Bir yazarın doğum yeri"],
+      options: mebCloseOptions(passage, "topic", passage.topic, 1),
       answer: "B",
       solution: `Metnin bütününde ${passage.topic} üzerinde durulmaktadır.`
     });
@@ -869,7 +1051,7 @@ function mebLgsQuestion(common, index) {
       ...common,
       text: passage.text,
       stem: "Bu metinden hareketle aşağıdakilerden hangisine ulaşılabilir?",
-      options: ["Metindeki bütün ayrıntılar konudan bağımsızdır.", passage.inference, "Yazar, konuyu hiçbir örnekle desteklememiştir.", "Metin yalnızca yönerge cümlelerinden oluşmaktadır."],
+      options: mebCloseOptions(passage, "inference", passage.inference, 1),
       answer: "B",
       solution: `Metindeki ayrıntılar '${passage.inference}' sonucuna ulaşmayı sağlar.`
     });
@@ -877,18 +1059,18 @@ function mebLgsQuestion(common, index) {
   if (mode === 4) {
     return buildQuestion({
       ...common,
-      text: `${passage.text}\n\n(I) Bu metinde yazar, konuyu tek bir örnekle sınırlamamıştır. (II) Düşüncesini açıklarken ayrıntılardan ve yorumdan yararlanmıştır. (III) Metinde kullanılan bütün cümleler yalnızca soru anlamı taşımaktadır. (IV) Anlatım, okurun konuyu farklı yönleriyle değerlendirmesine imkân verir.`,
+      text: `${passage.text}\n\n(I) Bu metinde yazar, konuyu tek bir örnekle sınırlamamıştır. (II) Düşüncesini açıklarken ayrıntılardan ve yorumdan yararlanmıştır. (III) Metnin ana düşüncesi yalnızca ilk cümlede doğrudan verilmiş, sonraki cümleler bu düşünceyle bağlantı kurmamıştır. (IV) Anlatım, okurun konuyu farklı yönleriyle değerlendirmesine imkân verir.`,
       stem: "Numaralanmış cümlelerden hangisi metnin anlatımıyla ilgili yanlış bir değerlendirmedir?",
       options: ["I", "II", "III", "IV"],
       answer: "C",
-      solution: "Metindeki cümlelerin tamamı soru anlamı taşımaz; III. cümledeki değerlendirme yanlıştır."
+      solution: "Metindeki sonraki cümleler ana düşünceden kopuk değildir; ayrıntılar ve yorumlar ana düşünceyi destekler. Bu nedenle III. cümledeki değerlendirme yanlıştır."
     });
   }
   return buildQuestion({
     ...common,
     text: passage.text,
     stem: "Bu metinde ağır basan anlatım biçimi aşağıdakilerden hangisidir?",
-    options: ["Masalsı anlatım", passage.style, "Destansı anlatım", "Emredici anlatım"],
+    options: mebCloseOptions(passage, "style", passage.style, 1),
     answer: "B",
     solution: `Metnin kuruluşu ve kullanılan ayrıntılar ${passage.style} özelliği gösterir.`
   });
@@ -1124,28 +1306,44 @@ function gradeEightSkillQuestion(topic, index, difficulty, number) {
     strategy: "Önce soru kökünün istediğini belirle, sonra metindeki kanıtla seçenekleri karşılaştır.",
     hint: "Metnin yalnız ilk cümlesine değil, sonuç bölümüne de bak."
   };
+  if (topic === "Zaman yönetimi") {
+    const timeText = "Deneme sonunda öğrenciler yalnız doğru sayılarını değil, hangi soruda ne kadar oyalandıklarını da inceledi. Bazı öğrencilerin uzun paragraflarda metni birkaç kez okuduğu, bazılarının ise soru kökünü tam anlamadan seçeneklere geçtiği görüldü. Öğretmen, sürenin iyi kullanılmasının metni aceleyle geçmek anlamına gelmediğini; soru kökünü, metindeki kanıtı ve kalan süreyi birlikte düşünmek gerektiğini belirtti.";
+    return buildQuestion({
+      ...common,
+      text: timeText,
+      stem: "Bu metne göre paragraf çözümünde zaman yönetimi için en uygun davranış hangisidir?",
+      options: [
+        "Uzun paragraf gördüğünde metni okumadan seçeneklerden birini işaretlemek",
+        "Soru kökünü, metindeki kanıtı ve kalan süreyi birlikte kontrol etmek",
+        "Doğru sayısına bakıp hangi soruda zaman kaybedildiğini hiç incelememek",
+        "Acele etmek için metindeki ayrıntıları birbirinden ayırmadan okumak"
+      ],
+      answer: "B",
+      solution: "Metin, zamanı yönetmenin acele etmek değil; soru kökü, kanıt ve süreyi birlikte değerlendirmek olduğunu vurgular."
+    });
+  }
   const byTopic = {
     "Konu bulma": {
       stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
-      options: [`${passage.topic}`, "Okul kurallarının tarihsel gelişimi", "Bir kitabın yazar kadrosu", "Sınav kitapçığının basım aşamaları"],
+      options: mebCloseOptions(passage, "topic", passage.topic, 0),
       answer: "A",
       solution: `Metin ${passage.topic} çevresinde kurulmuştur; diğer seçenekler metnin merkezinde değildir.`
     },
     "Ana düşünce": {
       stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
-      options: ["Paragraf sorularında yalnız hız yeterlidir.", passage.main, "Metinlerde ayrıntılar her zaman gereksizdir.", "Soru kökü okunmadan doğru cevap bulunabilir."],
+      options: mebCloseOptions(passage, "main", passage.main, 1),
       answer: "B",
       solution: `Metnin örnekleri ve sonuç bölümü '${passage.main}' düşüncesini destekler.`
     },
     "Yardımcı düşünce": {
       stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
-      options: ["Öğrencinin bütün soruları yanlış yaptığına", passage.detail, "Metinlerin yalnız ezberle anlaşılacağına", "Okuma çalışmalarının gereksiz olduğuna"],
+      options: mebCloseOptions(passage, "detail", passage.detail, 1),
       answer: "B",
       solution: `Metinde '${passage.detail}' bilgisine açıkça yer verilmiştir.`
     },
     "Çıkarım yapma": {
       stem: "Bu metinden aşağıdakilerden hangisi çıkarılabilir?",
-      options: ["Paragraf başarısı rastlantıya bağlıdır.", passage.inference, "Metni anlamak için seçeneklere bakmak yeterlidir.", "Uzun metinler hiçbir zaman çözülemez."],
+      options: mebCloseOptions(passage, "inference", passage.inference, 1),
       answer: "B",
       solution: `Metindeki açıklamalar '${passage.inference}' çıkarımını destekler.`
     },
@@ -1165,9 +1363,9 @@ function gradeEightSkillQuestion(topic, index, difficulty, number) {
       stem: "Bu iki metin için aşağıdakilerden hangisi söylenebilir?",
       options: [
         `I. metin ${passage.topic} üzerinde dururken II. metin ${other.topic} üzerinde durur.`,
-        "İki metin de yalnız kitap türlerini tanıtmaktadır.",
-        "I. metin kişisel bir anı, II. metin bir masal örneğidir.",
-        "İki metinde de paragraf çözümüyle ilgili hiçbir düşünce yoktur."
+        `İki metin de aynı biçimde yalnız ${passage.topic} konusunu işler.`,
+        `I. metinde ${other.topic}, II. metinde ${passage.topic} öne çıkar.`,
+        "İki metinde de konu, kişiler arasındaki karşılıklı konuşmalarla ilerler."
       ],
       answer: "A",
       solution: `I. metnin odağı ${passage.topic}, II. metnin odağı ise ${other.topic} konusudur.`
@@ -1462,37 +1660,37 @@ function generatedQuestion(grade, topic, index) {
     const map = {
       "Konu bulma": {
         stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
-        options: ["Bir yarışmanın sonucu", `${seed.person}'in ${seed.detail} ile ilgili çalışması`, "Yeni bir oyuncak alınması", "Uzak bir şehre yolculuk"],
+        options: [`${seed.person}'in görevi tek başına tamamlaması`, `${seed.person}'in ${seed.detail} ile ilgili çalışması`, `${seed.place} için yapılan çalışmanın ertelenmesi`, `Arkadaşların ${seed.action} yapmadan sonuca ulaşması`],
         answer: "B",
         solution: `Metnin bütününde ${seed.person}'in ${seed.detail} ile ilgili yaptığı çalışma anlatılır.`
       },
       "Ana düşünce": {
         stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
-        options: ["Her iş tek başına yapılmalıdır.", seed.message, "Plan yapmak zaman kaybettirir.", "Arkadaşlardan yardım istemek yanlıştır."],
+        options: ["Bir işi tamamlamak için yalnız hızlı davranmak yeterlidir.", seed.message, "Yardımlaşmak yapılan işi her zaman zorlaştırır.", "Planlı çalışma küçük görevlerde işe yaramaz."],
         answer: "B",
         solution: `Metin, olay üzerinden '${seed.message}' düşüncesini verir.`
       },
       "Başlık bulma": {
         stem: "Bu metne en uygun başlık hangisidir?",
-        options: ["Beklenmeyen Yolculuk", seed.title, "Zor Bir Sınav", "Kayıp Harita"],
+        options: ["Birlikte Tamamlanan Görev", seed.title, "Yarım Kalan Hazırlık", `${seed.place} İçin Yeni Bir Plan`],
         answer: "B",
         solution: `Başlık metnin tamamını kapsamalıdır. Metin ${seed.title.toLowerCase()} çevresinde gelişir.`
       },
       "Yardımcı düşünce": {
         stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
-        options: ["Görevin hiç tamamlanamadığına", seed.detail, "Öğrencilerin okuldan ayrıldığına", "Yeni bir ders başladığına"],
+        options: [`Görevin ${seed.place} dışında yapıldığına`, seed.detail, `${seed.person}'in arkadaşlarından hiç yardım almadığına`, "Çalışmanın herkes tarafından gereksiz görüldüğüne"],
         answer: "B",
         solution: `Metinde ${seed.detail} açıkça belirtilmiştir.`
       },
       "Hikâye unsurları": {
         stem: "Bu metinde olayın geçtiği yer aşağıdakilerden hangisidir?",
-        options: ["Tren istasyonu", seed.place, "Spor salonu", "Sinema"],
+        options: ["Sınıf dışındaki başka bir yer", seed.place, "Evdeki çalışma masası", "Şehir dışındaki bir kamp"],
         answer: "B",
         solution: `Olayın geçtiği yer metinde ${seed.place} olarak verilir.`
       },
       "Çıkarım yapma": {
         stem: "Bu metinden aşağıdakilerden hangisi çıkarılabilir?",
-        options: ["Öğrenciler görevden kaçmıştır.", seed.inference, "Yapılan iş kimseye yarar sağlamamıştır.", "Metinde bir yarış anlatılmıştır."],
+        options: [`${seed.person}'in çalışmayı tek başına bitirdiği`, seed.inference, "Yapılan işin arkadaşlar tarafından fark edilmediği", "Metindeki asıl amacın yarış kazanmak olduğu"],
         answer: "B",
         solution: `Metindeki değişim ve sonuç, '${seed.inference}' çıkarımını destekler.`
       }
@@ -1505,19 +1703,19 @@ function generatedQuestion(grade, topic, index) {
     const map = {
       "Konu bulma": {
         stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
-        options: ["Öğrencilerin oyun kuralları", `${seed.title} çalışmasında ${seed.detail}`, "Okul gezisinin hazırlıkları", "Bir yarışmanın sonucu"],
+        options: [`${seed.title} çalışmasının yalnız ilk aşaması`, `${seed.title} çalışmasında ${seed.detail}`, `${seed.detail} konusunun çalışmadan bağımsız kalması`, "Öğrencilerin sonucu değerlendirmeden çalışmayı bitirmesi"],
         answer: "B",
         solution: `Metnin tamamında ${seed.title.toLowerCase()} çalışması ve ${seed.detail} üzerinde durulur. Bu yüzden konu B seçeneğidir.`
       },
       "Ana düşünce": {
         stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
-        options: ["Kurallar her zaman gereksizdir.", seed.message, "Gözlem yapmak öğrenmeyi engeller.", "Planlı olmak sadece yetişkinler için önemlidir."],
+        options: ["Bir çalışmada yalnız sonucu görmek yeterlidir.", seed.message, "Gözlem yapmak öğrencilerin günlük yaşamla bağ kurmasını engeller.", "Planlı davranmak yalnızca okul dışındaki işler için önemlidir."],
         answer: "B",
         solution: `Metin ${seed.detail} üzerinden '${seed.message}' düşüncesini anlatır.`
       },
       "Yardımcı düşünce": {
         stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
-        options: ["Çalışmanın yarıda kaldığına", seed.detail, "Öğretmenin konuyu değiştirdiğine", "Öğrencilerin hiç görev almadığına"],
+        options: ["Çalışmanın gözlem yapılmadan tamamlandığına", seed.detail, "Öğretmenin konuyu başka bir çalışmaya çevirdiğine", "Öğrencilerin sonuç üzerinde hiç durmadığına"],
         answer: "B",
         solution: `Metinde ${seed.detail} yardımcı bilgi olarak kullanılmıştır.`
       },
@@ -1555,21 +1753,21 @@ function generatedQuestion(grade, topic, index) {
       "Konu bulma": {
         text: baseText,
         stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
-        options: ["Bir spor karşılaşmasının sonucu", `${seed.title} üzerinden ${seed.idea}`, "Bir eşyanın teknik özellikleri", "Okul kantinindeki fiyatlar"],
+        options: [`${seed.title} konusunda yalnız sonuçların sıralanması`, `${seed.title} üzerinden ${seed.idea}`, `${seed.idea} düşüncesinin örneklerden bağımsız anlatılması`, "Öğrencilerin konu dışı bir etkinliği değerlendirmesi"],
         answer: "B",
         solution: `Metinde ${seed.title.toLowerCase()} ve ${seed.idea} düşüncesi birlikte işlenir; konu bu ortak çizgide toplanır.`
       },
       "Ana düşünce": {
         text: baseText,
         stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
-        options: ["Sonuca ulaşmak için süreç önemsizdir.", seed.hidden, "Ayrıntılar her zaman konudan uzaklaştırır.", "Öğrenme yalnızca ezberle gerçekleşir."],
+        options: ["Sonuca ulaşmak için izlenen yolun değerlendirilmesine gerek yoktur.", seed.hidden, "Ayrıntılar doğru seçildiğinde bile düşünceyi zayıflatır.", "Öğrenme, örnekler üzerinde düşünmeden gerçekleşir."],
         answer: "B",
         solution: `Metindeki örnek ve sonuç bölümü '${seed.hidden}' düşüncesini destekler.`
       },
       "Yardımcı düşünce": {
         text: baseText,
         stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
-        options: ["Öğrencilerin hiçbir etkinliğe katılmadığına", seed.example, "Konunun tamamen değiştirilmesine", "Sonucun rastlantıyla ortaya çıktığına"],
+        options: ["Öğrencilerin örnekleri değerlendirmeden sonuca ulaştığına", seed.example, "Konuşmanın konudan tamamen uzaklaştığına", "Sonucun rastlantıyla ortaya çıktığının özellikle vurgulandığına"],
         answer: "B",
         solution: `Metinde '${seed.example}' ifadesi destekleyici bilgi olarak yer alır.`
       },
@@ -1604,7 +1802,7 @@ function generatedQuestion(grade, topic, index) {
       "Anlatım biçimleri": {
         text: `${seed.example}. Metinde ayrıntılar, düşünceyi okurun zihninde belirginleştirmek için seçilmiştir. Yazar, konuyu doğrudan bilgi vererek ve örnekle destekleyerek anlatır. Bu bölümde ayrıca ${note}.`,
         stem: "Bu metinde ağır basan anlatım biçimi hangisidir?",
-        options: ["Öyküleyici anlatım", seed.style, "Destansı anlatım", "Masalsı anlatım"],
+        options: ["Olay çevresinde gelişen öyküleyici anlatım", seed.style, "Coşkulu söyleyişe dayalı destansı anlatım", "Olağanüstü kişilere dayalı masalsı anlatım"],
         answer: "B",
         solution: `Metnin kuruluşu ${seed.style} özelliği gösterir.`
       },
@@ -1624,7 +1822,7 @@ function generatedQuestion(grade, topic, index) {
     "Konu bulma": {
       text: lgsText,
       stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
-      options: ["Sınav kitapçığının basımı", "Paragraf sorularında çözüm sürecini değerlendirme", "Okulda yapılan sosyal etkinlikler", "Metin türlerinin tarihsel gelişimi"],
+      options: ["Paragraf sorularında yalnız doğru sayısını yeterli görme", "Paragraf sorularında çözüm sürecini değerlendirme", "Uzun metinlerde yalnız okuma hızını artırma", "Seçenek eleme yapmadan soruları bitirme"],
       answer: "B",
       solution: "Metnin tamamında paragraf sorularında doğru sayısı, süre, seçenek eleme ve çözüm sürecini değerlendirme üzerinde durulur."
     },
