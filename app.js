@@ -1917,11 +1917,18 @@ function moveAnswerToLetter(question, targetLetter) {
 function distributeAnswersEvenly(questions) {
   const letters = ["A", "B", "C", "D"];
   const counters = { 5: 0, 6: 0, 7: 0, 8: 0 };
+  const answerPatterns = {
+    5: ["B", "D", "A", "C", "C", "A", "D", "B", "A", "C", "B", "D", "D", "B", "C", "A"],
+    6: ["C", "A", "D", "B", "B", "D", "A", "C", "D", "B", "C", "A", "A", "C", "B", "D"],
+    7: ["D", "B", "C", "A", "A", "C", "D", "B", "C", "A", "B", "D", "B", "D", "A", "C"],
+    8: ["C", "A", "D", "B", "A", "D", "B", "C", "D", "B", "A", "C", "B", "C", "D", "A"]
+  };
   return questions.map((question) => {
     const grade = Number(question.grade);
     const index = counters[grade] || 0;
     counters[grade] = index + 1;
-    return moveAnswerToLetter(question, letters[index % letters.length]);
+    const pattern = answerPatterns[grade] || letters;
+    return moveAnswerToLetter(question, pattern[index % pattern.length]);
   });
 }
 
