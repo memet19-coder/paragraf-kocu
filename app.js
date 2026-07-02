@@ -1901,6 +1901,30 @@ function makeQuestionId(question) {
   return `q${question.grade}_${Math.abs(hash)}`;
 }
 
+function moveAnswerToLetter(question, targetLetter) {
+  const letters = ["A", "B", "C", "D"];
+  const currentIndex = letters.indexOf(question.answer);
+  const targetIndex = letters.indexOf(targetLetter);
+  if (!Array.isArray(question.options) || question.options.length !== 4 || currentIndex < 0 || targetIndex < 0 || currentIndex === targetIndex) {
+    return { ...question, answer: targetLetter };
+  }
+  const options = [...question.options];
+  const [correctOption] = options.splice(currentIndex, 1);
+  options.splice(targetIndex, 0, correctOption);
+  return { ...question, options, answer: targetLetter };
+}
+
+function distributeAnswersEvenly(questions) {
+  const letters = ["A", "B", "C", "D"];
+  const counters = { 5: 0, 6: 0, 7: 0, 8: 0 };
+  return questions.map((question) => {
+    const grade = Number(question.grade);
+    const index = counters[grade] || 0;
+    counters[grade] = index + 1;
+    return moveAnswerToLetter(question, letters[index % letters.length]);
+  });
+}
+
 function balanceQuestionBank(baseQuestions) {
   const balanced = [];
   const weightedTargets = {
@@ -1969,7 +1993,7 @@ function balanceQuestionBank(baseQuestions) {
   return balanced;
 }
 
-questionBank = balanceQuestionBank(questionBank).map((question) => ({ ...question, id: makeQuestionId(question) }));
+questionBank = distributeAnswersEvenly(balanceQuestionBank(questionBank)).map((question) => ({ ...question, id: makeQuestionId(question) }));
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
 
 const CONTENT_VERSION = 5;
