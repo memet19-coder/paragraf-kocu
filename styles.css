@@ -1055,6 +1055,31 @@ h3 {
   font-weight: 800;
 }
 
+.question-source {
+  color: var(--teal-dark) !important;
+  background: var(--soft-teal);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.question-card-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.question-card-actions .icon-button {
+  width: 38px;
+  height: 38px;
+  background: #fff;
+}
+
+.question-card-actions .delete-question {
+  color: #a64242;
+}
+
 .question-preview-text {
   background: #f8faf9;
   border: 1px solid var(--line);
@@ -1097,6 +1122,36 @@ h3 {
   margin: 6px 0 0;
   color: #45556c;
   line-height: 1.55;
+}
+
+.question-edit-card {
+  border-color: var(--teal);
+  background: #f7fcfb;
+}
+
+.question-edit-form {
+  display: grid;
+  gap: 12px;
+}
+
+.question-edit-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.question-edit-form input,
+.question-edit-form textarea,
+.question-edit-form select {
+  width: 100%;
+}
+
+.question-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .teacher-layout {

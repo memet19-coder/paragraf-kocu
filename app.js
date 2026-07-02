@@ -1970,6 +1970,7 @@ function balanceQuestionBank(baseQuestions) {
 }
 
 questionBank = balanceQuestionBank(questionBank).map((question) => ({ ...question, id: makeQuestionId(question) }));
+const baseQuestionIds = new Set(questionBank.map((question) => question.id));
 
 const CONTENT_VERSION = 5;
 let state = loadState();
@@ -1980,6 +1981,7 @@ let quiz = null;
 let syncInProgress = false;
 const QUESTION_BANK_PASSWORD = "KOCU2026";
 let questionBankUnlocked = false;
+let editingQuestionId = null;
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -2088,6 +2090,9 @@ async function pushQueuedRecord(item) {
     return Boolean(await remoteTry(() => remoteDb.from("mistakes").upsert(item.payload, { onConflict: "student_key,question_id" }), null));
   }
   if (item.type === "customQuestion") {
+    return Boolean(await remoteTry(() => remoteDb.from("custom_questions").upsert(item.payload), null));
+  }
+  if (item.type === "deleteQuestion") {
     return Boolean(await remoteTry(() => remoteDb.from("custom_questions").upsert(item.payload), null));
   }
   if (item.type === "class") {
@@ -2317,13 +2322,47 @@ async function remoteSaveCustomQuestion(question) {
   else syncQueuedRecords();
 }
 
+async function remoteSaveDeletedQuestion(question) {
+  const payload = {
+    id: `delete_${question.id}`,
+    class_code: state.teacherClassCode,
+    grade: Number(question.grade || state.grade || 5),
+    topic: "__SILINDI__",
+    difficulty: "Silindi",
+    outcome: "Öğretmen tarafından silinen soru",
+    text: question.id,
+    stem: "Silinen soru",
+    options: ["-", "-", "-", "-"],
+    answer: "A",
+    solution: "Bu soru öğretmen tarafından havuzdan kaldırıldı.",
+    wrong: "",
+    strategy: "",
+    hint: ""
+  };
+  const key = `deleteQuestion:${question.id}`;
+  if (!isRemoteReady()) {
+    queueSync("deleteQuestion", payload, key);
+    return;
+  }
+  const result = await remoteTry(() => remoteDb.from("custom_questions").upsert(payload), null);
+  if (!result) queueSync("deleteQuestion", payload, key);
+  else syncQueuedRecords();
+}
+
 async function remoteLoadCustomQuestions() {
   if (!isRemoteReady()) return;
   const codes = [state.teacherClassCode, state.classCode].filter(Boolean);
   if (!codes.length) return;
   const result = await remoteTry(() => remoteDb.from("custom_questions").select("*").in("class_code", codes), { data: [] });
   const data = result?.data || [];
-  state.customQuestions = (data || []).map((item) => ({
+  const deletedIds = new Set(state.deletedQuestionIds || []);
+  const remoteQuestions = [];
+  (data || []).forEach((item) => {
+    if (String(item.id || "").startsWith("delete_")) {
+      deletedIds.add(String(item.id).slice("delete_".length));
+      return;
+    }
+    remoteQuestions.push({
     id: item.id,
     grade: item.grade,
     topic: item.topic,
@@ -2337,7 +2376,13 @@ async function remoteLoadCustomQuestions() {
     wrong: item.wrong,
     strategy: item.strategy,
     hint: item.hint
-  }));
+    });
+  });
+  const merged = new Map((state.customQuestions || []).map((question) => [question.id, question]));
+  remoteQuestions.forEach((question) => merged.set(question.id, question));
+  state.deletedQuestionIds = Array.from(deletedIds);
+  state.customQuestions = Array.from(merged.values()).filter((question) => !deletedIds.has(question.id));
+  persistStateOnly();
 }
 
 function loadState() {
@@ -2349,6 +2394,7 @@ function loadState() {
     teacherClassCode: "PK2026",
     classrooms: {},
     customQuestions: [],
+    deletedQuestionIds: [],
     mistakeBook: [],
     questionTimes: [],
     stats: { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 },
@@ -3066,8 +3112,30 @@ function textOnly(html) {
   return scratch.textContent || scratch.innerText || "";
 }
 
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function reviewQuestionBank() {
-  return [...questionBank, ...(state.customQuestions || [])];
+  const deleted = new Set(state.deletedQuestionIds || []);
+  const customById = new Map((state.customQuestions || [])
+    .filter((question) => question?.id && !deleted.has(question.id))
+    .map((question) => [question.id, question]));
+  const builtInQuestions = questionBank
+    .filter((question) => !deleted.has(question.id))
+    .map((question) => {
+      const edited = customById.get(question.id);
+      return edited ? { ...edited, source: "Düzenlendi" } : { ...question, source: "Hazır" };
+    });
+  const teacherQuestions = (state.customQuestions || [])
+    .filter((question) => question?.id && !deleted.has(question.id) && !baseQuestionIds.has(question.id))
+    .map((question) => ({ ...question, source: "Öğretmen" }));
+  return [...builtInQuestions, ...teacherQuestions];
 }
 
 function questionBankTopicsForGrade(gradeValue) {
@@ -3110,6 +3178,111 @@ function filteredQuestionBank() {
   });
 }
 
+function questionById(id) {
+  return reviewQuestionBank().find((question) => question.id === id);
+}
+
+function renderQuestionEditForm(question, index) {
+  const gradeTopics = Array.from(new Set([question.topic, ...availableTopicsForGrade(question.grade || state.grade)]));
+  return `
+    <article class="question-preview-card question-edit-card">
+      <form class="question-edit-form" data-question-id="${escapeHtml(question.id)}">
+        <div class="question-preview-head">
+          <span class="pill">${question.grade}. sınıf</span>
+          <strong>${index + 1}. Soruyu düzenle</strong>
+          <span>${escapeHtml(question.source || "Soru")}</span>
+        </div>
+        <div class="form-grid">
+          <label>Sınıf
+            <select name="grade">
+              ${[5, 6, 7, 8].map((grade) => `<option value="${grade}" ${Number(question.grade) === grade ? "selected" : ""}>${grade}. sınıf</option>`).join("")}
+            </select>
+          </label>
+          <label>Konu
+            <select name="topic">
+              ${gradeTopics.map((topic) => `<option ${topic === question.topic ? "selected" : ""}>${escapeHtml(topic)}</option>`).join("")}
+            </select>
+          </label>
+          <label>Zorluk
+            <select name="difficulty">
+              ${["Kolay", "Orta", "Zor"].map((difficulty) => `<option ${difficulty === question.difficulty ? "selected" : ""}>${difficulty}</option>`).join("")}
+            </select>
+          </label>
+          <label>Doğru cevap
+            <select name="answer">
+              ${["A", "B", "C", "D"].map((letter) => `<option ${letter === question.answer ? "selected" : ""}>${letter}</option>`).join("")}
+            </select>
+          </label>
+        </div>
+        <label>Kazanım
+          <input name="outcome" type="text" value="${escapeHtml(question.outcome || "")}">
+        </label>
+        <label>Paragraf metni
+          <textarea name="text" rows="7" required>${escapeHtml(question.text || "")}</textarea>
+        </label>
+        <label>Soru kökü
+          <input name="stem" type="text" value="${escapeHtml(question.stem || "")}" required>
+        </label>
+        <div class="form-grid">
+          ${["A", "B", "C", "D"].map((letter, optionIndex) => `
+            <label>${letter}
+              <input name="option${letter}" type="text" value="${escapeHtml(question.options?.[optionIndex] || "")}" required>
+            </label>
+          `).join("")}
+        </div>
+        <label>Ayrıntılı çözüm
+          <textarea name="solution" rows="3" required>${escapeHtml(question.solution || "")}</textarea>
+        </label>
+        <label>Çözüm stratejisi
+          <input name="strategy" type="text" value="${escapeHtml(question.strategy || "")}">
+        </label>
+        <div class="question-edit-actions">
+          <button class="primary-action" type="submit"><i data-lucide="save"></i><span>Kaydet</span></button>
+          <button class="secondary-action cancel-question-edit" type="button"><i data-lucide="x"></i><span>Vazgeç</span></button>
+        </div>
+      </form>
+    </article>
+  `;
+}
+
+function questionFromEditForm(form) {
+  const id = form.dataset.questionId;
+  const original = questionById(id) || {};
+  return {
+    ...original,
+    id,
+    grade: Number(form.elements.grade.value),
+    topic: form.elements.topic.value,
+    difficulty: form.elements.difficulty.value,
+    outcome: form.elements.outcome.value.trim() || `${form.elements.topic.value} kazanımı`,
+    text: form.elements.text.value.trim(),
+    stem: form.elements.stem.value.trim(),
+    options: ["A", "B", "C", "D"].map((letter) => form.elements[`option${letter}`].value.trim()),
+    answer: form.elements.answer.value,
+    solution: form.elements.solution.value.trim(),
+    strategy: form.elements.strategy.value.trim() || "Soru kökünü metindeki kanıtlarla birlikte değerlendir.",
+    hint: original.hint || "Metindeki ipuçlarını işaretle.",
+    wrong: original.wrong || "Yanlış seçenekler metindeki kapsamı daraltır ya da metinde söylenmeyen bir yargı içerir."
+  };
+}
+
+function upsertManagedQuestion(question) {
+  state.deletedQuestionIds = (state.deletedQuestionIds || []).filter((id) => id !== question.id);
+  const existingIndex = (state.customQuestions || []).findIndex((item) => item.id === question.id);
+  if (existingIndex >= 0) state.customQuestions[existingIndex] = question;
+  else state.customQuestions.push(question);
+  persistStateOnly();
+  remoteSaveCustomQuestion(question);
+}
+
+function deleteManagedQuestion(question) {
+  state.deletedQuestionIds = Array.from(new Set([...(state.deletedQuestionIds || []), question.id]));
+  state.customQuestions = (state.customQuestions || []).filter((item) => item.id !== question.id);
+  if (editingQuestionId === question.id) editingQuestionId = null;
+  persistStateOnly();
+  remoteSaveDeletedQuestion(question);
+}
+
 function renderQuestionBank() {
   const list = $("#questionBankList");
   const count = $("#questionBankCount");
@@ -3130,14 +3303,20 @@ function renderQuestionBank() {
   const filtered = filteredQuestionBank();
   count.textContent = `${filtered.length} soru`;
   list.innerHTML = filtered.length ? filtered.map((question, index) => {
+    if (editingQuestionId === question.id) return renderQuestionEditForm(question, index);
     const answerIndex = "ABCD".indexOf(question.answer);
     const answerText = answerIndex >= 0 ? question.options[answerIndex] : "";
     return `
-      <article class="question-preview-card">
+      <article class="question-preview-card" data-question-id="${escapeHtml(question.id)}">
         <div class="question-preview-head">
           <span class="pill">${question.grade}. sınıf</span>
           <strong>${index + 1}. ${question.topic}</strong>
           <span>${question.difficulty}</span>
+          <span class="question-source">${question.source || "Soru"}</span>
+          <div class="question-card-actions">
+            <button class="icon-button edit-question" type="button" title="Soruyu düzenle" aria-label="Soruyu düzenle"><i data-lucide="pencil"></i></button>
+            <button class="icon-button delete-question" type="button" title="Soruyu sil" aria-label="Soruyu sil"><i data-lucide="trash-2"></i></button>
+          </div>
         </div>
         <div class="question-preview-text">${question.text}</div>
         <div class="question-preview-stem">${question.stem}</div>
@@ -3744,6 +3923,45 @@ function bindEvents() {
   });
   $("#questionBankPassword").addEventListener("keydown", (event) => {
     if (event.key === "Enter") $("#unlockQuestionBank").click();
+  });
+  $("#questionBankList").addEventListener("click", (event) => {
+    const card = event.target.closest(".question-preview-card");
+    if (!card) return;
+    if (event.target.closest(".edit-question")) {
+      editingQuestionId = card.dataset.questionId;
+      renderQuestionBank();
+      window.lucide?.createIcons();
+      return;
+    }
+    if (event.target.closest(".cancel-question-edit")) {
+      editingQuestionId = null;
+      renderQuestionBank();
+      window.lucide?.createIcons();
+      return;
+    }
+    if (event.target.closest(".delete-question")) {
+      const question = questionById(card.dataset.questionId);
+      if (!question) return;
+      const ok = confirm("Bu soru havuzdan silinsin mi? Aynı sınıf koduyla giren öğrenciler de bu soruyu görmez.");
+      if (!ok) return;
+      deleteManagedQuestion(question);
+      renderAll();
+      setSyncStatus("Soru havuzdan kaldırıldı.", "ok");
+    }
+  });
+  $("#questionBankList").addEventListener("submit", (event) => {
+    const form = event.target.closest(".question-edit-form");
+    if (!form) return;
+    event.preventDefault();
+    const question = questionFromEditForm(form);
+    if (question.options.some((option) => !option)) {
+      alert("A, B, C ve D seçeneklerinin tamamını doldur.");
+      return;
+    }
+    upsertManagedQuestion(question);
+    editingQuestionId = null;
+    renderAll();
+    setSyncStatus("Soru düzenlendi ve kaydedildi.", "ok");
   });
   $("#topicList").addEventListener("click", (event) => {
     const card = event.target.closest(".topic-card");
