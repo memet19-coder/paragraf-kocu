@@ -10,6 +10,9 @@ const topics = [
   "Betimleyici anlatım", "Tartışmacı anlatım", "Metinler arası karşılaştırma",
   "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları",
   "MEB 6. sınıf Türkçe çalışma soruları", "MEB 7. sınıf Türkçe çalışma soruları",
+  "7. sınıf paragraf ek seti - Konu, başlık ve ana düşünce", "7. sınıf paragraf ek seti - Yardımcı düşünce ve çıkarım",
+  "7. sınıf paragraf ek seti - Paragraf yapısı ve tamamlama", "7. sınıf paragraf ek seti - Anlatım biçimleri ve metin türleri",
+  "7. sınıf paragraf ek seti - Görsel okuma ve sözel mantık",
   "8. sınıf paragraf ek seti - Parçada anlam", "8. sınıf paragraf ek seti - Metin türleri",
   "8. sınıf paragraf ek seti - Görsel ve grafik okuma", "8. sınıf paragraf ek seti - Sözel mantık"
 ];
@@ -28,7 +31,7 @@ const gradePlan = {
   7: {
     headline: "7. sınıf için yorumlama ve akışı koruma",
     subline: "Örtülü anlam, cümle sıralama, anlatım biçimleri ve akışı bozan cümleler öne çıkar.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "MEB 7. sınıf Türkçe çalışma soruları", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "MEB 7. sınıf Türkçe çalışma soruları", "7. sınıf paragraf ek seti - Konu, başlık ve ana düşünce", "7. sınıf paragraf ek seti - Yardımcı düşünce ve çıkarım", "7. sınıf paragraf ek seti - Paragraf yapısı ve tamamlama", "7. sınıf paragraf ek seti - Anlatım biçimleri ve metin türleri", "7. sınıf paragraf ek seti - Görsel okuma ve sözel mantık", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
   },
   8: {
     headline: "8. sınıf için LGS düzeyi yeni nesil tempo",
@@ -1845,7 +1848,12 @@ function balanceQuestionBank(baseQuestions) {
       "Düşünceyi geliştirme yolları": 25,
       "Tablo-grafik-görsel okuma": 25,
       "Sözel mantık destekli paragraf soruları": 25,
-      "MEB 7. sınıf Türkçe çalışma soruları": 100
+      "MEB 7. sınıf Türkçe çalışma soruları": 100,
+      "7. sınıf paragraf ek seti - Konu, başlık ve ana düşünce": 40,
+      "7. sınıf paragraf ek seti - Yardımcı düşünce ve çıkarım": 30,
+      "7. sınıf paragraf ek seti - Paragraf yapısı ve tamamlama": 25,
+      "7. sınıf paragraf ek seti - Anlatım biçimleri ve metin türleri": 25,
+      "7. sınıf paragraf ek seti - Görsel okuma ve sözel mantık": 30
     },
     8: {
       "Konu bulma": 45,
@@ -1884,6 +1892,10 @@ if (Array.isArray(window.MEB6_WORKBOOK_QUESTIONS)) {
 
 if (Array.isArray(window.MEB7_WORKBOOK_QUESTIONS)) {
   questionBank.push(...window.MEB7_WORKBOOK_QUESTIONS);
+}
+
+if (Array.isArray(window.SB7_PARAGRAPH_QUESTIONS)) {
+  questionBank.push(...window.SB7_PARAGRAPH_QUESTIONS);
 }
 
 if (Array.isArray(window.ISEM8_PARAGRAPH_QUESTIONS)) {
