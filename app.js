@@ -8,7 +8,8 @@ const topics = [
   "Örneklendirme", "Tanımlama", "Sayısal verilerden yararlanma", "Tanık gösterme",
   "Düşünceyi geliştirme yolları", "Anlatım biçimleri", "Açıklayıcı anlatım", "Öyküleyici anlatım",
   "Betimleyici anlatım", "Tartışmacı anlatım", "Metinler arası karşılaştırma",
-  "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları"
+  "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları",
+  "MEB 7. sınıf Türkçe çalışma soruları"
 ];
 
 const gradePlan = {
@@ -25,7 +26,7 @@ const gradePlan = {
   7: {
     headline: "7. sınıf için yorumlama ve akışı koruma",
     subline: "Örtülü anlam, cümle sıralama, anlatım biçimleri ve akışı bozan cümleler öne çıkar.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "MEB 7. sınıf Türkçe çalışma soruları", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
   },
   8: {
     headline: "8. sınıf için LGS düzeyi yeni nesil tempo",
@@ -1796,6 +1797,7 @@ function distributeAnswersEvenly(questions) {
     8: ["C", "A", "D", "B", "A", "D", "B", "C", "D", "B", "A", "C", "B", "C", "D", "A"]
   };
   return questions.map((question) => {
+    if (question.keepOptionOrder) return question;
     const grade = Number(question.grade);
     const index = counters[grade] || 0;
     counters[grade] = index + 1;
@@ -1839,7 +1841,8 @@ function balanceQuestionBank(baseQuestions) {
       "Anlatım biçimleri": 20,
       "Düşünceyi geliştirme yolları": 25,
       "Tablo-grafik-görsel okuma": 25,
-      "Sözel mantık destekli paragraf soruları": 25
+      "Sözel mantık destekli paragraf soruları": 25,
+      "MEB 7. sınıf Türkçe çalışma soruları": 100
     },
     8: {
       "Konu bulma": 45,
@@ -1866,6 +1869,10 @@ function balanceQuestionBank(baseQuestions) {
     });
   });
   return balanced;
+}
+
+if (Array.isArray(window.MEB7_WORKBOOK_QUESTIONS)) {
+  questionBank.push(...window.MEB7_WORKBOOK_QUESTIONS);
 }
 
 questionBank = distributeAnswersEvenly(balanceQuestionBank(questionBank)).map((question) => ({ ...question, id: makeQuestionId(question) }));
