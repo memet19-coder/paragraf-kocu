@@ -9,7 +9,7 @@ const topics = [
   "Düşünceyi geliştirme yolları", "Anlatım biçimleri", "Açıklayıcı anlatım", "Öyküleyici anlatım",
   "Betimleyici anlatım", "Tartışmacı anlatım", "Metinler arası karşılaştırma",
   "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları",
-  "MEB 7. sınıf Türkçe çalışma soruları"
+  "MEB 6. sınıf Türkçe çalışma soruları", "MEB 7. sınıf Türkçe çalışma soruları"
 ];
 
 const gradePlan = {
@@ -21,7 +21,7 @@ const gradePlan = {
   6: {
     headline: "6. sınıf için ipucu yakalama çalışması",
     subline: "Ana fikir, yardımcı fikir, metnin amacı ve anlam bütünlüğü birlikte çalışılır.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "MEB 6. sınıf Türkçe çalışma soruları", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
   },
   7: {
     headline: "7. sınıf için yorumlama ve akışı koruma",
@@ -1828,7 +1828,8 @@ function balanceQuestionBank(baseQuestions) {
       "Karşılaştırma": 20,
       "Paragraf tamamlama": 35,
       "Tablo-grafik-görsel okuma": 25,
-      "Sözel mantık destekli paragraf soruları": 25
+      "Sözel mantık destekli paragraf soruları": 25,
+      "MEB 6. sınıf Türkçe çalışma soruları": 100
     },
     7: {
       "Konu bulma": 50,
@@ -1869,6 +1870,10 @@ function balanceQuestionBank(baseQuestions) {
     });
   });
   return balanced;
+}
+
+if (Array.isArray(window.MEB6_WORKBOOK_QUESTIONS)) {
+  questionBank.push(...window.MEB6_WORKBOOK_QUESTIONS);
 }
 
 if (Array.isArray(window.MEB7_WORKBOOK_QUESTIONS)) {
