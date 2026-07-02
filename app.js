@@ -159,9 +159,9 @@ let questionBank = [
   },
   {
     grade: 6, topic: "Anlam bütünlüğü", difficulty: "Zor", outcome: "Metnin anlam bütünlüğünü sağlayan ifadeyi seçer.",
-    text: "Bir kulüp çalışmasında herkesin aynı görevi yapması beklenmez. Kimi öğrenci afiş hazırlar, kimi duyuru metni yazar, kimi de etkinlik günü düzeni sağlar. Farklı görevler doğru biçimde paylaşıldığında ----",
+    text: "Bir kulüp çalışmasında herkesin aynı görevi yapması beklenmez. Kimi öğrenci duyuru metni hazırlar, kimi kısa konuşmayı düzenler, kimi de etkinlik günü salon düzenini sağlar. Farklı görevler doğru biçimde paylaşıldığında ----",
     stem: "Bu metin aşağıdakilerden hangisiyle tamamlanırsa anlam bütünlüğü sağlanır?",
-    options: ["çalışma daha düzenli ve verimli ilerler.", "kulüp etkinlikleri tamamen gereksiz hâle gelir.", "hiç kimsenin sorumluluk almasına gerek kalmaz.", "afiş hazırlamak bütün görevlerden önemsizdir."],
+    options: ["çalışma daha düzenli ve verimli ilerler.", "kulüp etkinlikleri tamamen gereksiz hâle gelir.", "hiç kimsenin sorumluluk almasına gerek kalmaz.", "duyuru metni yazmak bütün görevlerden önemsizdir."],
     answer: "A",
     solution: "Metin görev paylaşımının yararını anlatıyor. Bu nedenle farklı görevlerin doğru paylaşılması sonucunda çalışmanın düzenli ilerlemesi beklenir.",
     wrong: "B ve C metnin olumlu görev paylaşımı düşüncesine aykırıdır. D metinde yoktur.",
@@ -269,25 +269,25 @@ let questionBank = [
   },
   {
     grade: 8, topic: "LGS tarzı yeni nesil paragraf soruları", difficulty: "Zor", outcome: "Uzun metinde çok aşamalı çıkarım yapar.",
-    text: "Bir yazar, iyi bir metnin okura her şeyi açıkça söylemek zorunda olmadığını belirtir. Ona göre metin, okurun zihninde tamamlanacak boşluklar bıraktığında daha kalıcı olur. Fakat bu boşluklar rastgele değil, metnin ipuçlarıyla desteklenmiş olmalıdır. Aksi halde okur yorum yapmak yerine tahmin etmek zorunda kalır.",
-    stem: "Bu paragrafa göre iyi bir metinde bulunması gereken özellik aşağıdakilerden hangisidir?",
-    options: ["Okura hiç yorum alanı bırakmamak", "Tüm bilgileri uzun açıklamalarla vermek", "İpuçlarıyla desteklenen anlam boşlukları oluşturmak", "Okurun yalnızca tahmine dayanmasını sağlamak"],
-    answer: "C",
-    solution: "Paragrafta hem boşluk bırakmanın önemi hem de bu boşlukların ipuçlarıyla desteklenmesi gerektiği vurgulanıyor. Bu iki koşulu birlikte karşılayan seçenek C'dir.",
-    wrong: "A metnin yorum alanını yok eder. B 'her şeyi açıkça söylemek zorunda değildir' ifadesine aykırıdır. D metinde olumsuz durum olarak verilir.",
-    strategy: "LGS taktiği: iki koşullu ifadeleri tek seçenekte birlikte ara; yalnız bir kısmını veren çeldiriciyi ele.",
-    hint: "Boşluk ve ipucu kavramlarını birlikte düşün."
+    text: "Gözlerini açtığında gün henüz doğmaya başlamıştı. Ağır hareketlerle doğruldu, besmelesini çekip her zamanki gibi camı açtı. Yüzüne vuran tertemiz hava, sabahın bu saatlerini büyük bir nimete dönüştürüyordu. Uzaklarda bir köpek uluyor, horozlar bütün mahalleyi uyandırmak istercesine ötüyor, ağustos böcekleri var gücüyle kanat çırpıyordu. Aynaya baktığında çizgili yüzü ona, bu sabahların tadını çıkarmak için kaç günü kaldığını sorar gibiydi.",
+    stem: "Bu metnin dil ve anlatımıyla ilgili aşağıdakilerden hangisi söylenemez?",
+    options: ["Betimlemeye başvurulmuştur.", "Anlatıcı olayın kahramanlarından biridir.", "Birden fazla duyuya seslenen ayrıntılara yer verilmiştir.", "Kişileştirme yoluyla anlatım güçlendirilmiştir."],
+    answer: "B",
+    solution: "Metin üçüncü kişi anlatıcıyla kurulmuştur; anlatıcı olayın kahramanlarından biri değildir. Diğer seçenekler metnin dil ve anlatım özellikleriyle uyumludur.",
+    wrong: "A sabah ve çevre ayrıntılarıyla, C ses ve dokunma duyularıyla, D aynadaki yüzün soru sorar gibi verilmesiyle desteklenir.",
+    strategy: "Dil ve anlatım sorularında anlatıcıyı, duyuları, betimlemeyi ve söz sanatlarını ayrı ayrı kontrol et.",
+    hint: "Anlatıcı metinde 'ben' diye olayın içinde mi, yoksa dışarıdan mı anlatıyor?"
   },
   {
     grade: 8, topic: "LGS tarzı yeni nesil paragraf soruları", difficulty: "Zor", outcome: "Uzun paragrafta ana düşünce ve çıkarımı birlikte değerlendirir.",
-    text: "Son yıllarda okuma sorularında öğrenciden yalnızca metindeki bilgiyi bulması değil, bilgiyi farklı durumlara taşıması da bekleniyor. Bir paragrafta yazar doğrudan 'sabırlı olun' demeyebilir; bunun yerine uzun süre emek veren bir kişinin sonunda başarıya ulaşmasını anlatabilir. Böyle bir soruda öğrenci, olayın yüzeyinde kalırsa yalnızca kahramanın ne yaptığını görür. Oysa asıl istenen, bu olaydan çıkarılacak genel düşünceyi fark etmektir.",
-    stem: "Bu metne göre yeni nesil paragraf sorularında öğrenciden beklenen temel beceri aşağıdakilerden hangisidir?",
-    options: ["Metindeki her kelimeyi ezberlemek", "Olaydan hareketle genel düşünceye ulaşmak", "Paragrafı yalnızca hızlı okumak", "Kahramanın adını ve yerini bulmakla yetinmek"],
-    answer: "B",
-    solution: "Metin, öğrencinin olayın yüzeyinde kalmaması ve olaydan çıkarılacak genel düşünceyi fark etmesi gerektiğini anlatır.",
-    wrong: "A ezber vurgusu yoktur. C hız tek başına yeterli değildir. D metnin eleştirdiği yüzeyde kalma davranışıdır.",
-    strategy: "LGS taktiği: örnek olayın arkasındaki genel mesajı bul; seçeneklerde bu mesajı aramaya öncelik ver.",
-    hint: "Metin 'asıl istenen' diyerek cevabın yönünü gösteriyor."
+    text: "(I) “Çizgi romanları neden seviyoruz?” sorusuna okurlar birbirinden farklı yanıtlar verebilir. (II) Kimi okur çizgilerin estetik etkisinden, kimi anlatım tekniğinin kendine özgü dinamizminden, kimi ise okuma deneyiminin sunduğu akıcılıktan söz eder; fakat tüm bu açıklamalara rağmen soruya tek ve kesin bir yanıt vermek kolay değildir. (III) Üstelik çizgi roman dünyası, çeşitliliğiyle bu soruyu daha da derinleştirir. (IV) Manga türünden deneysel çalışmalara, popüler kahraman serilerinden özgün yapımlara uzanan geniş yelpazesiyle çizgi roman, sonu olmayan bir evren niteliği taşır.",
+    stem: "Bu metin iki paragrafa ayrılmak istendiğinde ikinci paragraf numaralanmış cümlelerin hangisiyle başlar?",
+    options: ["I", "II", "III", "IV"],
+    answer: "C",
+    solution: "I ve II. cümlelerde çizgi romanların neden sevildiği üzerinde durulur. III. cümleden itibaren çizgi roman dünyasının çeşitliliği yeni bir düşünce olarak ele alınır.",
+    wrong: "I metnin girişidir, II ilk düşünceyi sürdürür, IV ise III ile başlayan ikinci bölümün açıklayıcı devamıdır.",
+    strategy: "Paragraf bölme sorularında konu yönünün değiştiği cümleyi bul; yeni bakış genellikle yeni paragrafı başlatır.",
+    hint: "İlk iki cümle okur gerekçelerini, son iki cümle çizgi roman dünyasının genişliğini anlatıyor."
   },
   {
     grade: 8, topic: "Çıkarım yapma", difficulty: "Orta", outcome: "Metindeki ipuçlarından hareketle yargıya ulaşır.",
@@ -321,7 +321,7 @@ const passageSeeds = {
     { title: "Dijital Defter", idea: "teknolojinin öğrenmeye destek olması", example: "öğrenci, derste aldığı notları konu başlıklarına göre dosyaladı", odd: "Deniz kaplumbağaları yumurtalarını kumsala bırakır.", hidden: "Teknoloji bilinçli kullanıldığında öğrenmeyi düzenler.", style: "açıklayıcı anlatım" },
     { title: "Eski Saat", idea: "eşyaların anılarla değer kazanması", example: "dedesinden kalan saati her sınavdan önce masasına koydu", odd: "Matematikte kesirler pay ve paydadan oluşur.", hidden: "Anılar, sıradan eşyaları özel kılabilir.", style: "öyküleyici anlatım" },
     { title: "Yağmur Sonrası", idea: "doğanın ayrıntılarını fark etmek", example: "ıslanan yaprakların üzerinde güneş ışığı parlıyordu", odd: "Futbolda takımlar on bir oyuncuyla sahaya çıkar.", hidden: "Dikkatli bakmak çevremizdeki güzellikleri görmemizi sağlar.", style: "betimleyici anlatım" },
-    { title: "Takım Çalışması", idea: "farklı görevlerin ortak başarıya katkısı", example: "bir grup afiş hazırlarken diğer grup sunum metnini düzenledi", odd: "Volkanik dağlar lav püskürterek oluşabilir.", hidden: "Paylaşılan sorumluluk başarıyı kolaylaştırır.", style: "açıklayıcı anlatım" },
+    { title: "Takım Çalışması", idea: "farklı görevlerin ortak başarıya katkısı", example: "bir grup duyuru metnini yazarken diğer grup sunum sırasını düzenledi", odd: "Volkanik dağlar lav püskürterek oluşabilir.", hidden: "Paylaşılan sorumluluk başarıyı kolaylaştırır.", style: "açıklayıcı anlatım" },
     { title: "Sabırlı Çalışma", idea: "zor konuların tekrar ile anlaşılması", example: "öğrenci, çözemediği soruları işaretleyip ertesi gün yeniden denedi", odd: "Karadeniz kıyılarında yağış yıl boyunca görülür.", hidden: "Sabır, öğrenme sürecindeki eksikleri tamamlamayı sağlar.", style: "tartışmacı anlatım" }
   ],
   8: [
@@ -504,7 +504,7 @@ const contextDossiers = [
   {
     title: "Şehirde Bisiklet Rotası",
     field: "ulaşım ve güvenlik",
-    lead: "Bir ulaşım afişinde bisiklet kullanmanın çevreye katkısı anlatılırken güvenli rota seçmenin önemi de vurgulanmıştır. Kask takmak, görünür kıyafet seçmek ve araç trafiğinin yoğun olduğu yollardan kaçınmak temel öneriler arasındadır.",
+    lead: "Bir ulaşım yazısında bisiklet kullanmanın çevreye katkısı anlatılırken güvenli rota seçmenin önemi de vurgulanmıştır. Kask takmak, görünür kıyafet seçmek ve araç trafiğinin yoğun olduğu yollardan kaçınmak temel öneriler arasındadır.",
     main: "Bisiklet kullanımı, çevre yararı kadar güvenli rota planlaması da gerektirir.",
     detail: "kask, görünür kıyafet ve güvenli rota seçiminin önerilmesi",
     warning: "Yoğun trafikli yolda plansız sürüş risk oluşturabilir.",
@@ -517,7 +517,7 @@ const contextDossiers = [
   {
     title: "Afet Çantası Listesi",
     field: "hazırlık ve güvenlik",
-    lead: "Afet hazırlığı afişinde çantanın yalnız bir kez hazırlanıp unutulmaması gerektiği vurgulanır. Su, ilk yardım malzemesi, fener, düdük ve kişisel ilaçlar düzenli olarak kontrol edilmelidir.",
+    lead: "Afet hazırlığı metninde çantanın yalnız bir kez hazırlanıp unutulmaması gerektiği vurgulanır. Su, ilk yardım malzemesi, fener, düdük ve kişisel ilaçlar düzenli olarak kontrol edilmelidir.",
     main: "Afet çantası, düzenli kontrol edildiğinde gerçek bir hazırlık aracına dönüşür.",
     detail: "su, fener, düdük ve kişisel ilaçların düzenli kontrol edilmesi",
     warning: "Tarihi geçmiş malzeme güven duygusu verse de ihtiyaç anında işe yaramayabilir.",
@@ -532,12 +532,12 @@ const contextDossiers = [
 function contextQuestion(grade, index, difficulty, number) {
   const dossier = contextDossiers[(index + grade) % contextDossiers.length];
   const cycle = Math.floor(index / contextDossiers.length);
-  const depth = grade === 5 ? "kısa bilgi kartı" : grade === 6 ? "rehber metni" : grade === 7 ? "çok parçalı afiş" : "bağlam temelli dosya";
+  const depth = grade === 5 ? "kısa bilgi kartı" : grade === 6 ? "rehber metni" : grade === 7 ? "çok parçalı okuma metni" : "bağlam temelli dosya";
   const applicationContexts = [
     "Öğrenciler bu sayfayı sınıf panosu için sadeleştirirken ana mesajı korumaya çalışmıştır.",
-    "Okuma kulübü, sayfadaki bilgi kutularını afişin ana metniyle ilişkilendirerek kısa bir sunum hazırlamıştır.",
+    "Okuma kulübü, sayfadaki bilgi kutularını ana metinle ilişkilendirerek kısa bir sunum hazırlamıştır.",
     "Bir grup öğrenci, rehberdeki önerileri günlük yaşamda uygulanabilir olup olmadığına göre değerlendirmiştir.",
-    "Öğretmen, öğrencilerden yalnız dikkat çekici görsele değil, küçük notlara ve tabloya da bakmalarını istemiştir.",
+    "Öğretmen, öğrencilerden yalnız ilk cümleye değil, bilgi kutularına ve tabloya da bakmalarını istemiştir.",
     "Sınıf tartışmasında bazı öğrenciler bilgi kutularının ana metni nasıl desteklediğini örneklerle açıklamıştır.",
     "Çalışmanın sonunda öğrenciler, rehberdeki uyarıların hangi davranışı değiştirmeyi amaçladığını belirlemiştir.",
     "Etkinlikte öğrenciler, metindeki kesin bilgi ile yorum gerektiren bölümleri farklı renklerle işaretlemiştir.",
@@ -626,7 +626,7 @@ function contextQuestion(grade, index, difficulty, number) {
     const made = makeOptions(dossier.warning, [
       "Bu konuda hiçbir risk bulunmadığı",
       "Tablodaki bütün satırların aynı anlama geldiği",
-      "Rehberin yalnız görsel süsleme amacı taşıdığı"
+      "Rehberin ana metinden bağımsız olduğu"
     ], index);
     return buildQuestion({
       ...common,
@@ -741,7 +741,7 @@ function lgsPdfStyleQuestion(common, index) {
   }
   if (mode === 2) {
     const correct = `${source.cards[0][0]}, ${source.cards[0][1].toLocaleLowerCase("tr-TR")}`;
-    const made = makeOptions(correct, [`${source.cards[1][0]}, metinde hiç açıklanmamıştır.`, `${source.cards[2][0]}, ana metinle çelişmektedir.`, `${source.cards[3][0]}, yalnız görsel süsleme amacı taşır.`], index);
+    const made = makeOptions(correct, [`${source.cards[1][0]}, metinde hiç açıklanmamıştır.`, `${source.cards[2][0]}, ana metinle çelişmektedir.`, `${source.cards[3][0]}, ana metinden bağımsız bir ayrıntıdır.`], index);
     return buildQuestion({ ...common, text: `${intro}${cards}`, stem: "Bilgi kutularından hareketle aşağıdakilerden hangisi söylenebilir?", ...made, solution: `İlk bilgi kutusunda '${source.cards[0][0]}' başlığı altında verilen açıklama doğrudan desteklenir.` });
   }
   if (mode === 3) {
@@ -753,7 +753,7 @@ function lgsPdfStyleQuestion(common, index) {
     return buildQuestion({ ...common, text: `${intro}${dataTable}`, stem: "Tablodaki bilgiler doğru eşleştirildiğinde aşağıdakilerden hangisi oluşur?", ...made, solution: "Doğru seçenek, tablonun aynı satırındaki üç bilgiyi değiştirmeden verir." });
   }
   if (mode === 5) {
-    const made = makeOptions(`"${source.boxTitle}" bölümü, ana metindeki düşünceyi somut bilgilerle desteklemektedir.`, [`"${source.boxTitle}" bölümü metnin konusunu değiştirmektedir.`, `"${source.boxTitle}" bölümü yalnız görsel süsleme amacı taşımaktadır.`, `"${source.boxTitle}" bölümü ana metindeki düşünceyle çelişmektedir.`], index);
+    const made = makeOptions(`"${source.boxTitle}" bölümü, ana metindeki düşünceyi somut bilgilerle desteklemektedir.`, [`"${source.boxTitle}" bölümü metnin konusunu değiştirmektedir.`, `"${source.boxTitle}" bölümü ana metinden kopuk bilgilerden oluşmaktadır.`, `"${source.boxTitle}" bölümü ana metindeki düşünceyle çelişmektedir.`], index);
     return buildQuestion({ ...common, text: `${intro}${cards}`, stem: `"${source.boxTitle}" bölümü ile ana metin arasındaki ilişki aşağıdakilerden hangisidir?`, ...made, solution: "Kutular, ana metindeki temel düşünceyi ayrıntılandırıp somutlaştırır." });
   }
   if (mode === 6) {
@@ -762,6 +762,136 @@ function lgsPdfStyleQuestion(common, index) {
   }
   const made = makeOptions(`Metin; ana açıklama, bilgi kutuları ve tabloyla ${source.title} konusunu çok yönlü tanıtmaktadır.`, ["Metin yalnız tek cümlelik bir uyarıdan oluşmaktadır.", "Metinde başlık ile bilgi kutuları arasında bağlantı yoktur.", "Metin herhangi bir okuma ya da yorumlama görevi gerektirmez."], index);
   return buildQuestion({ ...common, text: `${intro}${cards}${dataTable}`, stem: "Bu sayfanın yapısıyla ilgili en doğru yargı hangisidir?", ...made, solution: "Sayfa, ana metin, kutular ve tabloyu birlikte kullanan çok parçalı bir okuma metnidir." });
+}
+
+const mebGradeEightPassages = [
+  {
+    title: "Sabahın İlk Sesi",
+    text: "Gözlerini açtığında gün henüz doğmaya başlamıştı. Ağır hareketlerle doğruldu, besmelesini çekip her zamanki gibi camı açtı. Yüzüne vuran serin hava, geceden kalma yorgunluğu bir anda dağıttı. Uzaklarda bir köpek uluyor, horozlar bütün mahalleyi uyandırmak istercesine ötüyor, ağustos böcekleri görünmeyen bir telaşla kanat çırpıyordu. Aynadaki çizgili yüzüne bakınca zamanın sessizce eksilttiği günleri düşündü.",
+    topic: "sabah vaktinde yaşlı bir kişinin duygu ve gözlemleri",
+    main: "İnsan, sıradan bir sabah anında bile zamanın geçişini ve hayatın değerini derinden hissedebilir.",
+    detail: "Metinde görme, dokunma ve işitme duyularına seslenen ayrıntıların bulunması",
+    inference: "Kahraman sabahın canlılığını fark ederken kendi yaşlanmışlığıyla da yüzleşmektedir.",
+    style: "öyküleyici ve betimleyici anlatım"
+  },
+  {
+    title: "Çizgi Romanın Çekimi",
+    text: "(I) “Çizgi romanları neden seviyoruz?” sorusuna okurlar birbirinden farklı yanıtlar verebilir. (II) Kimi okur çizgilerin estetik etkisinden, kimi anlatım tekniğinin kendine özgü dinamizminden, kimi ise okuma deneyiminin sunduğu akıcılıktan söz eder; fakat tüm bu açıklamalara rağmen soruya tek ve kesin bir yanıt vermek kolay değildir. (III) Üstelik çizgi roman dünyası, çeşitliliğiyle bu soruyu daha da derinleştirir. (IV) Manga türünden deneysel çalışmalara, popüler kahraman serilerinden özgün yapımlara uzanan geniş yelpazesiyle çizgi roman, sonu olmayan bir evren niteliği taşır.",
+    topic: "çizgi romanların okur üzerindeki etkisi ve çeşitliliği",
+    main: "Çizgi romanların sevilme nedeni tek bir açıklamaya indirgenemeyecek kadar çeşitlidir.",
+    detail: "Çizgi roman okurlarının estetik, teknik ve akıcılık gibi farklı gerekçeler öne sürmesi",
+    inference: "Metinde ilk iki cümle okurun ilgisini, son iki cümle ise çizgi roman dünyasının genişliğini öne çıkarır.",
+    style: "tartışmacı ve açıklayıcı anlatım"
+  },
+  {
+    title: "Minyatürün Sabırlı Eli",
+    text: "Minyatür sanatında ayrıntı, yalnız göze hoş görünen bir süs değildir; anlatının taşıyıcısıdır. Bir savaş sahnesindeki atların dizilişi, bir şenlikteki kalabalığın yüz ifadeleri ya da bir bahçedeki ağaçların yerleşimi dönemin yaşama biçimi hakkında ipuçları verir. Bu yüzden minyatüre bakmak, küçük çizgilerin arasına saklanmış tarihî ve kültürel işaretleri okumayı gerektirir.",
+    topic: "minyatür sanatında ayrıntının işlevi",
+    main: "Minyatürde ayrıntılar, dönemin kültürünü ve yaşam biçimini anlamaya yarayan önemli ipuçları taşır.",
+    detail: "Atların dizilişi, yüz ifadeleri ve ağaçların yerleşiminin bilgi değeri taşıması",
+    inference: "Metin minyatürü yalnız görsel bir sanat değil, okunması gereken kültürel bir belge olarak değerlendirir.",
+    style: "açıklayıcı anlatım"
+  },
+  {
+    title: "Araştırmacının Sessizliği",
+    text: "Bir tarih araştırmacısının işi, eski belgelerin tozunu almakla bitmez. O, satır aralarında saklanan küçük bir tarih, unutulmuş bir imza ya da silik bir mühür üzerinden geçmişin eksik parçasına ulaşmaya çalışır. Bazen aradığı bilgi bir arşiv rafında değil, belgeler arasındaki sessiz ilişkide belirir. Bu nedenle araştırma sabır, dikkat ve kuşku isteyen uzun bir yolculuktur.",
+    topic: "tarih araştırmacılığında sabır ve dikkat",
+    main: "Tarih araştırması, belgeleri sabırla inceleyip küçük ipuçlarından anlamlı sonuçlar çıkarma işidir.",
+    detail: "Araştırmacının silik mühür ve unutulmuş imza gibi ayrıntılardan yararlanması",
+    inference: "Araştırmacı yalnız hazır bilgiyi bulmaz, dağınık ipuçları arasında ilişki kurar.",
+    style: "açıklayıcı ve betimleyici anlatım"
+  },
+  {
+    title: "Kısa Öykünün Kapısı",
+    text: "Kısa öykü, az sözle geniş bir alan açar okura. Bazen bir bakış, yarım kalmış bir cümle ya da kapının eşiğinde duran bir çift ayakkabı bütün bir hayatı düşündürmeye yeter. Bu türde yazar, her şeyi açıklamak yerine okurun sezgisine güvenir. Bu yüzden iyi bir kısa öykü, bittiği yerde kapanmaz; okurun zihninde yeni sorularla sürer.",
+    topic: "kısa öykünün okurda bıraktığı etki",
+    main: "Kısa öykü, az sözle okurun hayal gücünü ve sezgisini harekete geçiren bir türdür.",
+    detail: "Yazarın her şeyi açıklamak yerine okurun sezgisine güvenmesi",
+    inference: "Kısa öyküde eksik bırakılan alanlar okurun metne katılmasını sağlar.",
+    style: "deneme ve açıklayıcı anlatım"
+  },
+  {
+    title: "Yağmurdan Sonra",
+    text: "Yağmur dinince sokağın taşları koyu bir renge büründü. Saçaklardan düşen son damlalar, kaldırımın kenarında biriken küçük su halkalarını titretiyordu. Fırından yeni çıkmış ekmeğin kokusu, ıslak toprağın kokusuna karışmıştı. Bir çocuk, çamura basmamak için sekerek yürürken arkasında bıraktığı neşeli izlere dönüp gülümsedi.",
+    topic: "yağmur sonrası sokakta oluşan canlı görünüm",
+    main: "Yağmurdan sonra sıradan bir sokak, duyulara seslenen canlı bir görünüme kavuşur.",
+    detail: "Koku, görüntü ve hareket bildiren ayrıntıların birlikte verilmesi",
+    inference: "Metin olaydan çok atmosferi ve duyusal ayrıntıları öne çıkarmaktadır.",
+    style: "betimleyici anlatım"
+  },
+  {
+    title: "Eleştirinin Ölçüsü",
+    text: "Eleştiri, bir eserin yalnız kusurlarını göstermek değildir. İyi bir eleştirmen, metnin nerede güçlendiğini, nerede eksildiğini ve hangi gelenekle konuştuğunu birlikte değerlendirir. Eseri peşin hükümlerle yargılamak kolaydır; asıl zor olan, metnin kendi dünyasına girip onu kendi ölçüleri içinde anlamaya çalışmaktır.",
+    topic: "nitelikli edebiyat eleştirisinin özellikleri",
+    main: "Nitelikli eleştiri, eseri hem güçlü hem eksik yönleriyle kendi bütünlüğü içinde değerlendirmelidir.",
+    detail: "Eleştirmenin eserin hangi gelenekle konuştuğunu da dikkate alması",
+    inference: "Eleştiri, yargı vermekten önce anlama çabası gerektirir.",
+    style: "tartışmacı anlatım"
+  }
+];
+
+function mebLgsQuestion(common, index) {
+  const passage = mebGradeEightPassages[index % mebGradeEightPassages.length];
+  const mode = index % 6;
+  if (mode === 0) {
+    const narrative = mebGradeEightPassages[0];
+    return buildQuestion({
+      ...common,
+      text: narrative.text,
+      stem: "Bu metnin dil ve anlatımıyla ilgili aşağıdakilerden hangisi söylenemez?",
+      options: ["Betimleyici ögelere yer verilmiştir.", "Anlatıcı olayın kahramanlarından biridir.", "Anlatımda duyulara seslenen ayrıntılar kullanılmıştır.", "Metnin anlatımı konuya uygun bir atmosfer oluşturmuştur."],
+      answer: "B",
+      solution: "Metin üçüncü kişi anlatıcıyla kurulmuştur; anlatıcı olayın kahramanlarından biri değildir."
+    });
+  }
+  if (mode === 1) {
+    return buildQuestion({
+      ...common,
+      text: mebGradeEightPassages[1].text,
+      stem: "Bu metin iki paragrafa ayrılmak istendiğinde ikinci paragraf numaralanmış cümlelerin hangisiyle başlar?",
+      options: ["I", "II", "III", "IV"],
+      answer: "C",
+      solution: "I ve II. cümlelerde okurların çizgi romanı sevme nedenleri tartışılır. III. cümleden itibaren çizgi roman dünyasının çeşitliliğine geçildiği için ikinci paragraf III ile başlar."
+    });
+  }
+  if (mode === 2) {
+    return buildQuestion({
+      ...common,
+      text: passage.text,
+      stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
+      options: ["Bir sınavın uygulanma biçimi", passage.topic, "Okul kurallarının tarihçesi", "Bir yazarın doğum yeri"],
+      answer: "B",
+      solution: `Metnin bütününde ${passage.topic} üzerinde durulmaktadır.`
+    });
+  }
+  if (mode === 3) {
+    return buildQuestion({
+      ...common,
+      text: passage.text,
+      stem: "Bu metinden hareketle aşağıdakilerden hangisine ulaşılabilir?",
+      options: ["Metindeki bütün ayrıntılar konudan bağımsızdır.", passage.inference, "Yazar, konuyu hiçbir örnekle desteklememiştir.", "Metin yalnızca yönerge cümlelerinden oluşmaktadır."],
+      answer: "B",
+      solution: `Metindeki ayrıntılar '${passage.inference}' sonucuna ulaşmayı sağlar.`
+    });
+  }
+  if (mode === 4) {
+    return buildQuestion({
+      ...common,
+      text: `${passage.text}\n\n(I) Bu metinde yazar, konuyu tek bir örnekle sınırlamamıştır. (II) Düşüncesini açıklarken ayrıntılardan ve yorumdan yararlanmıştır. (III) Metinde kullanılan bütün cümleler yalnızca soru anlamı taşımaktadır. (IV) Anlatım, okurun konuyu farklı yönleriyle değerlendirmesine imkân verir.`,
+      stem: "Numaralanmış cümlelerden hangisi metnin anlatımıyla ilgili yanlış bir değerlendirmedir?",
+      options: ["I", "II", "III", "IV"],
+      answer: "C",
+      solution: "Metindeki cümlelerin tamamı soru anlamı taşımaz; III. cümledeki değerlendirme yanlıştır."
+    });
+  }
+  return buildQuestion({
+    ...common,
+    text: passage.text,
+    stem: "Bu metinde ağır basan anlatım biçimi aşağıdakilerden hangisidir?",
+    options: ["Masalsı anlatım", passage.style, "Destansı anlatım", "Emredici anlatım"],
+    answer: "B",
+    solution: `Metnin kuruluşu ve kullanılan ayrıntılar ${passage.style} özelliği gösterir.`
+  });
 }
 
 const gradeEightPassages = [
@@ -806,12 +936,12 @@ const gradeEightPassages = [
     inference: "Uzun metinlerde başarı, yalnız hızlı okumaya değil ne aradığını bilmeye de bağlıdır."
   },
   {
-    title: "Görsel okuma",
-    text: "Bir afişte verilen bilgiler, metin kadar dikkatli okunmadığında yanlış yorumlanabilir. Başlık, renk, oran ve küçük notlar birlikte değerlendirilmelidir. Öğrenci yalnız en büyük yazıya bakarsa görselin vermek istediği mesajın bir bölümünü kaçırabilir. Bu yüzden görsel sorularında ayrıntılar da ana bilgi kadar önem taşır.",
-    topic: "görsel unsurları birlikte değerlendirme",
-    main: "Görsel okuma, başlık ve ayrıntıları birlikte yorumlamayı gerektirir.",
-    detail: "Başlık, renk, oran ve küçük notların birlikte değerlendirilmesi gerektiği",
-    inference: "Görsel sorularında yalnız dikkat çeken bölüme bakmak eksik yorumlara yol açabilir."
+    title: "Sanat Dergisi Dosyası",
+    text: "Bir sanat dergisinde genç çizerlerin çalışmalarına ayrılan dosyada yalnız çizimlerin güzelliği değil, çizgilerin anlatıya nasıl hizmet ettiği de tartışılmıştır. Dosyada, bir karakterin yüzündeki küçük bir gölgenin korkuyu; arka planda eğilen bir ağacın ise yaklaşan fırtınayı sezdirebileceği belirtilir. Böylece görsel anlatının, metindeki duyguyu tamamlayan güçlü bir dil olduğu vurgulanır.",
+    topic: "görsel anlatımın metindeki duyguyu desteklemesi",
+    main: "Görsel anlatım, yalnız süsleme değil metnin duygu ve anlam dünyasını güçlendiren bir dildir.",
+    detail: "Küçük bir gölgenin korkuyu, eğilen ağacın yaklaşan fırtınayı sezdirebileceği",
+    inference: "Görsel unsurlar, metindeki anlamı tamamlayan yorumlanabilir ayrıntılar olarak kullanılmıştır."
   },
   {
     title: "Kaynak güvenilirliği",
@@ -976,7 +1106,7 @@ const gradeEightPassages = [
 ];
 
 function gradeEightSkillQuestion(topic, index, difficulty, number) {
-  const passage = gradeEightPassages[index % gradeEightPassages.length];
+  const passage = mebGradeEightPassages[index % mebGradeEightPassages.length];
   const passageCycle = Math.floor(index / gradeEightPassages.length);
   const passageAdditions = [
     "",
@@ -1027,7 +1157,7 @@ function gradeEightSkillQuestion(topic, index, difficulty, number) {
     }
   };
   if (topic === "Metinler arası karşılaştırma") {
-    const other = gradeEightPassages[(index + 7) % gradeEightPassages.length];
+    const other = mebGradeEightPassages[(index + 3) % mebGradeEightPassages.length];
     const otherText = `${other.text}${passageAdditions[passageCycle % passageAdditions.length]}`;
     return buildQuestion({
       ...common,
@@ -1044,7 +1174,7 @@ function gradeEightSkillQuestion(topic, index, difficulty, number) {
     });
   }
   if (topic === "LGS tarzı yeni nesil paragraf soruları") {
-    return lgsPdfStyleQuestion(common, index);
+    return mebLgsQuestion(common, index);
   }
   if (topic === "Tablo-grafik-görsel okuma") {
     const dataSets = [
@@ -1209,7 +1339,7 @@ function newGenerationQuestion(grade, topic, index, seed, note, difficulty, numb
         solution: "Günlük okuma süresi en yüksek olan öğrenci 35 dakika ile Bora'dır."
       },
       {
-        text: `<p>Okul kantininde sağlıklı ara öğün haftası için bir afiş hazırlanmıştır. Afişte ürünlerin özellikleri şöyle verilmiştir:</p>${stimulusTable(["Ürün", "Meyve içerir", "Şeker eklenmiş", "Saklama"], [["Yoğurtlu kase", "Evet", "Hayır", "Soğuk"], ["Kuru meyve paketi", "Evet", "Hayır", "Kuru"], ["Çikolatalı bar", "Hayır", "Evet", "Kuru"], ["Meyveli içecek", "Evet", "Evet", "Soğuk"]])}<p>Öğrencilerden meyve içeren ama şeker eklenmemiş ürünleri seçmeleri istenmiştir.</p>`,
+        text: `<p>Okul kantininde sağlıklı ara öğün haftası için ürün özelliklerini gösteren bir bilgi tablosu hazırlanmıştır:</p>${stimulusTable(["Ürün", "Meyve içerir", "Şeker eklenmiş", "Saklama"], [["Yoğurtlu kase", "Evet", "Hayır", "Soğuk"], ["Kuru meyve paketi", "Evet", "Hayır", "Kuru"], ["Çikolatalı bar", "Hayır", "Evet", "Kuru"], ["Meyveli içecek", "Evet", "Evet", "Soğuk"]])}<p>Öğrencilerden meyve içeren ama şeker eklenmemiş ürünleri seçmeleri istenmiştir.</p>`,
         stem: "Bu koşula uyan ürünler aşağıdakilerin hangisinde birlikte verilmiştir?",
         options: ["Yoğurtlu kase ve kuru meyve paketi", "Çikolatalı bar ve meyveli içecek", "Yoğurtlu kase ve çikolatalı bar", "Kuru meyve paketi ve meyveli içecek"],
         answer: "A",
