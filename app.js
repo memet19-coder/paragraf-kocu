@@ -387,7 +387,7 @@ const contextDossiers = [
   {
     title: "Akıllı Sofra Rehberi",
     field: "sağlık ve beslenme",
-    lead: "Okul panosunda sağlıklı beslenme için hazırlanan rehberde tabağın renkli sebzeler, tam tahıllar, baklagiller ve ölçülü yağlarla dengelenmesi gerektiği anlatılmıştır. Rehber, tek bir yiyeceği mucize gibi göstermeden günlük seçimlerin toplam etkisine dikkat çeker.",
+    lead: "Sağlıklı beslenmede tabağın renkli sebzeler, tam tahıllar, baklagiller ve ölçülü yağlarla dengelenmesi gerekir. Tek bir yiyeceği mucize gibi görmek yerine günlük seçimlerin toplam etkisine dikkat etmek daha doğru bir yaklaşımdır.",
     main: "Sağlıklı beslenme, tek bir besine yüklenmek yerine dengeli ve sürdürülebilir seçimler yapmayı gerektirir.",
     detail: "rehberin tek bir yiyeceği mucize gibi göstermediği",
     warning: "Bir besini çok tüketmek, dengeli beslenmenin yerini tutmaz.",
@@ -400,7 +400,7 @@ const contextDossiers = [
   {
     title: "Seslerin Haritası",
     field: "ses farkındalığı",
-    lead: "Bir dergi sayfası, şehirdeki sesleri yalnız gürültü olarak değil, dikkat ve duygu durumunu etkileyen ipuçları olarak ele almıştır. Öğrencilerden gün içinde duydukları sesleri, hissettirdikleri duyguyla birlikte not etmeleri istenmiştir.",
+    lead: "Şehirdeki sesler yalnız gürültü olarak görülmemelidir; bazı sesler dikkat süresini, ruh hâlini ve çalışma verimini etkileyebilir. Gün içinde duyulan sesleri, hissettirdikleri duyguyla birlikte not etmek çevreyi daha bilinçli fark etmeyi sağlar.",
     main: "Çevredeki sesleri bilinçli fark etmek, dikkat ve duygu yönetimini destekler.",
     detail: "seslerin hissettirdiği duygularla birlikte not edilmesi",
     warning: "Sürekli bildirim sesi, dikkati küçük parçalara bölebilir.",
@@ -413,7 +413,7 @@ const contextDossiers = [
   {
     title: "Balkondan Gökyüzü",
     field: "gökyüzü gözlemi",
-    lead: "Şehir ışıkları arasında bile gökyüzünü izlemek mümkündür. Rehberde, ayın evrelerini not etmek, parlak yıldızları takip etmek ve kısa gözlem süreleriyle gökyüzü alışkanlığı kazanmak önerilir.",
+    lead: "Şehir ışıkları arasında bile gökyüzünü izlemek mümkündür. Ayın evrelerini not etmek, parlak yıldızları takip etmek ve kısa gözlem süreleri ayırmak gökyüzü gözlemini düzenli bir alışkanlığa dönüştürür.",
     main: "Gökyüzünü düzenli gözlemlemek, insanın doğayla bağını ve merak duygusunu güçlendirir.",
     detail: "ayın evrelerinin not edilmesi ve parlak yıldızların takip edilmesi",
     warning: "Gözlem için güçlü araçlardan önce düzenli dikkat gerekir.",
@@ -426,7 +426,7 @@ const contextDossiers = [
   {
     title: "Bilgiyi Kalıcı Kılan Tekrar",
     field: "öğrenme ve tekrar",
-    lead: "Aralıklı tekrar, öğrenilen bilginin belirli zaman aralıklarıyla yeniden hatırlanmasına dayanır. Rehberde kısa ama planlı tekrarların, uzun ve düzensiz çalışmalardan daha kalıcı öğrenme sağlayabileceği belirtilmiştir.",
+    lead: "Aralıklı tekrar, öğrenilen bilginin belirli zaman aralıklarıyla yeniden hatırlanmasına dayanır. Kısa ama planlı tekrarlar, uzun ve düzensiz çalışmalardan daha kalıcı öğrenme sağlayabilir.",
     main: "Bilgi, doğru aralıklarla hatırlandığında daha kalıcı hâle gelir.",
     detail: "kısa ama planlı tekrarların uzun ve düzensiz çalışmalardan etkili olabileceği",
     warning: "Üst üste uzun çalışmak, öğrenmeyi kalıcı kılmak için tek başına yeterli değildir.",
@@ -439,7 +439,7 @@ const contextDossiers = [
   {
     title: "Bulutların Haritası",
     field: "doğa ve hava gözlemi",
-    lead: "Bulutlar yalnız gökyüzünü süsleyen görüntüler değildir; hava değişimlerinin ipuçlarını taşır. Bir gözlem dosyasında bulutların şekli, yüksekliği ve rengi incelenerek hava hakkında yorum yapılabileceği anlatılır.",
+    lead: "Bulutlar yalnız gökyüzünü süsleyen görüntüler değildir; hava değişimlerinin ipuçlarını taşır. Bulutların şekli, yüksekliği ve rengi birlikte incelendiğinde hava hakkında daha dikkatli yorum yapılabilir.",
     main: "Bulutları gözlemlemek, hava olaylarını anlamaya yardımcı olur.",
     detail: "bulutların şekli, yüksekliği ve renginin incelenmesi",
     warning: "Tek bir buluta bakarak kesin hava tahmini yapmak doğru değildir.",
@@ -452,7 +452,7 @@ const contextDossiers = [
   {
     title: "Artıklarla Barış Rehberi",
     field: "israfı azaltma",
-    lead: "Evde artan yiyecekleri değerlendirmek için hazırlanan eğlenceli rehberde, kapların üzerine tarih yazmak, görünür raf kullanmak ve küçük porsiyonlar hazırlamak önerilir. Amaç, yiyecekleri unutulmuş eşya olmaktan çıkarıp planlı tüketime katmaktır.",
+    lead: "Evde artan yiyecekleri değerlendirmek için kapların üzerine tarih yazmak, görünür raf kullanmak ve küçük porsiyonlar hazırlamak işe yarar. Amaç, yiyecekleri unutulmuş eşya olmaktan çıkarıp planlı tüketime katmaktır.",
     main: "Yiyecek israfını azaltmak, küçük düzenleme alışkanlıklarıyla mümkündür.",
     detail: "kapların üzerine tarih yazılması ve görünür raf kullanılması",
     warning: "Tarihsiz kaplar, yiyeceklerin unutulmasına ve bozulmasına yol açabilir.",
@@ -465,7 +465,7 @@ const contextDossiers = [
   {
     title: "Dijital Denge Planı",
     field: "teknoloji kullanımı",
-    lead: "Dijital denge planında ekran süresini tamamen yasaklamak yerine kullanım amacını belirlemek önerilir. Öğrenciler, ders, iletişim ve eğlence sürelerini ayırdığında teknolojiyi daha bilinçli kullanabilir.",
+    lead: "Ekran süresini tamamen yasaklamak yerine kullanım amacını belirlemek daha dengeli bir yoldur. Ders, iletişim ve eğlence süreleri birbirinden ayrıldığında teknoloji daha bilinçli kullanılabilir.",
     main: "Teknolojiyi bilinçli kullanmak, süre kadar amaç belirlemeyi de gerektirir.",
     detail: "ders, iletişim ve eğlence sürelerinin ayrılması",
     warning: "Amaçsız ekran kullanımı, zamanın fark edilmeden dağılmasına neden olabilir.",
@@ -478,7 +478,7 @@ const contextDossiers = [
   {
     title: "Su İzini Takip Et",
     field: "su tasarrufu",
-    lead: "Bir çevre bülteni, su kullanımının yalnız musluğu kapatmakla sınırlı olmadığını anlatır. Gıda, kıyafet ve temizlik alışkanlıkları da dolaylı su tüketimini etkiler. Öğrencilerden günlük seçimlerinin su izini düşünmeleri istenir.",
+    lead: "Su kullanımı yalnız musluğu kapatmakla sınırlı değildir. Gıda, kıyafet ve temizlik alışkanlıkları da dolaylı su tüketimini etkiler. Günlük seçimlerin su izini düşünmek, tasarruf bilincini güçlendirir.",
     main: "Su tasarrufu, doğrudan ve dolaylı tüketimi birlikte fark etmeyi gerektirir.",
     detail: "gıda, kıyafet ve temizlik alışkanlıklarının dolaylı su tüketimini etkilemesi",
     warning: "Yalnız musluğu kapatmak, su bilinci için yeterli görülmemelidir.",
@@ -504,7 +504,7 @@ const contextDossiers = [
   {
     title: "Şehirde Bisiklet Rotası",
     field: "ulaşım ve güvenlik",
-    lead: "Bir ulaşım yazısında bisiklet kullanmanın çevreye katkısı anlatılırken güvenli rota seçmenin önemi de vurgulanmıştır. Kask takmak, görünür kıyafet seçmek ve araç trafiğinin yoğun olduğu yollardan kaçınmak temel öneriler arasındadır.",
+    lead: "Bisiklet kullanmak çevreye katkı sağlar; ancak güvenli rota seçmek de en az bunun kadar önemlidir. Kask takmak, görünür kıyafet seçmek ve araç trafiğinin yoğun olduğu yollardan kaçınmak temel güvenlik adımlarıdır.",
     main: "Bisiklet kullanımı, çevre yararı kadar güvenli rota planlaması da gerektirir.",
     detail: "kask, görünür kıyafet ve güvenli rota seçiminin önerilmesi",
     warning: "Yoğun trafikli yolda plansız sürüş risk oluşturabilir.",
@@ -532,79 +532,65 @@ const contextDossiers = [
 function contextQuestion(grade, index, difficulty, number) {
   const dossier = contextDossiers[(index + grade) % contextDossiers.length];
   const cycle = Math.floor(index / contextDossiers.length);
-  const depth = grade === 5 ? "kısa bilgi kartı" : grade === 6 ? "rehber metni" : grade === 7 ? "çok parçalı okuma metni" : "bağlam temelli dosya";
-  const applicationContexts = [
-    "Öğrenciler bu sayfayı sınıf panosu için sadeleştirirken ana mesajı korumaya çalışmıştır.",
-    "Okuma kulübü, sayfadaki bilgi kutularını ana metinle ilişkilendirerek kısa bir sunum hazırlamıştır.",
-    "Bir grup öğrenci, rehberdeki önerileri günlük yaşamda uygulanabilir olup olmadığına göre değerlendirmiştir.",
-    "Öğretmen, öğrencilerden yalnız ilk cümleye değil, bilgi kutularına ve tabloya da bakmalarını istemiştir.",
-    "Sınıf tartışmasında bazı öğrenciler bilgi kutularının ana metni nasıl desteklediğini örneklerle açıklamıştır.",
-    "Çalışmanın sonunda öğrenciler, rehberdeki uyarıların hangi davranışı değiştirmeyi amaçladığını belirlemiştir.",
-    "Etkinlikte öğrenciler, metindeki kesin bilgi ile yorum gerektiren bölümleri farklı renklerle işaretlemiştir.",
-    "Okul bülteni için yapılan düzenlemede başlık, tablo ve rehber adımları birlikte değerlendirilmiştir.",
-    "Öğrenciler, bu dosyadan hareketle bir günlük uygulama planı çıkarıp hangi adımın önce geleceğini tartışmıştır.",
-    "Soru çözümünde öğrencilerden, metinde açıkça verilen bilgiyle kendi tahminlerini birbirinden ayırmaları istenmiştir."
-  ];
-  const application = applicationContexts[(index + cycle + grade) % applicationContexts.length];
-  const intro = `<p><strong>${dossier.title}</strong> adlı ${depth}, ${dossier.field} konusunda hazırlanmıştır. ${dossier.lead}</p><p>${application}</p>`;
+  const intro = `<p>${dossier.lead}</p>`;
   const factCards = stimulusCards([
-    { title: "Bilgi", text: dossier.fact },
+    { title: "Kesin bilgi", text: dossier.fact },
     { title: "Uyarı", text: dossier.warning },
-    { title: "Söz", text: dossier.quote },
-    { title: "Odak", text: dossier.field }
+    { title: "Kısa not", text: dossier.quote }
   ]);
   const table = stimulusTable(["Başlık", "Bilgi", "Not"], dossier.table);
   const steps = stimulusList(dossier.steps.map((step, stepIndex) => `${stepIndex + 1}. ${step}`));
-  const mode = (index + grade + cycle) % 6;
+  const mode = (index + grade + cycle) % 10;
   const common = {
     grade,
     topic: "Bağlam temelli yeni nesil okuma",
     difficulty,
     outcome: `Bağlam temelli okuma ve yorumlama sorusu ${number}.`,
-    strategy: "Parçaları ayrı ayrı oku; tablo, bilgi kutusu ve ana metnin aynı bilgiyi nasıl desteklediğini karşılaştır.",
-    hint: "Cevabı yalnız tek kutudan değil, bütün bağlamdan doğrula.",
-    wrong: "Yanlış seçenekler ya metinde olmayan bilgi ekler ya da yalnız bir ayrıntıyı genelleştirir."
+    strategy: "Önce metnin ana fikrini bul, sonra tablo ve kutulardaki bilgiyi metinle karşılaştır.",
+    hint: "Cevabı metindeki açık bilgiyle veya bütün parçaların ortak mesajıyla doğrula.",
+    wrong: "Yanlış seçenekler metni dar yorumlar, metinde olmayan bilgi ekler ya da verilen sırayı bozar."
   };
   if (mode === 0) {
     const made = makeOptions(dossier.main, [
-      "Metindeki bütün bilgiler yalnız eğlenmek için verilmiştir.",
-      "Tablodaki her bilgi birbirinin aynısıdır.",
-      "Rehber, okurun hiçbir davranışını değiştirmeyi amaçlamaz."
+      `${dossier.field} konusunda tek bir ayrıntıyı bilmek yeterlidir.`,
+      "Metindeki öneriler günlük yaşamla ilişkilendirilemez.",
+      "Metinde verilen örnekler ana düşünceyle bağlantı kurmaz."
     ], index);
     return buildQuestion({
       ...common,
       text: `${intro}${factCards}`,
-      stem: "Bu bağlamdan çıkarılabilecek ana düşünce aşağıdakilerden hangisidir?",
+      stem: "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
       ...made,
-      solution: `Ana metin ve bilgi kutuları birlikte değerlendirildiğinde '${dossier.main}' yargısı desteklenir.`
+      solution: `Metin ve bilgi kutuları birlikte değerlendirildiğinde '${dossier.main}' düşüncesi desteklenir.`
     });
   }
   if (mode === 1) {
     const made = makeOptions(dossier.detail, [
-      "konunun yalnız tarihsel yönünün anlatıldığı",
-      "bütün önerilerin yasaklama biçiminde verildiği",
-      "okurun hiçbir gözlem yapmasına gerek olmadığı"
+      "konunun yalnız geçmişteki örneklerle açıklandığı",
+      "önerilerin tamamının bir yasaklama biçiminde verildiği",
+      "okurun hiçbir davranışı değiştirmesine gerek görülmediği"
     ], index);
     return buildQuestion({
       ...common,
-      text: `${intro}${table}`,
+      text: intro,
       stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
       ...made,
       solution: `Metnin ilgili bölümünde '${dossier.detail}' bilgisi açıkça yer alır.`
     });
   }
   if (mode === 2) {
-    const made = makeOptions(dossier.fact, [
-      dossier.myth,
-      "Tablodaki en düşük değer her zaman en önemli bilgidir.",
-      "Bilgi kutuları ana metinle ilişkisizdir."
+    const firstRow = dossier.table[0];
+    const made = makeOptions(`${firstRow[0]} için verilen bilgi '${firstRow[1]}', not ise '${firstRow[2]}' şeklindedir.`, [
+      `${dossier.table[1][0]} için verilen bilgi '${firstRow[1]}' olarak gösterilmiştir.`,
+      `${dossier.table[2][0]} ile ilgili not '${firstRow[2]}' biçiminde verilmiştir.`,
+      `${dossier.table[3][0]} tablonun en olumlu örneği olarak gösterilmiştir.`
     ], index);
     return buildQuestion({
       ...common,
-      text: `${intro}${stimulusTable(["Mit", "Gerçek"], [[dossier.myth, dossier.fact], ["Tek başına tek yöntem yeterlidir.", dossier.warning]])}`,
-      stem: "Mit-gerçek tablosuna göre doğru bilgi aşağıdakilerden hangisidir?",
+      text: `${intro}${table}`,
+      stem: "Tablodaki bilgilere göre aşağıdakilerden hangisi doğrudur?",
       ...made,
-      solution: `Tabloda mitin karşısında verilen gerçek bilgi '${dossier.fact}' ifadesidir.`
+      solution: "Doğru seçenek tablonun aynı satırındaki bilgileri yer değiştirmeden verir."
     });
   }
   if (mode === 3) {
@@ -616,37 +602,89 @@ function contextQuestion(grade, index, difficulty, number) {
     ], index);
     return buildQuestion({
       ...common,
-      text: `${intro}<p>Rehberde önerilen uygulama sırası şöyledir:</p>${steps}`,
-      stem: "Bu rehbere göre adımların doğru sıralaması hangisidir?",
+      text: `${intro}<p>Önerilen uygulama sırası:</p>${steps}`,
+      stem: "Numaralanmış adımların doğru sıralaması aşağıdakilerden hangisidir?",
       ...made,
-      solution: "Rehberdeki numaralı adımlar korunmalıdır; doğru sıra metindeki sırayla aynıdır."
+      solution: "Numaralı adımlar korunmalıdır; doğru sıra metindeki sırayla aynıdır."
     });
   }
   if (mode === 4) {
     const made = makeOptions(dossier.warning, [
-      "Bu konuda hiçbir risk bulunmadığı",
-      "Tablodaki bütün satırların aynı anlama geldiği",
-      "Rehberin ana metinden bağımsız olduğu"
+      `${dossier.fact} bilgisinin bütünüyle yanlış olduğu`,
+      `${dossier.detail} bilgisinin metinde hiç yer almadığı`,
+      `${dossier.field} konusunda hiçbir önlem gerekmediği`
     ], index);
     return buildQuestion({
       ...common,
-      text: `${intro}${table}<p><strong>Dikkat kutusu:</strong> ${dossier.warning}</p>`,
-      stem: "Dikkat kutusuna göre okurun kaçınması gereken durum aşağıdakilerden hangisidir?",
+      text: `${intro}${table}<p><strong>Dikkat:</strong> ${dossier.warning}</p>`,
+      stem: "Metindeki uyarıya göre kaçınılması gereken durum aşağıdakilerden hangisidir?",
       ...made,
-      solution: `Dikkat kutusunda özellikle '${dossier.warning}' uyarısı yapılmıştır.`
+      solution: `Metinde özellikle '${dossier.warning}' uyarısı yapılmıştır.`
     });
   }
-  const made = makeOptions(`Bu dosya ${dossier.field} konusunda bilinçli davranış geliştirmeyi amaçlar.`, [
-    "Dosya yalnız bir ürünün reklamını yapmaktadır.",
-    "Dosya okura hiçbir öneri sunmamaktadır.",
-    "Dosya bütün bilgilerin ezberlenmesini yeterli görmektedir."
+  if (mode === 5) {
+    const made = makeOptions(dossier.fact, [
+      dossier.myth,
+      `${dossier.warning} uyarısının gereksiz olduğu`,
+      `${dossier.field} konusunda tek bir yöntemin herkese aynı sonucu verdiği`
+    ], index);
+    return buildQuestion({
+      ...common,
+      text: `${intro}${factCards}`,
+      stem: "Metindeki kesin bilgi aşağıdakilerden hangisidir?",
+      ...made,
+      solution: `Bilgi kutusunda '${dossier.fact}' yargısı kesin bilgi olarak verilmiştir.`
+    });
+  }
+  if (mode === 6) {
+    const made = makeOptions(dossier.myth, [dossier.fact, dossier.main, dossier.detail], index);
+    return buildQuestion({
+      ...common,
+      text: `${intro}<p><strong>Yanlış bilinen:</strong> ${dossier.myth}</p><p><strong>Doğrusu:</strong> ${dossier.fact}</p>`,
+      stem: "Bu metne göre aşağıdakilerden hangisi yanlış bir yorumdur?",
+      ...made,
+      solution: `Metin '${dossier.myth}' yargısını desteklemez; bunun yerine '${dossier.fact}' bilgisini verir.`
+    });
+  }
+  if (mode === 7) {
+    const made = makeOptions(`${dossier.field} konusunda daha bilinçli davranmaya yönlendirmek`, [
+      "Bir olayın kahramanlarını tanıtmak",
+      "Okura yalnız sanatsal bir betimleme sunmak",
+      "Bir yerin tarihini kronolojik sırayla anlatmak"
+    ], index);
+    return buildQuestion({
+      ...common,
+      text: `${intro}${factCards}`,
+      stem: "Bu metnin yazılış amacı aşağıdakilerden hangisidir?",
+      ...made,
+      solution: `Metin, ${dossier.field} konusunda okuru bilinçlendirmeye ve günlük davranışlarını düzenlemeye yöneltir.`
+    });
+  }
+  if (mode === 8) {
+    const made = makeOptions(`Metinde ${dossier.field} konusuyla ilgili öneri, uyarı ve örneklere yer verilmiştir.`, [
+      "Metin yalnızca kişisel bir anıyı olay sırasıyla anlatmaktadır.",
+      "Metinde konu, karşılıklı konuşmalarla ilerletilmiştir.",
+      "Metinde hiçbir açıklayıcı bilgiye yer verilmemiştir."
+    ], index);
+    return buildQuestion({
+      ...common,
+      text: `${intro}${table}`,
+      stem: "Bu metnin içeriğiyle ilgili aşağıdakilerden hangisi söylenebilir?",
+      ...made,
+      solution: "Ana metin, tablo ve kısa bilgiler aynı konuyu farklı yönlerden destekler."
+    });
+  }
+  const made = makeOptions(dossier.inference || dossier.main, [
+    "Metindeki bilgiler tek bir ayrıntıya indirgenmelidir.",
+    "Tablo ve kısa notlar metnin ana düşüncesiyle çelişmektedir.",
+    "Metin, okurun konuyla ilgili hiçbir değerlendirme yapmasını istemez."
   ], index);
   return buildQuestion({
     ...common,
     text: `${intro}${factCards}${table}`,
-    stem: "Bu bağlam temelli metnin hazırlanma amacı aşağıdakilerden hangisidir?",
+    stem: "Bu metinden aşağıdakilerden hangisine ulaşılabilir?",
     ...made,
-    solution: `Metindeki rehber, tablo ve bilgi kutuları ${dossier.field} konusunda bilinçli davranış geliştirmeye yöneliktir.`
+    solution: "Metindeki açıklamalar, tablo ve kısa bilgiler birlikte değerlendirildiğinde doğru çıkarıma ulaşılır."
   });
 }
 
@@ -675,7 +713,7 @@ const lgsPdfContexts = [
   },
   {
     title: "Seslerin Haritası",
-    text: "Günlük yaşamda duyduğumuz sesler ruh hâlimizi, dikkat süremizi ve çalışma verimimizi etkileyebilir. Rehberde yağmur, kuş sesi, trafik uğultusu, bildirim sesi ve klavye ritmi gibi seslerin kişide uyandırabileceği etkiler sınıflandırılmıştır.",
+    text: "Günlük yaşamda duyduğumuz sesler ruh hâlimizi, dikkat süremizi ve çalışma verimimizi etkileyebilir. Yağmur, kuş sesi, trafik uğultusu, bildirim sesi ve klavye ritmi kişide farklı etkiler uyandırabilir.",
     boxTitle: "Gün içindeki ses katmanları",
     cards: [["Doğa sesleri", "Yağmur, rüzgâr ve kuş sesleri."], ["Şehir sesleri", "Trafik, korna ve insan kalabalığı."], ["Dijital sesler", "Bildirim, alarm ve klavye tıklamaları."], ["Sessizlik", "Dinlenme ve odaklanma alanı."]],
     table: [["Yağmur", "Sakinlik", "Doğal ses"], ["Kuş sesi", "Açıklık", "Doğal ses"], ["Trafik", "Yorgunluk", "Şehir sesi"], ["Bildirim", "Dikkat bölünmesi", "Dijital ses"]],
@@ -725,19 +763,14 @@ function lgsPdfStyleQuestion(common, index) {
   const mode = (index + cycle) % 8;
   const cards = stimulusCards(source.cards.map(([title, text]) => ({ title, text })));
   const dataTable = stimulusTable(["Bölüm", "Bilgi", "İşlev"], source.table);
-  const cycleNotes = [
-    "Öğrenciler bu sayfayı ana metin, bilgi kutusu ve tablo ilişkisiyle incelemiştir.",
-    "Sınıf çalışmasında aynı sayfa bu kez yanlış yorumları ayıklamak için kullanılmıştır.",
-    "Öğretmen, öğrencilerden sayfadaki küçük kutuları ana düşünceyle ilişkilendirmelerini istemiştir."
-  ];
-  const intro = `<p><strong>${source.title}</strong></p><p>${source.text}</p><p>${cycleNotes[cycle % cycleNotes.length]}</p>`;
+  const intro = `<p>${source.text}</p>`;
   if (mode === 0) {
     const made = makeOptions(source.main, ["Metnin amacı yalnız okuru eğlendirmektir.", "Metinde verilen kutular ana metinle ilişkisizdir.", "Metin tek bir ayrıntıyı bütün bilgilerden üstün tutmaktadır."], index);
     return buildQuestion({ ...common, text: `${intro}${cards}`, stem: "Bu metin ve bilgi kutuları birlikte değerlendirildiğinde ulaşılabilecek ana düşünce hangisidir?", ...made, solution: `Ana metin ve kutular '${source.main}' düşüncesinde birleşir.` });
   }
   if (mode === 1) {
     const made = makeOptions(source.fact, [source.myth, "Tablodaki tüm bilgiler aynı anlama gelir.", "Metinde hiçbir karşılaştırma yapılmamıştır."], index);
-    return buildQuestion({ ...common, text: `${intro}${stimulusTable(["Mit", "Gerçek"], [[source.myth, source.fact], ["Tek bilgi bütün metni açıklamaya yeter.", "Metindeki parçalar birlikte okunmalıdır."]])}`, stem: "Mit-gerçek tablosuna göre aşağıdakilerden hangisi doğrudur?", ...made, solution: `Tabloda mitin karşısında gerçek bilgi olarak '${source.fact}' verilmiştir.` });
+    return buildQuestion({ ...common, text: `${intro}${stimulusTable(["Yanlış bilinen", "Doğrusu"], [[source.myth, source.fact], ["Tek bilgi bütün metni açıklamaya yeter.", "Metindeki parçalar birlikte okunmalıdır."]])}`, stem: "Verilen bilgilere göre aşağıdakilerden hangisi doğrudur?", ...made, solution: `Tabloda yanlış bilinen yargının karşısında doğru bilgi olarak '${source.fact}' verilmiştir.` });
   }
   if (mode === 2) {
     const correct = `${source.cards[0][0]}, ${source.cards[0][1].toLocaleLowerCase("tr-TR")}`;
@@ -746,7 +779,7 @@ function lgsPdfStyleQuestion(common, index) {
   }
   if (mode === 3) {
     const made = makeOptions(source.inference, ["Metin, okurun yalnız başlığa bakmasını yeterli görür.", "Metne göre bütün bilgiler tek bir satırdan çıkarılmalıdır.", "Metin, tablo ve kutular arasında ilişki kurulamayacağını savunur."], index);
-    return buildQuestion({ ...common, text: `${intro}${dataTable}`, stem: "Bu bağlamdan aşağıdakilerden hangisi çıkarılabilir?", ...made, solution: `Ana metin ile tablo birlikte düşünüldüğünde '${source.inference}' çıkarımı yapılabilir.` });
+    return buildQuestion({ ...common, text: `${intro}${dataTable}`, stem: "Bu metinden aşağıdakilerden hangisi çıkarılabilir?", ...made, solution: `Ana metin ile tablo birlikte düşünüldüğünde '${source.inference}' çıkarımı yapılabilir.` });
   }
   if (mode === 4) {
     const made = makeOptions(`${source.table[0][0]} - ${source.table[0][1]} - ${source.table[0][2]}`, [`${source.table[1][0]} - ${source.table[0][1]} - ${source.table[2][2]}`, `${source.table[2][0]} - ${source.table[3][1]} - ${source.table[0][2]}`, `${source.table[3][0]} - ${source.table[1][1]} - ${source.table[1][2]}`], index);
@@ -760,8 +793,8 @@ function lgsPdfStyleQuestion(common, index) {
     const made = makeOptions(source.myth, [source.fact, source.main, source.inference], index);
     return buildQuestion({ ...common, text: `${intro}${stimulusTable(["Yanlış Anlama", "Düzeltme"], [[source.myth, source.fact]])}`, stem: "Bu metne göre aşağıdakilerden hangisi yanlış bir yorumdur?", ...made, solution: `Metin '${source.myth}' yargısını desteklemez; bunun yerine '${source.fact}' bilgisini verir.` });
   }
-  const made = makeOptions(`Metin; ana açıklama, bilgi kutuları ve tabloyla ${source.title} konusunu çok yönlü tanıtmaktadır.`, ["Metin yalnız tek cümlelik bir uyarıdan oluşmaktadır.", "Metinde başlık ile bilgi kutuları arasında bağlantı yoktur.", "Metin herhangi bir okuma ya da yorumlama görevi gerektirmez."], index);
-  return buildQuestion({ ...common, text: `${intro}${cards}${dataTable}`, stem: "Bu sayfanın yapısıyla ilgili en doğru yargı hangisidir?", ...made, solution: "Sayfa, ana metin, kutular ve tabloyu birlikte kullanan çok parçalı bir okuma metnidir." });
+  const made = makeOptions("Metin, ana açıklama ile bilgi kutuları ve tabloyu birlikte kullanarak konuyu çok yönlü ele almaktadır.", ["Metin yalnız tek cümlelik bir uyarıdan oluşmaktadır.", "Metinde bilgi kutuları ana açıklamayla bağlantısızdır.", "Metin herhangi bir okuma ya da yorumlama görevi gerektirmez."], index);
+  return buildQuestion({ ...common, text: `${intro}${cards}${dataTable}`, stem: "Bu metnin yapısıyla ilgili en doğru yargı hangisidir?", ...made, solution: "Metin, ana açıklama, bilgi kutuları ve tabloyu birlikte kullanan çok parçalı bir okuma metnidir." });
 }
 
 const mebGradeEightPassages = [
@@ -1118,8 +1151,8 @@ const gradeEightPassages = [
     inference: "Uzun metinlerde başarı, yalnız hızlı okumaya değil ne aradığını bilmeye de bağlıdır."
   },
   {
-    title: "Sanat Dergisi Dosyası",
-    text: "Bir sanat dergisinde genç çizerlerin çalışmalarına ayrılan dosyada yalnız çizimlerin güzelliği değil, çizgilerin anlatıya nasıl hizmet ettiği de tartışılmıştır. Dosyada, bir karakterin yüzündeki küçük bir gölgenin korkuyu; arka planda eğilen bir ağacın ise yaklaşan fırtınayı sezdirebileceği belirtilir. Böylece görsel anlatının, metindeki duyguyu tamamlayan güçlü bir dil olduğu vurgulanır.",
+    title: "Görsel Anlatımın Gücü",
+    text: "Genç çizerlerin çalışmalarında yalnız çizimlerin güzelliği değil, çizgilerin anlatıya nasıl hizmet ettiği de önemlidir. Bir karakterin yüzündeki küçük bir gölge korkuyu, arka planda eğilen bir ağaç ise yaklaşan fırtınayı sezdirebilir. Böylece görsel anlatım, metindeki duyguyu tamamlayan güçlü bir dile dönüşür.",
     topic: "görsel anlatımın metindeki duyguyu desteklemesi",
     main: "Görsel anlatım, yalnız süsleme değil metnin duygu ve anlam dünyasını güçlendiren bir dildir.",
     detail: "Küçük bir gölgenin korkuyu, eğilen ağacın yaklaşan fırtınayı sezdirebileceği",
@@ -2913,9 +2946,9 @@ function strategyDetails(topic) {
     "Bağlam temelli yeni nesil okuma": {
       tag: "Çok parçalı okuma",
       summary: "Ana metin, tablo, bilgi kutusu ve rehber adımlarını birlikte yorumlama.",
-      steps: ["Önce başlık ve ana metni oku.", "Tablodaki kesin bilgileri işaretle.", "Mit-gerçek, uyarı ve adım kutularını ana fikirle ilişkilendir.", "Seçeneği bütün parçalarla doğrula."],
+      steps: ["Önce ana metni oku.", "Tablodaki kesin bilgileri işaretle.", "Yanlış bilinen-doğrusu, uyarı ve adım kutularını ana fikirle ilişkilendir.", "Seçeneği bütün parçalarla doğrula."],
       trap: "Yalnız görseldeki ya da tablodaki tek ayrıntıya göre genelleme yapma.",
-      example: "Bir rehberde hem uyarı hem tablo varsa cevap ikisinin birlikte desteklediği yargıdır."
+      example: "Bir metinde hem uyarı hem tablo varsa cevap ikisinin birlikte desteklediği yargıdır."
     },
     "Zaman yönetimi": {
       tag: "Sınav temposu",
