@@ -519,6 +519,10 @@ practicePassages.push(
   }
 );
 
+if (Array.isArray(window.PARAGRAF_KOCU_PRACTICE_PASSAGES)) {
+  practicePassages.push(...window.PARAGRAF_KOCU_PRACTICE_PASSAGES);
+}
+
 let questionBank = [
   {
     grade: 5, topic: "Konu bulma", difficulty: "Kolay", outcome: "Metnin konusunu belirler.",
