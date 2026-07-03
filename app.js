@@ -40,6 +40,262 @@ const gradePlan = {
   }
 };
 
+const practicePassages = [
+  {
+    id: "p5-fidan-gunlugu", grade: 5, focus: "Ana düşünce", difficulty: "Kolay", title: "Fidan Günlüğü",
+    text: "Okul bahçesine dikilen küçük fidan ilk günlerde rüzgârda eğiliyor, yaprakları cansız görünüyordu. Nisa, nöbetçi olduğu günlerde kantine gitmeden önce fidana uğrayıp toprağını kontrol etti. Arkadaşları da zamanla ona katıldı. Birkaç hafta sonra fidanın uçlarında parlak yapraklar belirdi. Çocuklar, küçük bir ilginin bile canlıları güçlendirebildiğini o zaman daha iyi anladı.",
+    prompts: [
+      ["Bu paragrafın konusu nedir?", "Öğrencilerin okul bahçesindeki fidana gösterdiği özen."],
+      ["Ana fikir nedir?", "Canlılara düzenli ilgi göstermek onların gelişmesine katkı sağlar."],
+      ["Bu metne hangi başlık uygun olur?", "Fidan Günlüğü / Küçük İlginin Gücü"],
+      ["Hangi anlatım biçimi ağır basmaktadır?", "Öyküleyici anlatım; çünkü bir olay, kişiler ve zaman içinde aktarılmıştır."],
+      ["Metinden hangi çıkarıma ulaşılabilir?", "Öğrenciler sorumluluk aldıkça çevrelerine karşı daha duyarlı hâle gelmiştir."]
+    ]
+  },
+  {
+    id: "p5-kayip-defter", grade: 5, focus: "Hikâye unsurları", difficulty: "Kolay", title: "Kayıp Defter",
+    text: "Mert, Türkçe dersinden önce çantasını karıştırdı ama mavi kaplı defterini bulamadı. Sırasının altına, kitaplığın yanına ve askıdaki montunun cebine baktı. Tam umudunu kesmişken Elif, defterin resim dersinde kullandıkları masada kaldığını söyledi. Mert defteri alınca arkadaşına teşekkür etti ve eşyalarını ders bitince kontrol etmeye karar verdi.",
+    prompts: [
+      ["Olay nedir?", "Mert'in Türkçe defterini araması ve sonunda bulması."],
+      ["Kişiler kimlerdir?", "Mert ve Elif."],
+      ["Metnin konusu nedir?", "Kaybolan defteri bulma süreci."],
+      ["Ana fikir nedir?", "Eşyalarımızı düzenli kontrol etmek sorun yaşamamızı önler."],
+      ["Metne uygun bir başlık yaz.", "Mavi Kaplı Defter / Kayıp Defter"]
+    ]
+  },
+  {
+    id: "p5-kitap-kokusu", grade: 5, focus: "Başlık bulma", difficulty: "Orta", title: "Kitap Kokusu",
+    text: "Zeynep, kütüphanenin kapısını açınca raflardan gelen eski kitap kokusunu hemen fark etti. Sessizce masaya oturdu, kapağı yıpranmış bir hikâye kitabı seçti. Sayfaları çevirdikçe tanımadığı insanların sevinçlerine, korkularına ve umutlarına ortak oldu. Eve dönerken kütüphanenin yalnızca kitap saklanan bir yer olmadığını, insanı başka dünyalara taşıyan sakin bir yolculuk alanı olduğunu düşündü.",
+    prompts: [
+      ["Paragrafın konusu nedir?", "Zeynep'in kütüphanede kitap okurken yaşadığı duygu ve düşünceler."],
+      ["Ana fikir nedir?", "Kütüphaneler ve kitaplar insanı farklı dünyalarla tanıştırır."],
+      ["Başlık ne olabilir?", "Kitap Kokusu / Sessiz Yolculuk"],
+      ["Metnin duygusu nasıldır?", "Sakin, merak uyandıran ve olumlu bir duygu taşır."],
+      ["Hangi anlatım biçimi kullanılmıştır?", "Öyküleyici anlatım ve betimleyici ögeler birlikte kullanılmıştır."]
+    ]
+  },
+  {
+    id: "p5-yagmur-sonrasi", grade: 5, focus: "Betimleyici anlatım", difficulty: "Orta", title: "Yağmur Sonrası",
+    text: "Yağmur dindikten sonra sokak, sanki yeni yıkanmış gibi parlıyordu. Kaldırım taşlarının arasında biriken küçük su damlaları sabah ışığında gümüş gibi görünüyordu. Apartmanların önündeki sardunyalar başlarını kaldırmış, toprağın kokusu bütün sokağa yayılmıştı. İnsanlar şemsiyelerini kapatıp ağır adımlarla yürürken serin hava yüzlerine dokunuyordu.",
+    prompts: [
+      ["Metnin konusu nedir?", "Yağmur sonrası sokağın görünümü."],
+      ["Hangi anlatım biçimi ağır basmaktadır?", "Betimleyici anlatım; çünkü varlıkların özellikleri duyulara seslenerek anlatılmıştır."],
+      ["Metinde hangi duyulara yer verilmiştir?", "Görme, koklama ve dokunma duyularına yer verilmiştir."],
+      ["Başlık ne olabilir?", "Yağmur Sonrası Sokak / Serin Sabah"],
+      ["Metnin anahtar sözcükleri nelerdir?", "Yağmur, sokak, su damlaları, toprak kokusu, serin hava."]
+    ]
+  },
+  {
+    id: "p5-paylasilan-ekmek", grade: 5, focus: "Yardımcı düşünce", difficulty: "Orta", title: "Paylaşılan Ekmek",
+    text: "Köy okulunda beslenme saatinde herkes çantasındakileri çıkarırdı. Bir gün Arda'nın yanında yalnızca küçük bir elma vardı. Bunu gören arkadaşları peynirinden, ekmeğinden ve zeytininden ona da verdi. Arda, o gün karnını doyurmaktan çok arkadaşlarının inceliğine sevindi. Öğretmenleri, paylaşmanın bazen en güzel dersi sınıfın içinde kendiliğinden verdiğini söyledi.",
+    prompts: [
+      ["Paragrafın konusu nedir?", "Arkadaşların Arda ile yiyeceklerini paylaşması."],
+      ["Ana fikir nedir?", "Paylaşmak insanları mutlu eder ve dostluğu güçlendirir."],
+      ["Yardımcı düşünce olarak ne söylenebilir?", "Arda'nın mutluluğu yalnızca karnının doymasından kaynaklanmamıştır."],
+      ["Metin türü neye yakındır?", "Hikâye edici metne yakındır."],
+      ["Başlık ne olabilir?", "Paylaşılan Ekmek / Sınıftaki Güzel Ders"]
+    ]
+  },
+  {
+    id: "p6-sessiz-kahraman", grade: 6, focus: "Metnin iletisi", difficulty: "Orta", title: "Sessiz Kahraman",
+    text: "Mahalledeki yaşlı çınarın gövdesine her yıl yeni bir çizik eklenirdi. Çocuklar onun altında oyun oynar, büyükler yaz akşamları serinlemek için dallarının gölgesine otururdu. Bir gün belediye görevlileri ağacın kuruyan dallarını budamaya geldi. O zaman herkes çınarın yalnızca bir ağaç olmadığını, mahallenin hafızasını taşıyan sessiz bir kahraman olduğunu fark etti.",
+    prompts: [
+      ["Metnin konusu nedir?", "Mahalledeki yaşlı çınarın insanlar için taşıdığı anlam."],
+      ["Ana fikir nedir?", "Bazı varlıklar sadece görüntüleriyle değil, insanlarda bıraktığı anılarla değer kazanır."],
+      ["Metnin iletisi nedir?", "Çevremizdeki doğal ve ortak değerleri korumalıyız."],
+      ["Hangi anlatım biçimi kullanılmıştır?", "Öyküleyici anlatım içinde betimleyici ögelere yer verilmiştir."],
+      ["Başlık ne olabilir?", "Sessiz Kahraman / Mahallenin Çınarı"]
+    ]
+  },
+  {
+    id: "p6-robot-kulubu", grade: 6, focus: "Amaç-sonuç", difficulty: "Orta", title: "Robot Kulübü",
+    text: "Robot kulübündeki öğrenciler, okul koridorlarında unutulan ışıkları fark edince küçük bir düzenek tasarlamaya karar verdi. Amaçları, sınıf boş kaldığında ışığın kendiliğinden kapanmasını sağlamaktı. İlk denemede sensör kapıya çok yakın yerleştirildiği için düzenek sürekli çalıştı. Öğrenciler ölçüm yapıp sistemi yeniden kurunca proje daha verimli hâle geldi.",
+    prompts: [
+      ["Öğrencilerin amacı nedir?", "Boş sınıflarda ışığın kendiliğinden kapanmasını sağlamak."],
+      ["Metnin konusu nedir?", "Robot kulübünün enerji tasarrufu için düzenek tasarlaması."],
+      ["Ana fikir nedir?", "Sorunlara çözüm üretirken deneme ve düzeltme yapmak başarıyı artırır."],
+      ["Metinde hangi neden-sonuç ilişkisi vardır?", "Sensör kapıya yakın olduğu için düzenek sürekli çalışmıştır."],
+      ["Başlık ne olabilir?", "Robot Kulübü / Işığı Söndüren Düzenek"]
+    ]
+  },
+  {
+    id: "p6-deniz-kabugu", grade: 6, focus: "Duyular", difficulty: "Orta", title: "Deniz Kabuğu",
+    text: "Eylül, sahilde bulduğu deniz kabuğunu avucuna aldı. Kabuğun dışı pütürlü, içi ise sedef gibi parlaktı. Kulağına götürdüğünde uzaktan gelen dalga seslerini andıran uğultuyu duydu. Tuz kokusu, serin rüzgâr ve ayaklarına değen ince kum, ona yaz sabahlarının hiç bitmeyecekmiş gibi geldiği günleri hatırlattı.",
+    prompts: [
+      ["Metnin konusu nedir?", "Eylül'ün deniz kabuğu üzerinden sahili ve yazı hatırlaması."],
+      ["Hangi duyulara yer verilmiştir?", "Dokunma, görme, işitme, koklama duyularına yer verilmiştir."],
+      ["Hangi anlatım biçimi ağır basmaktadır?", "Betimleyici anlatım."],
+      ["Başlık ne olabilir?", "Deniz Kabuğu / Yaz Sabahı"],
+      ["Metinden hangi çıkarım yapılabilir?", "Küçük bir nesne geçmişteki güzel anıları canlandırabilir."]
+    ]
+  },
+  {
+    id: "p6-iki-yol", grade: 6, focus: "Karşılaştırma", difficulty: "Orta", title: "İki Yol",
+    text: "Kasabaya giden iki yol vardı. Eski yol dere kenarından kıvrılarak ilerler, yolculara söğütlerin gölgesini ve kuş seslerini sunardı. Yeni yol ise daha kısa, geniş ve düzdü; kasabaya çabuk varmak isteyenler onu seçerdi. Dedem her seferinde eski yolu tercih eder, bazen bir yere varmak kadar yolun kendisini yaşamanın da önemli olduğunu söylerdi.",
+    prompts: [
+      ["Metinde karşılaştırılan unsurlar nelerdir?", "Kasabaya giden eski yol ve yeni yol."],
+      ["Metnin ana fikri nedir?", "Bazen hızdan çok yolculuğun yaşattıkları değerlidir."],
+      ["Metnin konusu nedir?", "İki yolun özellikleri ve dedenin eski yolu tercih etmesi."],
+      ["Başlık ne olabilir?", "İki Yol / Yolun Tadını Çıkarmak"],
+      ["Hangi anlatım biçimleri kullanılmıştır?", "Karşılaştırma içeren açıklayıcı anlatım ve betimleyici ögeler kullanılmıştır."]
+    ]
+  },
+  {
+    id: "p6-kus-gozlemcisi", grade: 6, focus: "Çıkarım yapma", difficulty: "Zor", title: "Kuş Gözlemcisi",
+    text: "Okulun fen kulübü, bahar aylarında bahçeye gelen kuşları gözlemlemek için küçük bir defter tuttu. Öğrenciler kuşların geliş saatlerini, renklerini ve kondukları ağaçları yazdı. Bir süre sonra serçelerin en çok ekmek kırıntısı bırakılan köşeye, saka kuşlarının ise çiçekli çalılara yakın yerlere geldiğini fark ettiler. Defterdeki notlar, dikkatli bakmanın rastgele bakmaktan çok daha fazla bilgi verdiğini gösterdi.",
+    prompts: [
+      ["Metnin konusu nedir?", "Öğrencilerin kuşları düzenli gözlemleyerek bilgi toplaması."],
+      ["Ana fikir nedir?", "Düzenli ve dikkatli gözlem yapmak çevremizi daha iyi anlamamızı sağlar."],
+      ["Metinden hangi çıkarıma ulaşılır?", "Kuşların davranışları bulundukları çevre ve yiyecek olanaklarıyla ilişkilidir."],
+      ["Başlık ne olabilir?", "Kuş Gözlemcisi / Bahçedeki Notlar"],
+      ["Metinde hangi düşünceyi geliştirme yolu vardır?", "Örneklendirme ve gözleme dayalı açıklama vardır."]
+    ]
+  },
+  {
+    id: "p7-cizgi-romanin-dili", grade: 7, focus: "Paragrafın yapısı", difficulty: "Orta", title: "Çizgi Romanın Dili",
+    text: "(I) Çizgi roman, yalnızca resimlerle süslenmiş bir hikâye değildir. (II) Karelerin sıralanışı, konuşma balonlarının yeri ve çizgilerin hareket duygusu okuma biçimini doğrudan etkiler. (III) Bu yüzden çizgi romanı değerlendirirken hem yazıya hem görsel anlatıma birlikte bakmak gerekir. (IV) Son yıllarda farklı ülkelerde üretilen çizgi romanlar, bu anlatım dilinin ne kadar geniş bir alana yayıldığını da göstermektedir.",
+    prompts: [
+      ["Metnin konusu nedir?", "Çizgi romanın yazı ve görsel anlatımı birlikte kullanan özel dili."],
+      ["Ana fikir nedir?", "Çizgi romanı doğru anlamak için yazı ve görsel unsurlar birlikte değerlendirilmelidir."],
+      ["İkinci paragraf nereden başlatılabilir?", "IV. cümleyle başlatılabilir; çünkü konu çizgi romanın anlatım dilinden yaygınlığına geçer."],
+      ["Başlık ne olabilir?", "Çizgi Romanın Dili"],
+      ["Hangi anlatım biçimi kullanılmıştır?", "Açıklayıcı anlatım."]
+    ]
+  },
+  {
+    id: "p7-eski-saat", grade: 7, focus: "Öyküleyici anlatım", difficulty: "Orta", title: "Eski Saat",
+    text: "Dolabın üst rafındaki eski saat yıllardır çalışmıyordu. Babam onu eline aldığında camındaki çizikleri parmağıyla yokladı, sonra kapağını dikkatle açtı. İçindeki küçük çarklar tozla kaplanmıştı. Birkaç saat uğraştıktan sonra saat ince bir tıkırtıyla işlemeye başladı. O ses, odadaki herkes için yalnızca zamanı değil, dedemden kalan hatırayı da yeniden canlandırdı.",
+    prompts: [
+      ["Metnin konusu nedir?", "Eski saatin onarılması ve ailede uyandırdığı anılar."],
+      ["Ana fikir nedir?", "Bazı eşyalar, taşıdığı hatıralar nedeniyle maddi değerinden daha anlamlıdır."],
+      ["Hangi anlatım biçimi ağır basmaktadır?", "Öyküleyici anlatım."],
+      ["Metinde betimlemeye örnek olabilecek ayrıntı nedir?", "Saatin camındaki çizikler ve çarkların tozla kaplanmış olması."],
+      ["Başlık ne olabilir?", "Eski Saat / Yeniden İşleyen Hatıra"]
+    ]
+  },
+  {
+    id: "p7-agaclarin-dili", grade: 7, focus: "Tartışmacı anlatım", difficulty: "Zor", title: "Ağaçların Dili",
+    text: "Bazıları şehirlerdeki ağaçları yalnızca yol kenarını süsleyen varlıklar olarak görür. Oysa ağaçlar gölge sağlar, havayı temizler, kuşlara yuva olur ve insanın beton arasında nefes almasını kolaylaştırır. Bir caddenin güzelliği yalnızca kaldırımların düzgünlüğüyle ölçülemez; orada yaşayan canlılara ne kadar yer açıldığıyla da ölçülür.",
+    prompts: [
+      ["Yazar hangi düşünceye karşı çıkmaktadır?", "Ağaçların yalnızca süs amacı taşıdığı düşüncesine."],
+      ["Ana fikir nedir?", "Şehirlerdeki ağaçlar estetikten öte yaşamsal ve çevresel değer taşır."],
+      ["Hangi anlatım biçimi kullanılmıştır?", "Tartışmacı anlatım."],
+      ["Metnin konusu nedir?", "Şehirlerde ağaçların önemi."],
+      ["Başlık ne olabilir?", "Ağaçların Dili / Şehirde Nefes Alan Canlılar"]
+    ]
+  },
+  {
+    id: "p7-kaybolan-sesler", grade: 7, focus: "Metnin duygusu", difficulty: "Orta", title: "Kaybolan Sesler",
+    text: "Eskiden sabahları mahalleyi simitçinin sesi uyandırırdı. Pencereler açılır, çocuklar bozuk paralarını avuçlarında sıkıştırıp merdivenlerden koşardı. Şimdi aynı sokakta arabaların uğultusu daha baskın; tanıdık sesler birer birer çekilmiş gibi. Yine de fırından yükselen sıcak ekmek kokusu, eski günlerin izini kısa bir an için geri getiriyor.",
+    prompts: [
+      ["Metnin duygusu nedir?", "Özlem ve hafif hüzün."],
+      ["Metnin konusu nedir?", "Mahallede eski seslerin ve alışkanlıkların kaybolması."],
+      ["Ana fikir nedir?", "Şehir değiştikçe eski mahalle yaşamının sıcak ayrıntıları da azalabilir."],
+      ["Hangi duyulara yer verilmiştir?", "İşitme ve koklama duyularına yer verilmiştir."],
+      ["Başlık ne olabilir?", "Kaybolan Sesler / Eski Mahallenin İzleri"]
+    ]
+  },
+  {
+    id: "p7-koprudeki-yazi", grade: 7, focus: "Örtülü anlam", difficulty: "Zor", title: "Köprüdeki Yazı",
+    text: "Köprünün girişindeki tabelada 'Yavaşla, karşı kıyı seni bekler.' yazıyordu. İlk bakışta bu yalnızca sürücülere yapılmış bir uyarı gibiydi. Ancak köprüden geçenlerin çoğu, bu cümlenin aceleyle tüketilen günlere de söylendiğini düşünürdü. Çünkü insan bazen varacağı yere odaklanırken yolun üzerinde gördüklerini, duyduklarını ve hissettiklerini kaçırır.",
+    prompts: [
+      ["Metnin konusu nedir?", "Bir uyarı cümlesinden hareketle acele etmeden yaşama düşüncesi."],
+      ["Örtülü anlam nedir?", "Yavaşlamak yalnız trafikte değil, yaşamı fark etmek için de gereklidir."],
+      ["Ana fikir nedir?", "İnsan hedefe ulaşırken yolculuğun ayrıntılarını da fark etmelidir."],
+      ["Başlık ne olabilir?", "Köprüdeki Yazı / Yavaşla"],
+      ["Hangi anlatım biçimi kullanılmıştır?", "Açıklayıcı ve yorumlayıcı anlatım."]
+    ]
+  },
+  {
+    id: "p7-gol-kiyisinda", grade: 7, focus: "Betimleyici anlatım", difficulty: "Zor", title: "Göl Kıyısında",
+    text: "Gölün yüzeyi akşam ışığında ince bir bakır tabaka gibi parlıyordu. Sazlıkların arasından gelen hışırtı, suya değen rüzgârın sesiyle karışıyordu. Kıyıdaki eski sandal, yarısı suya gömülmüş hâlde sessizce bekliyordu. Uzakta ağır ağır alçalan güneş, dağların ardında kaybolmadan önce gökyüzüne turuncu bir yol çizdi.",
+    prompts: [
+      ["Metnin konusu nedir?", "Akşam vakti göl kıyısının görünümü."],
+      ["Hangi anlatım biçimi ağır basmaktadır?", "Betimleyici anlatım."],
+      ["Metinde benzetmeye örnek nedir?", "Göl yüzeyinin bakır tabakaya benzetilmesi."],
+      ["Metnin duygusu nasıldır?", "Sakin ve etkileyici bir atmosfer taşır."],
+      ["Başlık ne olabilir?", "Göl Kıyısında / Akşamın Bakır Işığı"]
+    ]
+  },
+  {
+    id: "p8-sabah-penceresi", grade: 8, focus: "Dil ve anlatım", difficulty: "Orta", title: "Sabah Penceresi",
+    text: "Gözlerini açtığında gün henüz doğmaya başlamıştı. Ağır hareketlerle doğruldu, pencerenin kolunu usulca çevirdi. İçeri dolan serin hava, geceden kalma yorgunluğunu dağıttı. Uzaklarda bir köpek uluyor, horozlar mahalleyi uyandırmak istercesine ötüyor, ağaçların arasında görünmeyen kuşlar telaşlı telaşlı kanat çırpıyordu. Aynadaki çizgili yüzüne bakınca zamanın sessizce eksilttiği günleri düşündü.",
+    prompts: [
+      ["Metnin konusu nedir?", "Sabah vakti yaşlı bir kişinin çevreyi gözlemlemesi ve zamanı düşünmesi."],
+      ["Dil ve anlatımla ilgili neler söylenebilir?", "Betimlemeye başvurulmuş, birden fazla duyuya seslenen ayrıntılar kullanılmıştır."],
+      ["Anlatıcı olayın kahramanı mıdır?", "Hayır; anlatım üçüncü kişi ağzıyla yapılmıştır."],
+      ["Metnin duygusu nedir?", "Sakinlik, hüzün ve zamanın geçişini hissettiren bir duygu vardır."],
+      ["Başlık ne olabilir?", "Sabah Penceresi / Çizgili Yüz"]
+    ]
+  },
+  {
+    id: "p8-ustanin-fircasi", grade: 8, focus: "Ana düşünce", difficulty: "Orta", title: "Ustanın Fırçası",
+    text: "Yaşlı ressam, öğrencisinin yaptığı tabloya uzun süre baktı. Renkler parlak, çizgiler düzgün, kâğıt tertemizdi; yine de tabloda eksik bir şey vardı. Öğrenci sabırsızca nerede hata yaptığını sorunca usta, 'Hata çizgide değil, bakışında.' dedi. 'Gördüğünü kopyalamışsın ama gördüğünün sende uyandırdığı duyguyu tabloya katmamışsın.'",
+    prompts: [
+      ["Metnin ana fikri nedir?", "Sanatta teknik doğruluk kadar duygu ve özgün bakış da önemlidir."],
+      ["Metnin konusu nedir?", "Bir ressamın öğrencisine sanatta duygu ve bakışın önemini anlatması."],
+      ["Metinde verilmek istenen ileti nedir?", "Başarılı bir ürün ortaya koymak için görünenin ötesine geçmek gerekir."],
+      ["Hangi anlatım biçimi kullanılmıştır?", "Öyküleyici anlatım, diyalogla desteklenmiştir."],
+      ["Başlık ne olabilir?", "Ustanın Fırçası / Bakıştaki Eksik"]
+    ]
+  },
+  {
+    id: "p8-sanat-ve-sessizlik", grade: 8, focus: "Tartışmacı anlatım", difficulty: "Zor", title: "Sanat ve Sessizlik",
+    text: "Bir eserin etkileyici olması için mutlaka yüksek sesle konuşması gerekmez. Bazı tablolar, bazı şiirler ya da bazı kısa hikâyeler okurun zihninde sessizce büyür. Onları değerli kılan, her şeyi açıkça söylemeleri değil; okura tamamlayacağı anlam boşlukları bırakmalarıdır. Elbette bu boşluklar rastgele değil, metnin ya da eserin kendi ipuçlarıyla desteklenmiş olmalıdır.",
+    prompts: [
+      ["Metnin konusu nedir?", "Sanat eserlerinde açıklık ve anlam boşluğu ilişkisi."],
+      ["Ana fikir nedir?", "Etkili eserler her şeyi doğrudan söylemek yerine okura ipuçlarıyla düşünme alanı bırakabilir."],
+      ["Yazar hangi düşünceye karşı çıkmaktadır?", "Eserin etkileyici olması için her şeyi açıkça anlatması gerektiği düşüncesine."],
+      ["Hangi anlatım biçimi kullanılmıştır?", "Tartışmacı anlatım."],
+      ["Başlık ne olabilir?", "Sanat ve Sessizlik / Anlam Boşlukları"]
+    ]
+  },
+  {
+    id: "p8-iki-paragraf", grade: 8, focus: "Paragrafın yapısı", difficulty: "Zor", title: "Çizgi Roman Evreni",
+    text: "(I) Çizgi romanları neden sevdiğimiz sorusuna okurlar farklı yanıtlar verebilir. (II) Kimi okur çizgilerin estetik etkisinden, kimi anlatım tekniğinin hızından, kimi de okuma deneyiminin akıcılığından söz eder. (III) Üstelik çizgi roman dünyası, tür ve tema çeşitliliğiyle bu soruyu daha da derinleştirir. (IV) Manga türünden deneysel çalışmalara, süper kahraman serilerinden tarihsel anlatılara kadar uzanan geniş alan, çizgi romanı sonu olmayan bir evrene dönüştürür.",
+    prompts: [
+      ["Metnin konusu nedir?", "Çizgi romanların okur üzerindeki etkisi ve çeşitliliği."],
+      ["İkinci paragraf hangi cümleyle başlatılabilir?", "III. cümleyle; çünkü ilk iki cümle sevilme nedenlerini, III ve IV çeşitliliği anlatır."],
+      ["Ana fikir nedir?", "Çizgi roman, anlatım biçimi ve çeşitliliğiyle zengin bir okuma alanıdır."],
+      ["Başlık ne olabilir?", "Çizgi Roman Evreni"],
+      ["Metnin anlatım biçimi nedir?", "Açıklayıcı anlatım."]
+    ]
+  },
+  {
+    id: "p8-kayit-defteri", grade: 8, focus: "Yardımcı düşünce", difficulty: "Zor", title: "Kayıt Defteri",
+    text: "Bir araştırmacı, sahada topladığı bilgileri yalnızca hafızasına güvenerek saklayamaz. Gözlem zamanı, ortam koşulları, konuşulan kişiler ve dikkat çeken ayrıntılar düzenli biçimde kaydedilmelidir. Çünkü küçük görünen bir not, çalışmanın ilerleyen aşamasında önemli bir bağlantıyı açıklayabilir. Düzensiz tutulan kayıtlar ise en doğru gözlemleri bile kullanılamaz hâle getirebilir.",
+    prompts: [
+      ["Metnin konusu nedir?", "Araştırmada düzenli kayıt tutmanın önemi."],
+      ["Ana fikir nedir?", "Araştırma sürecinde bilgilerin düzenli kaydedilmesi güvenilir sonuçlara ulaşmayı sağlar."],
+      ["Yardımcı düşünce yaz.", "Küçük görünen notlar daha sonra önemli bağlantıları açıklayabilir."],
+      ["Metnin amacı nedir?", "Araştırma yapan kişiyi düzenli kayıt tutma konusunda bilgilendirmek ve uyarmak."],
+      ["Başlık ne olabilir?", "Kayıt Defteri / Küçük Notların Değeri"]
+    ]
+  },
+  {
+    id: "p8-bir-kentin-hafizasi", grade: 8, focus: "Metinler arası karşılaştırma", difficulty: "Zor", title: "Bir Kentin Hafızası",
+    text: "Eski fotoğraflar, bir kentin yalnızca binalarını değil, insanların yaşayış biçimini de gösterir. Meydandaki çeşmenin çevresinde toplanan çocuklar, dükkân önünde bekleyen esnaf, taş sokaktan geçen at arabası; hepsi geçmişin gündelik hayatına açılan küçük pencerelerdir. Bugünün geniş caddeleri ve parlak vitrinleri ise değişimi gösterir ama fotoğraflar, bu değişimin neyin üzerine kurulduğunu hatırlatır.",
+    prompts: [
+      ["Metnin konusu nedir?", "Eski fotoğrafların kent belleğini ve değişimi göstermesi."],
+      ["Ana fikir nedir?", "Eski fotoğraflar, kentlerin geçmiş yaşamını ve bugünkü değişimin köklerini anlamamızı sağlar."],
+      ["Metinde karşılaştırılan unsurlar nelerdir?", "Geçmişteki kent yaşamı ile bugünkü kent görünümü."],
+      ["Başlık ne olabilir?", "Bir Kentin Hafızası / Eski Fotoğraflar"],
+      ["Hangi anlatım biçimi kullanılmıştır?", "Açıklayıcı anlatım, betimleyici ayrıntılarla desteklenmiştir."]
+    ]
+  },
+  {
+    id: "p8-tartisma-masasi", grade: 8, focus: "Düşünceyi geliştirme yolları", difficulty: "Zor", title: "Tartışma Masası",
+    text: "Sınıfta yapılan bir tartışmada herkesin aynı fikirde olması beklenmez. Önemli olan, farklı düşüncelerin saygılı bir dille gerekçelendirilmesidir. Örneğin bir öğrenci okul bahçesinin spor alanı olarak düzenlenmesini savunurken diğeri sessiz okuma köşelerine ihtiyaç olduğunu söyleyebilir. Bu iki görüş, kanıt ve örneklerle desteklendiğinde tartışma bir çekişme olmaktan çıkar, ortak akıl arayışına dönüşür.",
+    prompts: [
+      ["Metnin konusu nedir?", "Tartışmalarda farklı görüşlerin gerekçeli ve saygılı biçimde sunulması."],
+      ["Ana fikir nedir?", "Farklı düşünceler kanıt ve örneklerle desteklendiğinde tartışma verimli hâle gelir."],
+      ["Düşünceyi geliştirme yollarından hangileri vardır?", "Örneklendirme ve açıklama kullanılmıştır."],
+      ["Metnin amacı nedir?", "Sağlıklı tartışmanın nasıl olması gerektiğini açıklamak."],
+      ["Başlık ne olabilir?", "Tartışma Masası / Ortak Akıl"]
+    ]
+  }
+];
+
 let questionBank = [
   {
     grade: 5, topic: "Konu bulma", difficulty: "Kolay", outcome: "Metnin konusunu belirler.",
@@ -1909,6 +2165,8 @@ const CONTENT_VERSION = 5;
 let state = loadState();
 let selectedCount = 5;
 let activeTopic = topics[0];
+let activePracticeId = null;
+let practiceAnswersVisible = false;
 let pendingGrade = state.grade;
 let quiz = null;
 let syncInProgress = false;
@@ -2335,7 +2593,8 @@ function loadState() {
     answers: [],
     syncQueue: [],
     dailyTask: null,
-    assignments: []
+    assignments: [],
+    practiceNotes: {}
   };
 
   try {
@@ -2497,6 +2756,7 @@ function setView(view) {
   const titles = {
     dashboard: "Bugünkü Görevin",
     topics: "Konu Çalış",
+    practice: "Alıştırma",
     strategies: "Stratejiler",
     mistakes: "Yanlışlarım",
     report: "Gelişim Raporum",
@@ -2585,6 +2845,131 @@ function renderTopicDetail(topic) {
       <button class="lesson-button" data-difficulty="Zor">Zor test</button>
     </div>
   `;
+}
+
+function practiceFilters() {
+  return {
+    grade: $("#practiceGradeFilter")?.value || String(state.grade),
+    focus: $("#practiceFocusFilter")?.value || "Tüm konular"
+  };
+}
+
+function filteredPracticePassages() {
+  const { grade, focus } = practiceFilters();
+  return practicePassages.filter((passage) => {
+    if (grade !== "all" && String(passage.grade) !== grade) return false;
+    if (focus !== "Tüm konular" && passage.focus !== focus) return false;
+    return true;
+  });
+}
+
+function renderPracticeFilters() {
+  const gradeFilter = $("#practiceGradeFilter");
+  const focusFilter = $("#practiceFocusFilter");
+  if (!gradeFilter || !focusFilter) return;
+
+  const previousGrade = gradeFilter.value || String(state.grade);
+  gradeFilter.innerHTML = `
+    <option value="${state.grade}">${state.grade}. sınıf</option>
+    <option value="all">Tüm sınıflar</option>
+    <option value="5">5. sınıf</option>
+    <option value="6">6. sınıf</option>
+    <option value="7">7. sınıf</option>
+    <option value="8">8. sınıf</option>
+  `;
+  const gradeValues = Array.from(gradeFilter.options).map((option) => option.value);
+  gradeFilter.value = gradeValues.includes(previousGrade) ? previousGrade : String(state.grade);
+
+  const currentFocus = focusFilter.value || "Tüm konular";
+  const focusSet = new Set(practicePassages
+    .filter((passage) => gradeFilter.value === "all" || String(passage.grade) === gradeFilter.value)
+    .map((passage) => passage.focus));
+  const focusOptions = ["Tüm konular", ...Array.from(focusSet).sort((a, b) => a.localeCompare(b, "tr"))];
+  focusFilter.innerHTML = focusOptions.map((focus) => `<option>${escapeHtml(focus)}</option>`).join("");
+  focusFilter.value = focusOptions.includes(currentFocus) ? currentFocus : "Tüm konular";
+}
+
+function selectPracticePassage(id) {
+  activePracticeId = id;
+  practiceAnswersVisible = false;
+  renderPractice();
+}
+
+function renderPractice() {
+  const listNode = $("#practicePassageList");
+  const readerNode = $("#practiceReader");
+  if (!listNode || !readerNode) return;
+  renderPracticeFilters();
+  const passages = filteredPracticePassages();
+  if (!passages.some((passage) => passage.id === activePracticeId)) {
+    activePracticeId = passages[0]?.id || null;
+    practiceAnswersVisible = false;
+  }
+  const selected = passages.find((passage) => passage.id === activePracticeId);
+
+  listNode.innerHTML = passages.map((passage) => `
+    <button class="practice-passage-button ${passage.id === activePracticeId ? "is-active" : ""}" data-practice-id="${escapeHtml(passage.id)}" type="button">
+      <span class="pill">${passage.grade}. sınıf</span>
+      <strong>${escapeHtml(passage.title)}</strong>
+      <small>${escapeHtml(passage.focus)} · ${escapeHtml(passage.difficulty)}</small>
+    </button>
+  `).join("");
+
+  if (!selected) {
+    readerNode.innerHTML = `<div class="empty-state">Bu seçime uygun paragraf bulunamadı.</div>`;
+    return;
+  }
+
+  const notes = state.practiceNotes?.[selected.id] || {};
+  readerNode.innerHTML = `
+    <div class="practice-reader-head">
+      <div>
+        <span class="pill">${selected.grade}. sınıf</span>
+        <h2>${escapeHtml(selected.title)}</h2>
+        <p>${escapeHtml(selected.focus)} · ${escapeHtml(selected.difficulty)}</p>
+      </div>
+      <button class="secondary-action" id="pickRandomPractice" type="button"><i data-lucide="shuffle"></i><span>Başka paragraf</span></button>
+    </div>
+    <div class="practice-text">${escapeHtml(selected.text)}</div>
+    <div class="practice-prompt-grid">
+      ${selected.prompts.map(([question, sample], index) => `
+        <label class="practice-answer-box">
+          <span>${escapeHtml(question)}</span>
+          <textarea data-practice-note="${index}" rows="3" placeholder="Kendi cevabını yaz">${escapeHtml(notes[index] || "")}</textarea>
+          <em class="practice-sample ${practiceAnswersVisible ? "is-visible" : ""}">Örnek cevap: ${escapeHtml(sample)}</em>
+        </label>
+      `).join("")}
+    </div>
+    <div class="practice-actions">
+      <button class="primary-action" id="togglePracticeAnswers" type="button"><i data-lucide="${practiceAnswersVisible ? "eye-off" : "eye"}"></i><span>${practiceAnswersVisible ? "Örnek cevapları gizle" : "Örnek cevapları göster"}</span></button>
+      <button class="secondary-action" id="clearPracticeNotes" type="button"><i data-lucide="eraser"></i><span>Cevaplarımı temizle</span></button>
+    </div>
+  `;
+  window.lucide?.createIcons();
+}
+
+function savePracticeNote(passageId, index, value) {
+  if (!state.practiceNotes) state.practiceNotes = {};
+  if (!state.practiceNotes[passageId]) state.practiceNotes[passageId] = {};
+  state.practiceNotes[passageId][index] = value;
+  persistStateOnly();
+}
+
+function clearPracticeNotes() {
+  if (!activePracticeId) return;
+  if (!state.practiceNotes) state.practiceNotes = {};
+  state.practiceNotes[activePracticeId] = {};
+  persistStateOnly();
+  renderPractice();
+}
+
+function pickRandomPractice() {
+  const passages = filteredPracticePassages();
+  if (!passages.length) return;
+  const otherPassages = passages.filter((passage) => passage.id !== activePracticeId);
+  const pool = otherPassages.length ? otherPassages : passages;
+  const next = pool[Math.floor(Math.random() * pool.length)];
+  selectPracticePassage(next.id);
 }
 
 function weakestTopic() {
@@ -3468,6 +3853,7 @@ function renderAll() {
   $("#gradeSelect").value = state.grade;
   renderDashboard();
   renderTopics();
+  renderPractice();
   renderStrategies();
   renderMistakes();
   renderReport();
@@ -3803,6 +4189,9 @@ function bindEvents() {
     }
     state.grade = event.target.value;
     activeTopic = gradePlan[state.grade].focus[0];
+    activePracticeId = null;
+    const practiceGrade = $("#practiceGradeFilter");
+    if (practiceGrade) practiceGrade.value = state.grade;
     saveState();
     renderAll();
   });
@@ -3826,6 +4215,38 @@ function bindEvents() {
     renderAll();
   });
   $("#topicFilter").addEventListener("change", renderTopics);
+  $("#practiceGradeFilter")?.addEventListener("change", () => {
+    activePracticeId = null;
+    practiceAnswersVisible = false;
+    renderPractice();
+  });
+  $("#practiceFocusFilter")?.addEventListener("change", () => {
+    activePracticeId = null;
+    practiceAnswersVisible = false;
+    renderPractice();
+  });
+  $("#practicePassageList")?.addEventListener("click", (event) => {
+    const button = event.target.closest(".practice-passage-button");
+    if (!button) return;
+    selectPracticePassage(button.dataset.practiceId);
+  });
+  $("#practiceReader")?.addEventListener("input", (event) => {
+    const textarea = event.target.closest("[data-practice-note]");
+    if (!textarea || !activePracticeId) return;
+    savePracticeNote(activePracticeId, textarea.dataset.practiceNote, textarea.value);
+  });
+  $("#practiceReader")?.addEventListener("click", (event) => {
+    if (event.target.closest("#togglePracticeAnswers")) {
+      practiceAnswersVisible = !practiceAnswersVisible;
+      renderPractice();
+      return;
+    }
+    if (event.target.closest("#clearPracticeNotes")) {
+      clearPracticeNotes();
+      return;
+    }
+    if (event.target.closest("#pickRandomPractice")) pickRandomPractice();
+  });
   $("#questionBankGrade").addEventListener("change", () => {
     updateQuestionBankTopics();
     renderQuestionBank();

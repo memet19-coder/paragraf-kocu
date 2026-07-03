@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=question-bank-edit-1">
+  <link rel="stylesheet" href="./styles.css?v=practice-workshop-1">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -68,6 +68,7 @@
       <nav class="nav-list">
         <button class="nav-item is-active" data-view="dashboard"><i data-lucide="home"></i><span>Bugünkü Görevin</span></button>
         <button class="nav-item" data-view="topics"><i data-lucide="book-open-check"></i><span>Konu Çalış</span></button>
+        <button class="nav-item" data-view="practice"><i data-lucide="notebook-pen"></i><span>Alıştırma</span></button>
         <button class="nav-item" data-view="strategies"><i data-lucide="lightbulb"></i><span>Stratejiler</span></button>
         <button class="nav-item" data-view="mistakes"><i data-lucide="scan-search"></i><span>Yanlışlarım</span></button>
         <button class="nav-item" data-view="report"><i data-lucide="chart-no-axes-combined"></i><span>Gelişim Raporum</span></button>
@@ -165,6 +166,25 @@
           <div class="topic-layout">
             <div class="topic-list" id="topicList"></div>
             <article class="topic-detail" id="topicDetail"></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="practiceView" aria-labelledby="viewTitle">
+        <div class="section-band">
+          <div class="toolbar">
+            <div>
+              <p class="eyebrow">Paragraf alıştırmaları</p>
+              <h2>Oku, düşün, kendi cevabını yaz</h2>
+            </div>
+            <div class="practice-controls">
+              <select id="practiceGradeFilter" aria-label="Alıştırma sınıf filtresi"></select>
+              <select id="practiceFocusFilter" aria-label="Alıştırma konu filtresi"></select>
+            </div>
+          </div>
+          <div class="practice-workbench">
+            <aside class="practice-passage-list" id="practicePassageList" aria-label="Paragraf listesi"></aside>
+            <article class="practice-reader" id="practiceReader"></article>
           </div>
         </div>
       </section>
@@ -418,7 +438,7 @@
   <script src="./meb7-questions.js?v=meb7-workbook-1"></script>
   <script src="./sb7-paragraph-questions.js?v=sb7-paragraph-1"></script>
   <script src="./isem8-paragraph-questions.js?v=isem8-paragraph-1"></script>
-  <script src="./app.js?v=publish-refresh-1"></script>
+  <script src="./app.js?v=practice-workshop-1"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>
