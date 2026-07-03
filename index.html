@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=practice-pdf-1">
+  <link rel="stylesheet" href="./styles.css?v=teacher-practice-1">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -349,6 +349,47 @@
               </div>
             </form>
           </div>
+          <div class="chart-panel teacher-practice-panel">
+            <div class="toolbar">
+              <div>
+                <p class="eyebrow">Alıştırma takibi</p>
+                <h2>Öğrencilerin paragraf çalışma durumu</h2>
+              </div>
+            </div>
+            <div class="student-table-wrap compact-table">
+              <table class="student-table">
+                <thead>
+                  <tr>
+                    <th>Öğrenci</th>
+                    <th>Sınıf</th>
+                    <th>Tamamlanan</th>
+                    <th>Oran</th>
+                    <th>Son paragraf</th>
+                    <th>Durum</th>
+                  </tr>
+                </thead>
+                <tbody id="practiceTrackingRows"></tbody>
+              </table>
+            </div>
+          </div>
+          <form class="question-form" id="customPracticeForm">
+            <h3>Alıştırma paragrafı ekle</h3>
+            <div class="form-grid">
+              <label>Sınıf<select id="customPracticeGrade"><option>5</option><option>6</option><option>7</option><option>8</option></select></label>
+              <label>Konu<select id="customPracticeFocus"></select></label>
+              <label>Zorluk<select id="customPracticeDifficulty"><option>Kolay</option><option>Orta</option><option>Zor</option></select></label>
+              <label>Başlık<input id="customPracticeTitle" type="text" placeholder="Paragraf başlığı" required></label>
+            </div>
+            <label>Paragraf metni<textarea id="customPracticeText" rows="5" required></textarea></label>
+            <div class="form-grid">
+              <label>Konu örnek cevabı<input id="customPracticeTopicAnswer" type="text" required></label>
+              <label>Ana fikir örnek cevabı<input id="customPracticeMainAnswer" type="text" required></label>
+              <label>Başlık örnek cevabı<input id="customPracticeTitleAnswer" type="text"></label>
+              <label>Anlatım biçimi örnek cevabı<input id="customPracticeNarrationAnswer" type="text" required></label>
+            </div>
+            <label>Çıkarım / yardımcı düşünce örnek cevabı<input id="customPracticeInferenceAnswer" type="text" required></label>
+            <button class="primary-action" type="submit"><i data-lucide="send"></i><span>Paragrafı ekle</span></button>
+          </form>
           <form class="question-form" id="customQuestionForm">
             <h3>Soru ekle</h3>
             <div class="form-grid">
@@ -437,8 +478,8 @@
   <script src="./meb7-questions.js?v=meb7-workbook-1"></script>
   <script src="./sb7-paragraph-questions.js?v=sb7-paragraph-1"></script>
   <script src="./isem8-paragraph-questions.js?v=isem8-paragraph-1"></script>
-  <script src="./practice-passages-extra.js?v=practice-pdf-1"></script>
-  <script src="./app.js?v=practice-pdf-1"></script>
+  <script src="./practice-passages-extra.js?v=teacher-practice-1"></script>
+  <script src="./app.js?v=teacher-practice-1"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>

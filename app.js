@@ -2574,7 +2574,7 @@ function buildCurrentStudentPayload() {
     class_code: code,
     name: state.studentName.trim(),
     grade: Number(state.grade),
-    stats: state.stats,
+    stats: { ...state.stats, practiceCompleted: state.practiceCompleted || [] },
     topic_stats: state.topicStats,
     mistake_book: state.mistakeBook || [],
     question_times: state.questionTimes || [],
@@ -2594,7 +2594,7 @@ function buildStudentPayloadFromProfile(student, key, code) {
     class_code: code,
     name: (student.name || "").trim(),
     grade: Number(student.grade || state.grade),
-    stats: student.stats || { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 },
+    stats: { ...(student.stats || { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 }), practiceCompleted: student.practiceCompleted || student.stats?.practiceCompleted || [] },
     topic_stats: student.topicStats || {},
     mistake_book: student.mistakeBook || [],
     question_times: student.questionTimes || [],
@@ -2627,7 +2627,8 @@ async function remoteLoadStudent(name, code) {
     mistakeBook: data.mistake_book || [],
     questionTimes: data.question_times || [],
     answers: attemptsToAnswers(attemptsResult?.data || []),
-    assignments: data.assignments || []
+    assignments: data.assignments || [],
+    practiceCompleted: data.stats?.practiceCompleted || []
   };
 }
 
@@ -2692,12 +2693,13 @@ async function remoteLoadClassroom(code = state.teacherClassCode) {
   return (data || []).map((student) => ({
     name: student.name,
     grade: String(student.grade),
-    stats: student.stats || {},
+    stats: { ...(student.stats || {}), practiceCompleted: student.practiceCompleted || student.stats?.practiceCompleted || [] },
     topicStats: student.topic_stats || {},
     mistakeBook: student.mistake_book || [],
     questionTimes: student.question_times || [],
     answers: attemptsToAnswers(attemptsByStudent[student.student_key] || []),
-    assignments: student.assignments || []
+    assignments: student.assignments || [],
+    practiceCompleted: student.stats?.practiceCompleted || []
   }));
 }
 
@@ -2732,6 +2734,33 @@ async function remoteSaveCustomQuestion(question) {
     hint: question.hint
   };
   const key = `customQuestion:${question.id}`;
+  if (!isRemoteReady()) {
+    queueSync("customQuestion", payload, key);
+    return;
+  }
+  const result = await remoteTry(() => remoteDb.from("custom_questions").upsert(payload), null);
+  if (!result) queueSync("customQuestion", payload, key);
+  else syncQueuedRecords();
+}
+
+async function remoteSaveCustomPracticePassage(passage) {
+  const payload = {
+    id: passage.id,
+    class_code: state.teacherClassCode,
+    grade: passage.grade,
+    topic: passage.focus,
+    difficulty: passage.difficulty,
+    outcome: "__practice_passage__",
+    text: passage.text,
+    stem: passage.title,
+    options: ["-", "-", "-", "-"],
+    answer: "A",
+    solution: JSON.stringify({ prompts: passage.prompts, source: passage.source || "Öğretmen" }),
+    wrong: "",
+    strategy: "Öğretmen tarafından eklenen alıştırma paragrafı",
+    hint: ""
+  };
+  const key = `customPractice:${passage.id}`;
   if (!isRemoteReady()) {
     queueSync("customQuestion", payload, key);
     return;
@@ -2776,9 +2805,35 @@ async function remoteLoadCustomQuestions() {
   const data = result?.data || [];
   const deletedIds = new Set(state.deletedQuestionIds || []);
   const remoteQuestions = [];
+  const remotePracticePassages = [];
   (data || []).forEach((item) => {
     if (String(item.id || "").startsWith("delete_")) {
       deletedIds.add(String(item.id).slice("delete_".length));
+      return;
+    }
+    if (item.outcome === "__practice_passage__") {
+      let details = {};
+      try {
+        details = JSON.parse(item.solution || "{}");
+      } catch {
+        details = {};
+      }
+      remotePracticePassages.push({
+        id: item.id,
+        grade: item.grade,
+        focus: item.topic,
+        difficulty: item.difficulty,
+        title: item.stem,
+        text: item.text,
+        prompts: details.prompts || [
+          ["Bu paragrafın konusu nedir?", "Öğretmen örnek cevabı eklemiştir."],
+          ["Ana fikir nedir?", "Öğretmen örnek cevabı eklemiştir."],
+          ["Bu metne hangi başlık uygun olur?", item.stem],
+          ["Hangi anlatım biçimi kullanılmıştır?", "Öğretmen örnek cevabı eklemiştir."],
+          ["Metinden hangi çıkarıma ulaşılabilir?", "Öğretmen örnek cevabı eklemiştir."]
+        ],
+        source: details.source || "Öğretmen"
+      });
       return;
     }
     remoteQuestions.push({
@@ -2801,6 +2856,11 @@ async function remoteLoadCustomQuestions() {
   remoteQuestions.forEach((question) => merged.set(question.id, question));
   state.deletedQuestionIds = Array.from(deletedIds);
   state.customQuestions = Array.from(merged.values()).filter((question) => !deletedIds.has(question.id));
+  if (remotePracticePassages.length) {
+    const practiceMerged = new Map((state.customPracticePassages || []).map((passage) => [passage.id, passage]));
+    remotePracticePassages.forEach((passage) => practiceMerged.set(passage.id, passage));
+    state.customPracticePassages = Array.from(practiceMerged.values());
+  }
   persistStateOnly();
 }
 
@@ -2813,6 +2873,7 @@ function loadState() {
     teacherClassCode: "PK2026",
     classrooms: {},
     customQuestions: [],
+    customPracticePassages: [],
     deletedQuestionIds: [],
     mistakeBook: [],
     questionTimes: [],
@@ -2843,6 +2904,51 @@ function saveState() {
 
 function gradeQuestions(grade = state.grade) {
   return [...questionBank, ...(state.customQuestions || [])].filter((question) => question.grade === Number(grade));
+}
+
+function normalizePracticeFocus(focus = "") {
+  const value = String(focus);
+  const fixes = new Map([
+    ["??kar?m yapma", "Çıkarım yapma"],
+    ["Ana d???nce", "Ana düşünce"],
+    ["Ba?l?k bulma", "Başlık bulma"],
+    ["Yard?mc? d???nce", "Yardımcı düşünce"],
+    ["Betimleyici anlat?m", "Betimleyici anlatım"],
+    ["Hik?ye unsurlar?", "Hikâye unsurları"],
+    ["Metnin amac?", "Metnin amacı"],
+    ["Anlat?m bi?imleri", "Anlatım biçimleri"],
+    ["D???nceyi geli?tirme yollar?", "Düşünceyi geliştirme yolları"],
+    ["Paragraf?n yap?s?", "Paragrafın yapısı"],
+    ["Tart??mac? anlat?m", "Tartışmacı anlatım"],
+    ["Metinler aras? kar??la?t?rma", "Metinler arası karşılaştırma"],
+    ["Dil ve anlat?m", "Dil ve anlatım"]
+  ]);
+  if (fixes.has(value)) return fixes.get(value);
+  if (value.includes("kar") && value.includes("m yapma")) return "Çıkarım yapma";
+  if (value.includes("Ana d")) return "Ana düşünce";
+  if (value.includes("Ba") && value.includes("l") && value.includes("bulma")) return "Başlık bulma";
+  if (value.includes("Yard")) return "Yardımcı düşünce";
+  if (value.includes("Betimleyici")) return "Betimleyici anlatım";
+  if (value.includes("Hik")) return "Hikâye unsurları";
+  if (value.includes("amac")) return "Metnin amacı";
+  if (value.includes("Anlat")) return "Anlatım biçimleri";
+  if (value.includes("geli")) return "Düşünceyi geliştirme yolları";
+  if (value.includes("Paragraf")) return "Paragrafın yapısı";
+  if (value.includes("Tart")) return "Tartışmacı anlatım";
+  if (value.includes("Metinler")) return "Metinler arası karşılaştırma";
+  if (value.includes("Dil")) return "Dil ve anlatım";
+  return value;
+}
+
+function allPracticePassages() {
+  return [...practicePassages, ...(state.customPracticePassages || [])].map((passage) => ({
+    ...passage,
+    focus: normalizePracticeFocus(passage.focus)
+  }));
+}
+
+function practicePassagesForGrade(grade = state.grade) {
+  return allPracticePassages().filter((passage) => passage.grade === Number(grade));
 }
 
 function shuffleQuestions(items) {
@@ -3091,7 +3197,7 @@ function practiceFilters() {
 
 function filteredPracticePassages() {
   const { grade, focus } = practiceFilters();
-  return practicePassages.filter((passage) => {
+  return allPracticePassages().filter((passage) => {
     if (grade !== "all" && String(passage.grade) !== grade) return false;
     if (focus !== "Tüm konular" && passage.focus !== focus) return false;
     return true;
@@ -3126,7 +3232,7 @@ function renderPracticeFilters() {
   gradeFilter.value = gradeValues.includes(previousGrade) ? previousGrade : String(state.grade);
 
   const currentFocus = focusFilter.value || "Tüm konular";
-  const focusSet = new Set(practicePassages
+  const focusSet = new Set(allPracticePassages()
     .filter((passage) => gradeFilter.value === "all" || String(passage.grade) === gradeFilter.value)
     .map((passage) => passage.focus));
   const focusOptions = ["Tüm konular", ...Array.from(focusSet).sort((a, b) => a.localeCompare(b, "tr"))];
@@ -3225,6 +3331,7 @@ function completePracticePassage() {
   if (!state.practiceCompleted.includes(activePracticeId)) state.practiceCompleted.push(activePracticeId);
   syncCurrentStudent();
   persistStateOnly();
+  remoteUpsertStudent();
   const next = availablePracticePassages()[0];
   activePracticeId = next?.id || null;
   practiceAnswersVisible = false;
@@ -3240,6 +3347,7 @@ function resetPracticeSet() {
   practiceJustCompleted = false;
   syncCurrentStudent();
   persistStateOnly();
+  remoteUpsertStudent();
   renderPractice();
 }
 
@@ -4004,6 +4112,57 @@ function addCustomQuestion() {
   renderAll();
 }
 
+function practiceFocusOptionsForGrade(grade = state.grade) {
+  const focusSet = new Set(practicePassagesForGrade(grade).map((passage) => passage.focus));
+  return Array.from(focusSet).sort((a, b) => a.localeCompare(b, "tr"));
+}
+
+function updateCustomPracticeFocus() {
+  const grade = $("#customPracticeGrade")?.value || state.grade;
+  const focusSelect = $("#customPracticeFocus");
+  if (!focusSelect) return;
+  const options = practiceFocusOptionsForGrade(grade);
+  focusSelect.innerHTML = options.map((focus) => `<option>${escapeHtml(focus)}</option>`).join("");
+}
+
+function addCustomPracticePassage() {
+  const grade = Number($("#customPracticeGrade").value);
+  const title = $("#customPracticeTitle").value.trim();
+  const text = $("#customPracticeText").value.trim();
+  const titleAnswer = $("#customPracticeTitleAnswer").value.trim() || title;
+  const passage = {
+    id: `teacher-practice-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    grade,
+    focus: $("#customPracticeFocus").value,
+    difficulty: $("#customPracticeDifficulty").value,
+    title,
+    text,
+    prompts: [
+      ["Bu paragrafın konusu nedir?", $("#customPracticeTopicAnswer").value.trim()],
+      ["Ana fikir nedir?", $("#customPracticeMainAnswer").value.trim()],
+      ["Bu metne hangi başlık uygun olur?", titleAnswer],
+      ["Hangi anlatım biçimi kullanılmıştır?", $("#customPracticeNarrationAnswer").value.trim()],
+      ["Metinden hangi çıkarıma ulaşılabilir?", $("#customPracticeInferenceAnswer").value.trim()]
+    ],
+    source: "Öğretmen"
+  };
+  if (!passage.text || !passage.title || passage.prompts.some(([, answer]) => !answer)) {
+    alert("Paragraf metni ve örnek cevapların tamamını doldurmalısın.");
+    return;
+  }
+  if (!Array.isArray(state.customPracticePassages)) state.customPracticePassages = [];
+  state.customPracticePassages.push(passage);
+  remoteSaveCustomPracticePassage(passage);
+  activePracticeId = null;
+  syncCurrentStudent();
+  persistStateOnly();
+  $("#customPracticeForm").reset();
+  updateCustomPracticeFocus();
+  renderPractice();
+  renderTeacher();
+  setSyncStatus("Alıştırma paragrafı eklendi.", "ok");
+}
+
 function renderTeacher() {
   ensureTeacherDetails();
   syncCurrentStudent();
@@ -4023,6 +4182,8 @@ function renderTeacher() {
   }
   updateAssignmentTopics();
   updateCustomTopics();
+  updateCustomPracticeFocus();
+  renderPracticeTracking(students);
   renderDailyTaskForm();
   refreshRemoteTeacherPanel();
 }
@@ -4033,7 +4194,13 @@ async function refreshRemoteTeacherPanel() {
   if (!students.length) return;
   const room = ensureClassroom(state.teacherClassCode);
   students.forEach((student) => {
-    room.students[studentKey(student.name, state.teacherClassCode)] = student;
+    const key = studentKey(student.name, state.teacherClassCode);
+    const existing = room.students[key] || {};
+    room.students[key] = {
+      ...student,
+      practiceNotes: existing.practiceNotes || student.practiceNotes || {},
+      practiceCompleted: existing.practiceCompleted || student.practiceCompleted || []
+    };
   });
   $("#studentRows").innerHTML = students.map((student) => {
     const weak = weakestTopicFor(student.topicStats || {});
@@ -4045,6 +4212,7 @@ async function refreshRemoteTeacherPanel() {
   if ($("#assignStudent")) {
     $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
   }
+  renderPracticeTracking(currentClassStudents(state.teacherClassCode));
 }
 
 function ensureTeacherDetails() {
@@ -4053,6 +4221,37 @@ function ensureTeacherDetails() {
   const cells = Array.from(header.children);
   const lastCell = cells[cells.length - 1];
   if (lastCell) lastCell.textContent = "Yanlış konuları";
+}
+
+function practiceStatsForStudent(student) {
+  const grade = Number(student.grade || state.grade);
+  const gradePassages = practicePassagesForGrade(grade);
+  const passageMap = new Map(gradePassages.map((passage) => [passage.id, passage]));
+  const completed = (student.practiceCompleted || []).filter((id) => passageMap.has(id));
+  const total = gradePassages.length;
+  const percent = total ? Math.round((completed.length / total) * 100) : 0;
+  const lastId = completed[completed.length - 1];
+  const lastPassage = lastId ? passageMap.get(lastId) : null;
+  const status = completed.length === 0 ? "Başlamadı" : completed.length >= total ? "Tamamladı" : "Devam ediyor";
+  return { completed: completed.length, total, percent, lastPassage, status };
+}
+
+function renderPracticeTracking(students = currentClassStudents(state.teacherClassCode)) {
+  const rows = $("#practiceTrackingRows");
+  if (!rows) return;
+  rows.innerHTML = students.length ? students.map((student) => {
+    const stats = practiceStatsForStudent(student);
+    return `
+      <tr>
+        <td>${escapeHtml(student.name || "Adsız öğrenci")}</td>
+        <td>${escapeHtml(student.grade || "-")}. sınıf</td>
+        <td>${stats.completed}/${stats.total}</td>
+        <td>${stats.percent}%</td>
+        <td>${stats.lastPassage ? `${escapeHtml(stats.lastPassage.title)} · ${escapeHtml(stats.lastPassage.focus)}` : "Henüz yok"}</td>
+        <td>${stats.status}</td>
+      </tr>
+    `;
+  }).join("") : `<tr><td colspan="6">Bu sınıf kodunda alıştırma kaydı henüz yok.</td></tr>`;
 }
 
 function updateAssignmentTopics() {
@@ -4677,6 +4876,11 @@ function bindEvents() {
     alert("Günün görevi yayınlandı.");
   });
   $("#clearDailyTask")?.addEventListener("click", clearDailyTask);
+  $("#customPracticeGrade")?.addEventListener("change", updateCustomPracticeFocus);
+  $("#customPracticeForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    addCustomPracticePassage();
+  });
   $("#customQuestionForm").addEventListener("submit", (event) => {
     event.preventDefault();
     addCustomQuestion();
