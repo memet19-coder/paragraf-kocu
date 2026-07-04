@@ -2960,6 +2960,29 @@ function shuffleQuestions(items) {
   return shuffled;
 }
 
+function questionIdFor(question) {
+  return question?.id || makeQuestionId(question);
+}
+
+function solvedQuestionIdsForGrade(grade = state.grade) {
+  return new Set((state.answers || [])
+    .filter((answer) => String(answer.grade) === String(grade))
+    .map((answer) => answer.id)
+    .filter(Boolean));
+}
+
+function onlyUnsolvedQuestions(pool, grade = state.grade) {
+  const solvedIds = solvedQuestionIdsForGrade(grade);
+  return pool.filter((question) => !solvedIds.has(questionIdFor(question)));
+}
+
+function sampleQuestionForTopic(topic) {
+  const gradePool = gradeQuestions(state.grade);
+  return pickQuestions({ count: 1, topic })[0]
+    || gradePool.find((question) => question.topic === topic || question.topic.includes(topic))
+    || gradePool[0];
+}
+
 function pickQuestions({ count = 5, grade = state.grade, topic = null, difficulty = null } = {}) {
   const gradePool = gradeQuestions(grade);
   let pool = gradePool;
@@ -2972,17 +2995,18 @@ function pickQuestions({ count = 5, grade = state.grade, topic = null, difficult
     pool = difficultyPool.length ? difficultyPool : pool;
   }
   if (!pool.length) return [];
-  const shuffled = shuffleQuestions(pool);
-  return Array.from({ length: count }, (_, index) => shuffled[index % shuffled.length]);
+  const freshPool = onlyUnsolvedQuestions(pool, grade);
+  if (!freshPool.length) return [];
+  return shuffleQuestions(freshPool).slice(0, count);
 }
 
 function pickBalancedQuestions({ count = 10, grade = state.grade, topics: preferredTopics = null } = {}) {
-  const gradePool = gradeQuestions(grade);
+  const gradePool = onlyUnsolvedQuestions(gradeQuestions(grade), grade);
   const topicNames = preferredTopics?.length ? preferredTopics : [...new Set(gradePool.map((question) => question.topic))];
   const buckets = topicNames
     .map((topic) => [topic, shuffleQuestions(gradePool.filter((question) => question.topic === topic))])
     .filter(([, bucket]) => bucket.length);
-  if (!buckets.length) return pickQuestions({ count, grade });
+  if (!buckets.length) return [];
 
   const selected = [];
   let bucketIndex = Math.floor(Math.random() * buckets.length);
@@ -2992,7 +3016,7 @@ function pickBalancedQuestions({ count = 10, grade = state.grade, topics: prefer
     bucketIndex += 1;
     if (buckets.every(([, bucket]) => !bucket.length)) break;
   }
-  return selected.length ? selected : pickQuestions({ count, grade });
+  return selected;
 }
 
 function availableTopicsForGrade(grade = state.grade) {
@@ -3172,7 +3196,11 @@ function renderTopics() {
 }
 
 function renderTopicDetail(topic) {
-  const sample = pickQuestions({ count: 1, topic })[0];
+  const sample = sampleQuestionForTopic(topic);
+  if (!sample) {
+    $("#topicDetail").innerHTML = `<div class="empty-state">Bu konu için gösterilecek soru bulunamadı.</div>`;
+    return;
+  }
   $("#topicDetail").innerHTML = `
     <p class="eyebrow">${state.grade}. sınıf</p>
     <h2>${topic}</h2>
@@ -4383,7 +4411,7 @@ function startPracticeMode(mode) {
 
 function startQuiz(questions, title, meta) {
   if (!questions?.length) {
-    alert("Bu çalışma için uygun soru bulunamadı.");
+    alert("Bu sınıf ve çalışma için çözülmemiş soru kalmadı. Farklı konu seçebilir ya da öğretmen yeni soru ekleyebilir.");
     return;
   }
   quiz = { questions, index: 0, title, meta, correct: 0, wrong: 0, blank: 0, startedAt: Date.now(), questionStartedAt: Date.now(), locked: false };
