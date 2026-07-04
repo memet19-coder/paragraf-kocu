@@ -823,7 +823,7 @@ const passageSeeds = {
 
 function paragraphExtension(grade, seed, note, index) {
   const gradeFive = [
-    "Bu olaydan sonra öğrenciler, küçük bir görevin bile dikkat ve sorumluluk istediğini daha iyi anladı.",
+    "Bu deneyimden sonra öğrenciler, ayrıntılara dikkat etmenin sonucu nasıl değiştirdiğini daha iyi anladı.",
     "Öğretmen, yapılan çalışmanın yalnızca sonucu değil, öğrencilerin süreçteki çabasını da gösterdiğini belirtti.",
     "Sınıftaki konuşmada herkes, benzer durumlarda nasıl davranabileceğini kısaca anlattı."
   ];
@@ -1997,12 +1997,30 @@ function newGenerationQuestion(grade, topic, index, seed, note, difficulty, numb
   return null;
 }
 
+function gradeFiveGeneratedText(seed, note, extension, index) {
+  const variants = [
+    `${seed.person}, ${seed.place} içinde her gün gördüğü ama pek dikkat etmediği bir ayrıntıyı fark etti. ${seed.detail} konusunda küçük bir aksaklık yaşanınca önce durumu gözlemledi, sonra arkadaşlarıyla konuşup ne yapılabileceğini düşündü. Çalışma ilerledikçe herkesin fikrinin işe yaradığı görüldü. ${seed.person}, ${note}; ${extension}`,
+    `${seed.place} o sabah her zamankinden daha hareketliydi. ${seed.person}, ${seed.detail} ile ilgili hazırlık yapılırken bazı şeylerin eksik kaldığını gördü. Acele etmek yerine sırayla ne yapılacağını belirledi ve arkadaşlarından destek istedi. İş bittiğinde ortaya çıkan düzen, planlı davranmanın ne kadar önemli olduğunu gösterdi. ${extension}`,
+    `${seed.person}, bir süre ${seed.place} çevresini sessizce izledi. Önce gözden kaçan küçük ayrıntıları fark etti, sonra ${seed.detail} için yapılacakları zihninde sıraya koydu. Arkadaşları da ona katılınca çalışma daha kolay ilerledi. Bu durum, dikkatli bakmanın ve birlikte hareket etmenin sonucu değiştirebileceğini gösterdi.`,
+    `${seed.place} için yapılan hazırlıkta herkes farklı bir işle ilgileniyordu. ${seed.person}, ${seed.detail} konusunun unutulmaması gerektiğini söyleyince çalışma daha düzenli yürüdü. Başta küçük görünen bu ayrıntı, sonucun daha iyi olmasını sağladı. ${note}. ${extension}`,
+    `${seed.person}, ${seed.place} ile ilgili bir konuşmada herkesin aynı şeyi fark etmediğini gördü. Kimi yalnız sonuca bakıyor, kimi de ${seed.detail} gibi ayrıntıların neden gerekli olduğunu anlatıyordu. Konuşma ilerledikçe öğrenciler, bir işi anlamak için yalnız ne yapıldığına değil, niçin yapıldığına da bakmak gerektiğini fark etti.`,
+    `${seed.place} sessizleştiğinde ${seed.person} etrafına daha dikkatli baktı. Düzenli duran yerlerin daha kolay kullanıldığını, dağınık kalan bölümlerde ise zaman kaybedildiğini gördü. Bu yüzden ${seed.detail} üzerinde durdu ve arkadaşlarına fikrini anlattı. Anlatılanlar, küçük ayrıntıların büyük kolaylıklar sağlayabileceğini düşündürdü.`,
+    `Bir gün ${seed.person}, ${seed.place} hakkında kısa bir gözlem yazısı hazırladı. Yazısında önce ne gördüğünü anlattı, sonra ${seed.detail} ile ilgili düşüncelerini örneklerle açıkladı. Arkadaşları yazıyı okuyunca aynı yere farklı gözlerle bakabileceklerini fark etti. Böylece metin, gözlem yapmanın anlamayı güçlendirdiğini gösterdi.`,
+    `${seed.person}, ${seed.place} için yapılan çalışmada en çok dinlemenin işe yaradığını düşündü. Çünkü herkes kendi fikrini söyleyince ${seed.detail} konusunda daha doğru bir yol bulundu. Kimse tek başına karar vermedi; önce konuşuldu, sonra uygulandı. Bu da ortak düşünmenin çalışmayı kolaylaştırdığını ortaya koydu.`,
+    `${seed.place} ile ilgili sorun ilk bakışta çok büyük görünmüyordu. Ancak ${seed.person}, ${seed.detail} yapılmadığında işlerin karışabileceğini fark etti. Bunun üzerine arkadaşlarıyla birlikte kısa bir plan hazırladı. Plan uygulandığında hem zaman kazanıldı hem de herkes ne yapacağını daha iyi anladı.`,
+    `${seed.person}, ${seed.place} hakkında anlatılanları dikkatle dinledi. Anlatılanlarda özellikle ${seed.detail} üzerinde duruluyordu. Çünkü bu ayrıntı olmadan yapılan çalışma eksik kalabilirdi. Dersin sonunda öğrenciler, metindeki önemli bilgiyi ayırt etmenin doğru sonuca ulaşmayı kolaylaştırdığını gördü.`,
+    `${seed.place} bir süre sonra eskisinden daha düzenli görünmeye başladı. Bunda ${seed.person}'in ${seed.detail} konusuna dikkat çekmesinin payı vardı. Arkadaşları önce bu ayrıntının gerekli olup olmadığını tartıştı, sonra denediklerinde işe yaradığını gördüler. Böylece küçük bir uyarının bile davranışları değiştirebileceği anlaşıldı.`,
+    `${seed.person}, ${seed.place} ile ilgili çalışmayı anlatırken yalnız sonucu söylemekle yetinmedi. Önce nasıl düşündüğünü, sonra ${seed.detail} için hangi yolu seçtiğini açıkladı. Arkadaşları onu dinlerken kendi davranışlarını da değerlendirdi. Bu anlatım, yapılan işin arkasındaki düşünceyi görmenin önemini ortaya koydu. ${extension}`
+  ];
+  return variants[index % variants.length];
+}
+
 function generatedQuestion(grade, topic, index) {
   const seed = passageSeeds[grade][index % passageSeeds[grade].length];
   const difficulty = index % 5 < 2 ? "Kolay" : index % 5 < 4 ? "Orta" : "Zor";
   const number = index + 1;
   const variantNotes = {
-    5: ["öğretmen kısa bir değerlendirme yaptı", "arkadaşları kendi görevlerini de anlattı", "sınıf panosuna küçük bir not asıldı", "çalışmanın sonucu ertesi gün yeniden konuşuldu"],
+    5: ["öğretmen kısa bir değerlendirme yaptı", "arkadaşları kendi gözlemlerini de anlattı", "sınıf panosuna küçük bir not asıldı", "öğrenciler yaptıkları seçimin nedenini açıkladı"],
     6: ["öğrenciler sonucu defterlerine iki maddeyle yazdı", "öğretmen benzer bir günlük yaşam örneği verdi", "sınıf, neden ve sonucu birlikte tartıştı", "çalışmanın sonunda kısa bir özet çıkarıldı"],
     7: ["öğrenciler metindeki anahtar sözcükleri işaretledi", "sınıfta farklı yorumlar karşılaştırıldı", "öğretmen konu dışı ayrıntıları ayıklamalarını istedi", "metnin giriş ve sonuç cümleleri ayrıca incelendi"],
     8: ["öğrenciler sürelerini tabloya işledi", "yanlış seçeneklerin neden güçlü çeldirici olduğu tartışıldı", "soru kökü önce okunarak çözüm yolu belirlendi", "verilerden kesin yargı ile yorum ayrıldı"]
@@ -2017,11 +2035,11 @@ function generatedQuestion(grade, topic, index) {
   if (newGenQuestion) return newGenQuestion;
 
   if (grade === 5) {
-    const text = `${seed.person}, ${seed.place} için küçük bir görev üstlendi. Önce ${seed.action}, sonra ${seed.detail} konusunda arkadaşlarından yardım aldı. Günün sonunda herkes yapılan işin işe yaradığını fark etti. ${seed.person}, birlikte çalışınca işlerin daha kolay bittiğini düşündü; ayrıca ${note}. ${extension}`;
+    const text = gradeFiveGeneratedText(seed, note, extension, index);
     const map = {
       "Konu bulma": {
         stem: "Bu metnin konusu aşağıdakilerden hangisidir?",
-        options: [`${seed.person}'in görevi tek başına tamamlaması`, `${seed.person}'in ${seed.detail} ile ilgili çalışması`, `${seed.place} için yapılan çalışmanın ertelenmesi`, `Arkadaşların ${seed.action} yapmadan sonuca ulaşması`],
+        options: [`${seed.person}'in bütün işi tek başına bitirmesi`, `${seed.person}'in ${seed.detail} ile ilgili çalışması`, `${seed.place} için yapılan hazırlığın tamamen bırakılması`, "Arkadaşların konu hakkında hiçbir şey yapmaması"],
         answer: "B",
         solution: `Metnin bütününde ${seed.person}'in ${seed.detail} ile ilgili yaptığı çalışma anlatılır.`
       },
@@ -2033,13 +2051,13 @@ function generatedQuestion(grade, topic, index) {
       },
       "Başlık bulma": {
         stem: "Bu metne en uygun başlık hangisidir?",
-        options: ["Birlikte Tamamlanan Görev", seed.title, "Yarım Kalan Hazırlık", `${seed.place} İçin Yeni Bir Plan`],
+        options: ["Birlikte Bulunan Çözüm", seed.title, "Yarım Kalan Hazırlık", `${seed.place} İçin Yeni Bir Plan`],
         answer: "B",
         solution: `Başlık metnin tamamını kapsamalıdır. Metin ${seed.title.toLowerCase()} çevresinde gelişir.`
       },
       "Yardımcı düşünce": {
         stem: "Bu metinde aşağıdakilerden hangisine değinilmiştir?",
-        options: [`Görevin ${seed.place} dışında yapıldığına`, seed.detail, `${seed.person}'in arkadaşlarından hiç yardım almadığına`, "Çalışmanın herkes tarafından gereksiz görüldüğüne"],
+        options: [`Çalışmanın ${seed.place} dışında yapıldığına`, seed.detail, `${seed.person}'in arkadaşlarından hiç yardım almadığına`, "Çalışmanın herkes tarafından gereksiz görüldüğüne"],
         answer: "B",
         solution: `Metinde ${seed.detail} açıkça belirtilmiştir.`
       },
