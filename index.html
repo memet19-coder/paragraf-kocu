@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=no-repeat-questions-1">
+  <link rel="stylesheet" href="./styles.css?v=teacher-tools-2">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -316,12 +316,35 @@
               <p class="eyebrow">Öğretmen paneli</p>
               <h2>Sınıf takibi ve günün görevi</h2>
             </div>
-            <button class="secondary-action" id="addStudent"><i data-lucide="user-plus"></i><span>Öğrenci ekle</span></button>
+            <div class="teacher-toolbar-actions">
+              <button class="secondary-action" id="backupTeacherData" type="button"><i data-lucide="download"></i><span>Yedekle</span></button>
+              <button class="secondary-action" id="openTeacherQuestionEditor" type="button"><i data-lucide="pencil"></i><span>Düzenle</span></button>
+              <button class="secondary-action" id="openTeacherQuestionDeleter" type="button"><i data-lucide="trash-2"></i><span>Sil</span></button>
+              <button class="secondary-action" id="toggleTeacherCorrection" type="button" aria-expanded="false"><i data-lucide="user-cog"></i><span>Öğrenci düzelt</span></button>
+              <button class="secondary-action" id="addStudent" type="button"><i data-lucide="user-plus"></i><span>Öğrenci ekle</span></button>
+            </div>
           </div>
           <div class="class-code-panel">
             <strong>Sınıf kodu: <span id="teacherClassCode"></span></strong>
             <button class="secondary-action" id="newClassCode"><i data-lucide="rotate-ccw"></i><span>Yeni kod</span></button>
           </div>
+          <form class="teacher-correction-panel" id="teacherCorrectionPanel" hidden>
+            <div>
+              <p class="eyebrow">Öğrenci kaydı düzeltme</p>
+              <h3>Yanlış girilen bilgiyi güncelle</h3>
+              <p class="muted-copy">Ad veya sınıf bilgisini düzeltebilir, gerekirse yalnızca seçtiğin öğrencinin ilerlemesini temizleyebilirsin.</p>
+            </div>
+            <div class="form-grid teacher-correction-grid">
+              <label>Öğrenci<select id="teacherCorrectionStudent"></select></label>
+              <label>Ad soyad<input id="teacherCorrectionName" type="text" autocomplete="off"></label>
+              <label>Sınıf<select id="teacherCorrectionGrade"><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
+            </div>
+            <div class="teacher-correction-actions">
+              <button class="primary-action" id="saveTeacherCorrection" type="submit"><i data-lucide="save"></i><span>Değişiklikleri kaydet</span></button>
+              <button class="secondary-action" id="resetTeacherStudentProgress" type="button"><i data-lucide="eraser"></i><span>Bu öğrencinin ilerlemesini temizle</span></button>
+              <span class="sync-status" id="teacherCorrectionStatus" aria-live="polite"></span>
+            </div>
+          </form>
           <div class="teacher-layout">
             <div class="student-table-wrap">
               <table class="student-table">
@@ -333,6 +356,7 @@
                     <th>D/Y</th>
                     <th>Zorlandığı konu</th>
                     <th>Yanlış konuları</th>
+                    <th>İşlem</th>
                   </tr>
                 </thead>
                 <tbody id="studentRows"></tbody>
@@ -479,7 +503,7 @@
   <script src="./sb7-paragraph-questions.js?v=sb7-paragraph-1"></script>
   <script src="./isem8-paragraph-questions.js?v=isem8-paragraph-1"></script>
   <script src="./practice-passages-extra.js?v=grade5-variety-1"></script>
-  <script src="./app.js?v=grade5-variety-1"></script>
+  <script src="./app.js?v=teacher-tools-2"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>

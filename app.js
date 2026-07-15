@@ -2419,6 +2419,8 @@ let syncInProgress = false;
 const QUESTION_BANK_PASSWORD = "KOCU2026";
 let questionBankUnlocked = false;
 let editingQuestionId = null;
+let teacherCorrectionMode = false;
+let selectedTeacherStudentKey = "";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -2535,6 +2537,9 @@ async function pushQueuedRecord(item) {
   if (item.type === "class") {
     return Boolean(await remoteTry(() => remoteDb.from("classes").upsert(item.payload, { onConflict: "class_code" }), null));
   }
+  if (item.type === "deleteStudent") {
+    return Boolean(await remoteTry(() => remoteDb.from("students").delete().eq("student_key", item.payload.student_key), null));
+  }
   return true;
 }
 
@@ -2629,6 +2634,17 @@ async function remoteUpsertStudentProfile(student, key, code) {
   }
   const result = await sendStudentPayload(payload);
   if (!result) queueSync("student", payload, `student:${key}`);
+}
+
+async function remoteDeleteStudent(key) {
+  if (!key) return false;
+  if (!isRemoteReady()) {
+    queueSync("deleteStudent", { student_key: key }, `deleteStudent:${key}`);
+    return false;
+  }
+  const result = await remoteTry(() => remoteDb.from("students").delete().eq("student_key", key), null);
+  if (!result) queueSync("deleteStudent", { student_key: key }, `deleteStudent:${key}`);
+  return Boolean(result);
 }
 
 async function remoteLoadStudent(name, code) {
@@ -4094,6 +4110,36 @@ function generateClassCode() {
   return `PK${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 }
 
+function openTeacherQuestionBank(mode = "edit") {
+  questionBankUnlocked = true;
+  setView("questionBank");
+  renderQuestionBank();
+  window.lucide?.createIcons();
+  setSyncStatus(mode === "delete" ? "Silme alanı açıldı." : "Düzenleme alanı açıldı.", "ok");
+  document.querySelector(".main-content")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function downloadTeacherBackup() {
+  const backup = {
+    format: "paragraf-kocu-backup",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    classCode: state.teacherClassCode,
+    data: JSON.parse(JSON.stringify(state))
+  };
+  const date = new Date().toISOString().slice(0, 10);
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `paragraf-kocu-${state.teacherClassCode || "sinif"}-${date}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  setSyncStatus("Sınıf yedeği indirildi.", "ok");
+}
+
 function downloadStudentReport() {
   const accuracy = state.stats.solved ? Math.round((state.stats.correct / state.stats.solved) * 100) : 0;
   const weak = weakestTopic() || "Veri bekleniyor";
@@ -4217,12 +4263,7 @@ function renderTeacher() {
   const studentEntries = currentClassStudentEntries(code);
   const students = studentEntries.map(([, student]) => student);
   $("#teacherClassCode").textContent = code;
-  $("#studentRows").innerHTML = students.length ? students.map((student) => {
-    const weak = weakestTopicFor(student.topicStats || {});
-    const correct = student.stats?.correct || 0;
-    const wrong = student.stats?.wrong || 0;
-    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
-  }).join("") : `<tr><td colspan="6">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
+  $("#studentRows").innerHTML = renderTeacherStudentRows(studentEntries);
   if ($("#assignStudent")) {
     $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
   }
@@ -4231,6 +4272,7 @@ function renderTeacher() {
   updateCustomPracticeFocus();
   renderPracticeTracking(students);
   renderDailyTaskForm();
+  renderTeacherCorrectionForm();
   refreshRemoteTeacherPanel();
 }
 
@@ -4248,25 +4290,136 @@ async function refreshRemoteTeacherPanel() {
       practiceCompleted: existing.practiceCompleted || student.practiceCompleted || []
     };
   });
-  $("#studentRows").innerHTML = students.map((student) => {
-    const weak = weakestTopicFor(student.topicStats || {});
-    const correct = student.stats?.correct || 0;
-    const wrong = student.stats?.wrong || 0;
-    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
-  }).join("");
   const studentEntries = currentClassStudentEntries(state.teacherClassCode);
+  $("#studentRows").innerHTML = renderTeacherStudentRows(studentEntries);
   if ($("#assignStudent")) {
     $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
   }
   renderPracticeTracking(currentClassStudents(state.teacherClassCode));
+  renderTeacherCorrectionForm();
 }
 
 function ensureTeacherDetails() {
   const header = document.querySelector("#teacherView .student-table thead tr");
   if (!header) return;
   const cells = Array.from(header.children);
-  const lastCell = cells[cells.length - 1];
-  if (lastCell) lastCell.textContent = "Yanlış konuları";
+  const wrongTopicsCell = cells.find((cell) => cell.textContent.includes("Yanlış"));
+  const actionCell = cells[cells.length - 1];
+  if (wrongTopicsCell) wrongTopicsCell.textContent = "Yanlış konuları";
+  if (actionCell) actionCell.textContent = "İşlem";
+}
+
+function renderTeacherStudentRows(studentEntries = currentClassStudentEntries(state.teacherClassCode)) {
+  if (!studentEntries.length) return `<tr><td colspan="7">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
+  return studentEntries.map(([key, student]) => {
+    const weak = weakestTopicFor(student.topicStats || {});
+    const correct = student.stats?.correct || 0;
+    const wrong = student.stats?.wrong || 0;
+    return `
+      <tr>
+        <td>${escapeHtml(student.name || "Adsız öğrenci")}</td>
+        <td>${escapeHtml(student.grade || "-")}. sınıf</td>
+        <td>${student.stats?.solved || 0}</td>
+        <td>${correct}/${wrong}</td>
+        <td>${escapeHtml(weak || "Veri bekliyor")}</td>
+        <td>${escapeHtml(wrongTopicSummary(student))}</td>
+        <td><button class="icon-button teacher-edit-student" type="button" data-student-key="${escapeHtml(key)}" title="Öğrenci kaydını düzelt" aria-label="Öğrenci kaydını düzelt"><i data-lucide="pencil"></i></button></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function renderTeacherCorrectionForm() {
+  const panel = $("#teacherCorrectionPanel");
+  const select = $("#teacherCorrectionStudent");
+  if (!panel || !select) return;
+  panel.hidden = !teacherCorrectionMode;
+  if (!teacherCorrectionMode) return;
+
+  const entries = currentClassStudentEntries(state.teacherClassCode);
+  if (!entries.length) {
+    select.innerHTML = `<option value="">Öğrenci kaydı yok</option>`;
+    $("#teacherCorrectionName").value = "";
+    return;
+  }
+  if (!entries.some(([key]) => key === selectedTeacherStudentKey)) selectedTeacherStudentKey = entries[0][0];
+  select.innerHTML = entries.map(([key, student]) => `<option value="${escapeHtml(key)}">${escapeHtml(student.name || "Adsız öğrenci")}</option>`).join("");
+  select.value = selectedTeacherStudentKey;
+  const student = ensureClassroom(state.teacherClassCode).students[selectedTeacherStudentKey];
+  if (!student) return;
+  $("#teacherCorrectionName").value = student.name || "";
+  $("#teacherCorrectionGrade").value = String(student.grade || state.grade);
+}
+
+function setTeacherCorrectionStatus(message, type = "info") {
+  const node = $("#teacherCorrectionStatus");
+  if (!node) return;
+  node.textContent = message;
+  node.classList.toggle("is-ok", type === "ok");
+  node.classList.toggle("is-warn", type === "warn");
+}
+
+function saveTeacherCorrection(event) {
+  event.preventDefault();
+  const oldKey = $("#teacherCorrectionStudent")?.value || selectedTeacherStudentKey;
+  const room = ensureClassroom(state.teacherClassCode);
+  const current = room.students[oldKey];
+  const name = $("#teacherCorrectionName")?.value.trim();
+  const grade = String($("#teacherCorrectionGrade")?.value || current?.grade || state.grade);
+  if (!current || !name) {
+    setTeacherCorrectionStatus("Öğrenci adı boş bırakılamaz.", "warn");
+    return;
+  }
+
+  const newKey = studentKey(name, state.teacherClassCode);
+  if (newKey !== oldKey && room.students[newKey]) {
+    setTeacherCorrectionStatus("Bu adla kayıtlı başka bir öğrenci zaten var.", "warn");
+    return;
+  }
+  const updated = { ...current, name, grade, updatedAt: new Date().toLocaleString("tr-TR") };
+  if (newKey !== oldKey) delete room.students[oldKey];
+  room.students[newKey] = updated;
+  selectedTeacherStudentKey = newKey;
+
+  if (studentKey(state.studentName, state.classCode || state.teacherClassCode) === oldKey) {
+    state.studentName = name;
+    state.grade = grade;
+    state.classCode = state.teacherClassCode;
+  }
+  persistStateOnly();
+  remoteUpsertStudentProfile(updated, newKey, state.teacherClassCode);
+  if (newKey !== oldKey) remoteDeleteStudent(oldKey);
+  teacherCorrectionMode = true;
+  renderAll();
+  setTeacherCorrectionStatus("Öğrenci kaydı düzeltildi.", "ok");
+}
+
+function resetTeacherStudentProgress() {
+  const key = $("#teacherCorrectionStudent")?.value || selectedTeacherStudentKey;
+  const room = ensureClassroom(state.teacherClassCode);
+  const student = room.students[key];
+  if (!student) return;
+  if (!confirm(`${student.name} adlı öğrencinin ilerleme kayıtları temizlensin mi?`)) return;
+  const reset = {
+    ...student,
+    stats: { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 },
+    topicStats: {},
+    mistakeBook: [],
+    questionTimes: [],
+    answers: [],
+    assignments: [],
+    practiceNotes: {},
+    practiceCompleted: [],
+    updatedAt: new Date().toLocaleString("tr-TR")
+  };
+  room.students[key] = reset;
+  if (studentKey(state.studentName, state.classCode || state.teacherClassCode) === key) applyStudentProfile(reset);
+  persistStateOnly();
+  remoteUpsertStudentProfile(reset, key, state.teacherClassCode);
+  teacherCorrectionMode = true;
+  selectedTeacherStudentKey = key;
+  renderAll();
+  setTeacherCorrectionStatus("Öğrencinin ilerleme kayıtları temizlendi.", "ok");
 }
 
 function practiceStatsForStudent(student) {
@@ -4890,6 +5043,32 @@ function bindEvents() {
     if (item) startQuiz([mistakeToQuestion(item)], "Yanlış Tekrarı", item.topic);
   });
   $("#downloadPdf").addEventListener("click", downloadStudentReport);
+  $("#backupTeacherData")?.addEventListener("click", downloadTeacherBackup);
+  $("#openTeacherQuestionEditor")?.addEventListener("click", () => openTeacherQuestionBank("edit"));
+  $("#openTeacherQuestionDeleter")?.addEventListener("click", () => openTeacherQuestionBank("delete"));
+  $("#toggleTeacherCorrection")?.addEventListener("click", () => {
+    teacherCorrectionMode = !teacherCorrectionMode;
+    const button = $("#toggleTeacherCorrection");
+    button.setAttribute("aria-expanded", String(teacherCorrectionMode));
+    renderTeacherCorrectionForm();
+    if (teacherCorrectionMode) $("#teacherCorrectionPanel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+  $("#teacherCorrectionStudent")?.addEventListener("change", (event) => {
+    selectedTeacherStudentKey = event.target.value;
+    renderTeacherCorrectionForm();
+  });
+  $("#teacherCorrectionPanel")?.addEventListener("submit", saveTeacherCorrection);
+  $("#resetTeacherStudentProgress")?.addEventListener("click", resetTeacherStudentProgress);
+  $("#studentRows")?.addEventListener("click", (event) => {
+    const button = event.target.closest(".teacher-edit-student");
+    if (!button) return;
+    teacherCorrectionMode = true;
+    selectedTeacherStudentKey = button.dataset.studentKey || "";
+    const toggle = $("#toggleTeacherCorrection");
+    toggle?.setAttribute("aria-expanded", "true");
+    renderTeacherCorrectionForm();
+    $("#teacherCorrectionPanel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
   $("#newClassCode").addEventListener("click", () => {
     state.teacherClassCode = generateClassCode();
     ensureClassroom(state.teacherClassCode);

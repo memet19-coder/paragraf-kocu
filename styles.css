@@ -1339,6 +1339,45 @@ h3 {
   gap: 14px;
 }
 
+.teacher-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.teacher-correction-panel {
+  margin: 14px 0;
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--blue);
+  border-radius: 8px;
+}
+
+.teacher-correction-panel h3 {
+  margin: 0;
+}
+
+.muted-copy {
+  margin: 5px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.teacher-correction-grid {
+  grid-template-columns: 1.2fr 1.5fr 110px;
+}
+
+.teacher-correction-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .student-table-wrap, .assignment-form {
   background: #fff;
   border: 1px solid var(--line);
@@ -1360,7 +1399,7 @@ h3 {
 .student-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 720px;
+  min-width: 790px;
 }
 
 .student-table th, .student-table td {
