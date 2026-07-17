@@ -1007,6 +1007,29 @@ h3 {
   min-width: 0;
 }
 
+.source-question-scroll {
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.source-question-frame {
+  width: 100%;
+  min-width: 680px;
+  min-height: 220px;
+  background: #fff;
+}
+
+.source-question-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .paragraph-mark-area .paragraph-text {
   min-height: 128px;
   user-select: none;
@@ -1267,6 +1290,22 @@ h3 {
   line-height: 1.65;
 }
 
+.question-preview-source {
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.question-preview-source img {
+  display: block;
+  width: 100%;
+  min-width: 620px;
+  height: auto;
+}
+
 .question-preview-stem {
   font-weight: 800;
 }
@@ -1339,45 +1378,6 @@ h3 {
   gap: 14px;
 }
 
-.teacher-toolbar-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.teacher-correction-panel {
-  margin: 14px 0;
-  padding: 16px;
-  display: grid;
-  gap: 14px;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--blue);
-  border-radius: 8px;
-}
-
-.teacher-correction-panel h3 {
-  margin: 0;
-}
-
-.muted-copy {
-  margin: 5px 0 0;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.teacher-correction-grid {
-  grid-template-columns: 1.2fr 1.5fr 110px;
-}
-
-.teacher-correction-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
 .student-table-wrap, .assignment-form {
   background: #fff;
   border: 1px solid var(--line);
@@ -1399,7 +1399,7 @@ h3 {
 .student-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 790px;
+  min-width: 720px;
 }
 
 .student-table th, .student-table td {

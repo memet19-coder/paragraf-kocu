@@ -2274,7 +2274,7 @@ function buildQuestion(question) {
 }
 
 function makeQuestionId(question) {
-  const raw = `${question.grade}|${question.topic}|${question.text}|${question.stem}`;
+  const raw = `${question.grade}|${question.topic}|${question.sourceImage || ""}|${question.text}|${question.stem}`;
   let hash = 0;
   for (let i = 0; i < raw.length; i += 1) hash = ((hash << 5) - hash + raw.charCodeAt(i)) | 0;
   return `q${question.grade}_${Math.abs(hash)}`;
@@ -2387,26 +2387,11 @@ function balanceQuestionBank(baseQuestions) {
   return balanced;
 }
 
-if (Array.isArray(window.MEB6_WORKBOOK_QUESTIONS)) {
-  questionBank.push(...window.MEB6_WORKBOOK_QUESTIONS);
-}
-
-if (Array.isArray(window.MEB7_WORKBOOK_QUESTIONS)) {
-  questionBank.push(...window.MEB7_WORKBOOK_QUESTIONS);
-}
-
-if (Array.isArray(window.SB7_PARAGRAPH_QUESTIONS)) {
-  questionBank.push(...window.SB7_PARAGRAPH_QUESTIONS);
-}
-
-if (Array.isArray(window.ISEM8_PARAGRAPH_QUESTIONS)) {
-  questionBank.push(...window.ISEM8_PARAGRAPH_QUESTIONS);
-}
-
-questionBank = distributeAnswersEvenly(balanceQuestionBank(questionBank)).map((question) => ({ ...question, id: makeQuestionId(question) }));
+questionBank = (Array.isArray(window.DEFINE5_QUESTIONS) ? window.DEFINE5_QUESTIONS : [])
+  .map((question) => ({ ...question, id: makeQuestionId(question) }));
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
 
-const CONTENT_VERSION = 5;
+const CONTENT_VERSION = 6;
 let state = loadState();
 let selectedCount = 5;
 let activeTopic = topics[0];
@@ -2419,8 +2404,6 @@ let syncInProgress = false;
 const QUESTION_BANK_PASSWORD = "KOCU2026";
 let questionBankUnlocked = false;
 let editingQuestionId = null;
-let teacherCorrectionMode = false;
-let selectedTeacherStudentKey = "";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -2537,9 +2520,6 @@ async function pushQueuedRecord(item) {
   if (item.type === "class") {
     return Boolean(await remoteTry(() => remoteDb.from("classes").upsert(item.payload, { onConflict: "class_code" }), null));
   }
-  if (item.type === "deleteStudent") {
-    return Boolean(await remoteTry(() => remoteDb.from("students").delete().eq("student_key", item.payload.student_key), null));
-  }
   return true;
 }
 
@@ -2634,17 +2614,6 @@ async function remoteUpsertStudentProfile(student, key, code) {
   }
   const result = await sendStudentPayload(payload);
   if (!result) queueSync("student", payload, `student:${key}`);
-}
-
-async function remoteDeleteStudent(key) {
-  if (!key) return false;
-  if (!isRemoteReady()) {
-    queueSync("deleteStudent", { student_key: key }, `deleteStudent:${key}`);
-    return false;
-  }
-  const result = await remoteTry(() => remoteDb.from("students").delete().eq("student_key", key), null);
-  if (!result) queueSync("deleteStudent", { student_key: key }, `deleteStudent:${key}`);
-  return Boolean(result);
 }
 
 async function remoteLoadStudent(name, code) {
@@ -4067,6 +4036,20 @@ function renderQuestionBank() {
     if (editingQuestionId === question.id) return renderQuestionEditForm(question, index);
     const answerIndex = "ABCD".indexOf(question.answer);
     const answerText = answerIndex >= 0 ? question.options[answerIndex] : "";
+    const sourceLabel = question.sourceTest && question.sourceQuestion
+      ? `Test ${question.sourceTest} · Soru ${question.sourceQuestion}`
+      : "Kaynak soru";
+    const previewContent = question.sourceImage ? `
+      <figure class="question-preview-source">
+        <img src="${escapeHtml(question.sourceImage)}" alt="${escapeHtml(`${question.topic} - ${sourceLabel}`)}" loading="lazy">
+      </figure>
+    ` : `
+      <div class="question-preview-text">${question.text}</div>
+      <div class="question-preview-stem">${question.stem}</div>
+      <ol class="question-preview-options" type="A">
+        ${question.options.map((option, optionIndex) => `<li class="${optionIndex === answerIndex ? "is-answer" : ""}">${option}</li>`).join("")}
+      </ol>
+    `;
     return `
       <article class="question-preview-card" data-question-id="${escapeHtml(question.id)}">
         <div class="question-preview-head">
@@ -4079,13 +4062,9 @@ function renderQuestionBank() {
             <button class="icon-button delete-question" type="button" title="Soruyu sil" aria-label="Soruyu sil"><i data-lucide="trash-2"></i></button>
           </div>
         </div>
-        <div class="question-preview-text">${question.text}</div>
-        <div class="question-preview-stem">${question.stem}</div>
-        <ol class="question-preview-options" type="A">
-          ${question.options.map((option, optionIndex) => `<li class="${optionIndex === answerIndex ? "is-answer" : ""}">${option}</li>`).join("")}
-        </ol>
+        ${previewContent}
         <div class="question-preview-solution">
-          <strong>Doğru cevap: ${question.answer}${answerText ? ` - ${answerText}` : ""}</strong>
+          <strong>Doğru cevap: ${question.answer}${question.sourceImage ? "" : (answerText ? ` - ${answerText}` : "")}</strong>
           <p>${question.solution}</p>
         </div>
       </article>
@@ -4108,36 +4087,6 @@ function mistakeToQuestion(item) {
 
 function generateClassCode() {
   return `PK${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-}
-
-function openTeacherQuestionBank(mode = "edit") {
-  questionBankUnlocked = true;
-  setView("questionBank");
-  renderQuestionBank();
-  window.lucide?.createIcons();
-  setSyncStatus(mode === "delete" ? "Silme alanı açıldı." : "Düzenleme alanı açıldı.", "ok");
-  document.querySelector(".main-content")?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-function downloadTeacherBackup() {
-  const backup = {
-    format: "paragraf-kocu-backup",
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    classCode: state.teacherClassCode,
-    data: JSON.parse(JSON.stringify(state))
-  };
-  const date = new Date().toISOString().slice(0, 10);
-  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `paragraf-kocu-${state.teacherClassCode || "sinif"}-${date}.json`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
-  setSyncStatus("Sınıf yedeği indirildi.", "ok");
 }
 
 function downloadStudentReport() {
@@ -4263,7 +4212,12 @@ function renderTeacher() {
   const studentEntries = currentClassStudentEntries(code);
   const students = studentEntries.map(([, student]) => student);
   $("#teacherClassCode").textContent = code;
-  $("#studentRows").innerHTML = renderTeacherStudentRows(studentEntries);
+  $("#studentRows").innerHTML = students.length ? students.map((student) => {
+    const weak = weakestTopicFor(student.topicStats || {});
+    const correct = student.stats?.correct || 0;
+    const wrong = student.stats?.wrong || 0;
+    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
+  }).join("") : `<tr><td colspan="6">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
   if ($("#assignStudent")) {
     $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
   }
@@ -4272,7 +4226,6 @@ function renderTeacher() {
   updateCustomPracticeFocus();
   renderPracticeTracking(students);
   renderDailyTaskForm();
-  renderTeacherCorrectionForm();
   refreshRemoteTeacherPanel();
 }
 
@@ -4290,136 +4243,25 @@ async function refreshRemoteTeacherPanel() {
       practiceCompleted: existing.practiceCompleted || student.practiceCompleted || []
     };
   });
+  $("#studentRows").innerHTML = students.map((student) => {
+    const weak = weakestTopicFor(student.topicStats || {});
+    const correct = student.stats?.correct || 0;
+    const wrong = student.stats?.wrong || 0;
+    return `<tr><td>${student.name}</td><td>${student.grade}. sınıf</td><td>${student.stats?.solved || 0}</td><td>${correct}/${wrong}</td><td>${weak || "Veri bekliyor"}</td><td>${wrongTopicSummary(student)}</td></tr>`;
+  }).join("");
   const studentEntries = currentClassStudentEntries(state.teacherClassCode);
-  $("#studentRows").innerHTML = renderTeacherStudentRows(studentEntries);
   if ($("#assignStudent")) {
     $("#assignStudent").innerHTML = [`<option value="__all__">Tüm sınıf</option>`, ...studentEntries.map(([key, student]) => `<option value="${key}">${student.name}</option>`)].join("");
   }
   renderPracticeTracking(currentClassStudents(state.teacherClassCode));
-  renderTeacherCorrectionForm();
 }
 
 function ensureTeacherDetails() {
   const header = document.querySelector("#teacherView .student-table thead tr");
   if (!header) return;
   const cells = Array.from(header.children);
-  const wrongTopicsCell = cells.find((cell) => cell.textContent.includes("Yanlış"));
-  const actionCell = cells[cells.length - 1];
-  if (wrongTopicsCell) wrongTopicsCell.textContent = "Yanlış konuları";
-  if (actionCell) actionCell.textContent = "İşlem";
-}
-
-function renderTeacherStudentRows(studentEntries = currentClassStudentEntries(state.teacherClassCode)) {
-  if (!studentEntries.length) return `<tr><td colspan="7">Bu sınıf koduna bağlı öğrenci kaydı henüz yok.</td></tr>`;
-  return studentEntries.map(([key, student]) => {
-    const weak = weakestTopicFor(student.topicStats || {});
-    const correct = student.stats?.correct || 0;
-    const wrong = student.stats?.wrong || 0;
-    return `
-      <tr>
-        <td>${escapeHtml(student.name || "Adsız öğrenci")}</td>
-        <td>${escapeHtml(student.grade || "-")}. sınıf</td>
-        <td>${student.stats?.solved || 0}</td>
-        <td>${correct}/${wrong}</td>
-        <td>${escapeHtml(weak || "Veri bekliyor")}</td>
-        <td>${escapeHtml(wrongTopicSummary(student))}</td>
-        <td><button class="icon-button teacher-edit-student" type="button" data-student-key="${escapeHtml(key)}" title="Öğrenci kaydını düzelt" aria-label="Öğrenci kaydını düzelt"><i data-lucide="pencil"></i></button></td>
-      </tr>
-    `;
-  }).join("");
-}
-
-function renderTeacherCorrectionForm() {
-  const panel = $("#teacherCorrectionPanel");
-  const select = $("#teacherCorrectionStudent");
-  if (!panel || !select) return;
-  panel.hidden = !teacherCorrectionMode;
-  if (!teacherCorrectionMode) return;
-
-  const entries = currentClassStudentEntries(state.teacherClassCode);
-  if (!entries.length) {
-    select.innerHTML = `<option value="">Öğrenci kaydı yok</option>`;
-    $("#teacherCorrectionName").value = "";
-    return;
-  }
-  if (!entries.some(([key]) => key === selectedTeacherStudentKey)) selectedTeacherStudentKey = entries[0][0];
-  select.innerHTML = entries.map(([key, student]) => `<option value="${escapeHtml(key)}">${escapeHtml(student.name || "Adsız öğrenci")}</option>`).join("");
-  select.value = selectedTeacherStudentKey;
-  const student = ensureClassroom(state.teacherClassCode).students[selectedTeacherStudentKey];
-  if (!student) return;
-  $("#teacherCorrectionName").value = student.name || "";
-  $("#teacherCorrectionGrade").value = String(student.grade || state.grade);
-}
-
-function setTeacherCorrectionStatus(message, type = "info") {
-  const node = $("#teacherCorrectionStatus");
-  if (!node) return;
-  node.textContent = message;
-  node.classList.toggle("is-ok", type === "ok");
-  node.classList.toggle("is-warn", type === "warn");
-}
-
-function saveTeacherCorrection(event) {
-  event.preventDefault();
-  const oldKey = $("#teacherCorrectionStudent")?.value || selectedTeacherStudentKey;
-  const room = ensureClassroom(state.teacherClassCode);
-  const current = room.students[oldKey];
-  const name = $("#teacherCorrectionName")?.value.trim();
-  const grade = String($("#teacherCorrectionGrade")?.value || current?.grade || state.grade);
-  if (!current || !name) {
-    setTeacherCorrectionStatus("Öğrenci adı boş bırakılamaz.", "warn");
-    return;
-  }
-
-  const newKey = studentKey(name, state.teacherClassCode);
-  if (newKey !== oldKey && room.students[newKey]) {
-    setTeacherCorrectionStatus("Bu adla kayıtlı başka bir öğrenci zaten var.", "warn");
-    return;
-  }
-  const updated = { ...current, name, grade, updatedAt: new Date().toLocaleString("tr-TR") };
-  if (newKey !== oldKey) delete room.students[oldKey];
-  room.students[newKey] = updated;
-  selectedTeacherStudentKey = newKey;
-
-  if (studentKey(state.studentName, state.classCode || state.teacherClassCode) === oldKey) {
-    state.studentName = name;
-    state.grade = grade;
-    state.classCode = state.teacherClassCode;
-  }
-  persistStateOnly();
-  remoteUpsertStudentProfile(updated, newKey, state.teacherClassCode);
-  if (newKey !== oldKey) remoteDeleteStudent(oldKey);
-  teacherCorrectionMode = true;
-  renderAll();
-  setTeacherCorrectionStatus("Öğrenci kaydı düzeltildi.", "ok");
-}
-
-function resetTeacherStudentProgress() {
-  const key = $("#teacherCorrectionStudent")?.value || selectedTeacherStudentKey;
-  const room = ensureClassroom(state.teacherClassCode);
-  const student = room.students[key];
-  if (!student) return;
-  if (!confirm(`${student.name} adlı öğrencinin ilerleme kayıtları temizlensin mi?`)) return;
-  const reset = {
-    ...student,
-    stats: { solved: 0, correct: 0, wrong: 0, blank: 0, seconds: 0, streak: 0 },
-    topicStats: {},
-    mistakeBook: [],
-    questionTimes: [],
-    answers: [],
-    assignments: [],
-    practiceNotes: {},
-    practiceCompleted: [],
-    updatedAt: new Date().toLocaleString("tr-TR")
-  };
-  room.students[key] = reset;
-  if (studentKey(state.studentName, state.classCode || state.teacherClassCode) === key) applyStudentProfile(reset);
-  persistStateOnly();
-  remoteUpsertStudentProfile(reset, key, state.teacherClassCode);
-  teacherCorrectionMode = true;
-  selectedTeacherStudentKey = key;
-  renderAll();
-  setTeacherCorrectionStatus("Öğrencinin ilerleme kayıtları temizlendi.", "ok");
+  const lastCell = cells[cells.length - 1];
+  if (lastCell) lastCell.textContent = "Yanlış konuları";
 }
 
 function practiceStatsForStudent(student) {
@@ -4599,13 +4441,27 @@ function closeQuizDrawer() {
 
 function renderQuestion() {
   const question = quiz.questions[quiz.index];
-  $("#quizMeta").textContent = quiz.meta;
-  $("#quizTitle").textContent = `${quiz.title} · ${quiz.index + 1}/${quiz.questions.length}`;
-  $("#quizProgressBar").style.width = `${(quiz.index / quiz.questions.length) * 100}%`;
-  $("#questionCard").innerHTML = `
-    <div class="question-field"><small>Sınıf seviyesi</small><span>${question.grade}. sınıf</span></div>
-    <div class="question-field"><small>Konu</small><span>${question.topic}</span></div>
-    ${question.grade === 8 ? `<div class="question-field"><small>Süre takibi</small><span class="timer-chip">8. sınıf için süre kaydediliyor</span></div>` : ""}
+  const sourceLabel = question.sourceTest && question.sourceQuestion
+    ? `Test ${question.sourceTest} · Soru ${question.sourceQuestion}`
+    : "Kaynak soru";
+  const questionContent = question.sourceImage ? `
+    <div class="question-field source-question-field">
+      <small>Kitaptaki özgün soru · ${sourceLabel}</small>
+      <div class="paragraph-workbench">
+        <div class="marking-tools" role="group" aria-label="Soru işaretleme araçları">
+          <button class="marking-tool is-active" id="penTool" type="button">Kalem</button>
+          <button class="marking-tool" id="eraserTool" type="button">Silgi</button>
+          <button class="marking-tool" id="clearMarks" type="button">Temizle</button>
+        </div>
+        <div class="source-question-scroll">
+          <div class="paragraph-mark-area source-question-frame">
+            <img class="source-question-image" id="sourceQuestionImage" src="${escapeHtml(question.sourceImage)}" alt="${escapeHtml(`${question.topic} - ${sourceLabel}`)}">
+            <canvas id="paragraphCanvas" aria-label="Soru üzerine işaretleme alanı"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  ` : `
     <div class="question-field">
       <small>Paragraf metni</small>
       <div class="paragraph-workbench">
@@ -4621,10 +4477,20 @@ function renderQuestion() {
       </div>
     </div>
     <div class="question-field"><small>Soru kökü</small><strong>${question.stem}</strong></div>
+  `;
+  $("#quizMeta").textContent = quiz.meta;
+  $("#quizTitle").textContent = `${quiz.title} · ${quiz.index + 1}/${quiz.questions.length}`;
+  $("#quizProgressBar").style.width = `${(quiz.index / quiz.questions.length) * 100}%`;
+  $("#questionCard").innerHTML = `
+    <div class="question-field"><small>Sınıf seviyesi</small><span>${question.grade}. sınıf</span></div>
+    <div class="question-field"><small>Konu</small><span>${question.topic}</span></div>
+    ${question.grade === 8 ? `<div class="question-field"><small>Süre takibi</small><span class="timer-chip">8. sınıf için süre kaydediliyor</span></div>` : ""}
+    ${questionContent}
     <div class="option-list">
       ${question.options.map((option, index) => {
         const letter = String.fromCharCode(65 + index);
-        return `<button class="option-button" data-answer="${letter}">${letter}) ${option}</button>`;
+        const label = question.sourceImage ? `${letter} seçeneğini işaretle` : `${letter}) ${option}`;
+        return `<button class="option-button" data-answer="${letter}">${label}</button>`;
       }).join("")}
     </div>
     <div class="quiz-actions">
@@ -4660,6 +4526,9 @@ function initParagraphMarker() {
     context.lineCap = "round";
     context.lineJoin = "round";
   }
+
+  const sourceImage = $("#sourceQuestionImage");
+  if (sourceImage && !sourceImage.complete) sourceImage.addEventListener("load", resizeCanvas, { once: true });
 
   function setTool(tool) {
     activeTool = tool;
@@ -5043,32 +4912,6 @@ function bindEvents() {
     if (item) startQuiz([mistakeToQuestion(item)], "Yanlış Tekrarı", item.topic);
   });
   $("#downloadPdf").addEventListener("click", downloadStudentReport);
-  $("#backupTeacherData")?.addEventListener("click", downloadTeacherBackup);
-  $("#openTeacherQuestionEditor")?.addEventListener("click", () => openTeacherQuestionBank("edit"));
-  $("#openTeacherQuestionDeleter")?.addEventListener("click", () => openTeacherQuestionBank("delete"));
-  $("#toggleTeacherCorrection")?.addEventListener("click", () => {
-    teacherCorrectionMode = !teacherCorrectionMode;
-    const button = $("#toggleTeacherCorrection");
-    button.setAttribute("aria-expanded", String(teacherCorrectionMode));
-    renderTeacherCorrectionForm();
-    if (teacherCorrectionMode) $("#teacherCorrectionPanel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  });
-  $("#teacherCorrectionStudent")?.addEventListener("change", (event) => {
-    selectedTeacherStudentKey = event.target.value;
-    renderTeacherCorrectionForm();
-  });
-  $("#teacherCorrectionPanel")?.addEventListener("submit", saveTeacherCorrection);
-  $("#resetTeacherStudentProgress")?.addEventListener("click", resetTeacherStudentProgress);
-  $("#studentRows")?.addEventListener("click", (event) => {
-    const button = event.target.closest(".teacher-edit-student");
-    if (!button) return;
-    teacherCorrectionMode = true;
-    selectedTeacherStudentKey = button.dataset.studentKey || "";
-    const toggle = $("#toggleTeacherCorrection");
-    toggle?.setAttribute("aria-expanded", "true");
-    renderTeacherCorrectionForm();
-    $("#teacherCorrectionPanel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  });
   $("#newClassCode").addEventListener("click", () => {
     state.teacherClassCode = generateClassCode();
     ensureClassroom(state.teacherClassCode);
