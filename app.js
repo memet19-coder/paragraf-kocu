@@ -2274,7 +2274,7 @@ function buildQuestion(question) {
 }
 
 function makeQuestionId(question) {
-  const raw = `${question.grade}|${question.topic}|${question.sourceImage || ""}|${question.text}|${question.stem}`;
+  const raw = `${question.grade}|${question.topic}|${question.text}|${question.stem}`;
   let hash = 0;
   for (let i = 0; i < raw.length; i += 1) hash = ((hash << 5) - hash + raw.charCodeAt(i)) | 0;
   return `q${question.grade}_${Math.abs(hash)}`;
@@ -2391,7 +2391,7 @@ questionBank = (Array.isArray(window.DEFINE5_QUESTIONS) ? window.DEFINE5_QUESTIO
   .map((question) => ({ ...question, id: makeQuestionId(question) }));
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
 
-const CONTENT_VERSION = 6;
+const CONTENT_VERSION = 7;
 let state = loadState();
 let selectedCount = 5;
 let activeTopic = topics[0];
@@ -3851,6 +3851,10 @@ function escapeHtml(value = "") {
     .replaceAll("'", "&#039;");
 }
 
+function formatQuestionText(value = "") {
+  return escapeHtml(value).replace(/\n/g, "<br>");
+}
+
 function reviewQuestionBank() {
   const deleted = new Set(state.deletedQuestionIds || []);
   const customById = new Map((state.customQuestions || [])
@@ -4036,18 +4040,11 @@ function renderQuestionBank() {
     if (editingQuestionId === question.id) return renderQuestionEditForm(question, index);
     const answerIndex = "ABCD".indexOf(question.answer);
     const answerText = answerIndex >= 0 ? question.options[answerIndex] : "";
-    const sourceLabel = question.sourceTest && question.sourceQuestion
-      ? `Test ${question.sourceTest} · Soru ${question.sourceQuestion}`
-      : "Kaynak soru";
-    const previewContent = question.sourceImage ? `
-      <figure class="question-preview-source">
-        <img src="${escapeHtml(question.sourceImage)}" alt="${escapeHtml(`${question.topic} - ${sourceLabel}`)}" loading="lazy">
-      </figure>
-    ` : `
-      <div class="question-preview-text">${question.text}</div>
-      <div class="question-preview-stem">${question.stem}</div>
+    const previewContent = `
+      ${question.text ? `<div class="question-preview-text">${formatQuestionText(question.text)}</div>` : ""}
+      <div class="question-preview-stem">${formatQuestionText(question.stem)}</div>
       <ol class="question-preview-options" type="A">
-        ${question.options.map((option, optionIndex) => `<li class="${optionIndex === answerIndex ? "is-answer" : ""}">${option}</li>`).join("")}
+        ${question.options.map((option, optionIndex) => `<li class="${optionIndex === answerIndex ? "is-answer" : ""}">${formatQuestionText(option)}</li>`).join("")}
       </ol>
     `;
     return `
@@ -4056,7 +4053,6 @@ function renderQuestionBank() {
           <span class="pill">${question.grade}. sınıf</span>
           <strong>${index + 1}. ${question.topic}</strong>
           <span>${question.difficulty}</span>
-          <span class="question-source">${question.source || "Soru"}</span>
           <div class="question-card-actions">
             <button class="icon-button edit-question" type="button" title="Soruyu düzenle" aria-label="Soruyu düzenle"><i data-lucide="pencil"></i></button>
             <button class="icon-button delete-question" type="button" title="Soruyu sil" aria-label="Soruyu sil"><i data-lucide="trash-2"></i></button>
@@ -4064,8 +4060,8 @@ function renderQuestionBank() {
         </div>
         ${previewContent}
         <div class="question-preview-solution">
-          <strong>Doğru cevap: ${question.answer}${question.sourceImage ? "" : (answerText ? ` - ${answerText}` : "")}</strong>
-          <p>${question.solution}</p>
+          <strong>Doğru cevap: ${question.answer}${answerText ? ` - ${formatQuestionText(answerText)}` : ""}</strong>
+          <p>${formatQuestionText(question.solution)}</p>
         </div>
       </article>
     `;
@@ -4441,28 +4437,8 @@ function closeQuizDrawer() {
 
 function renderQuestion() {
   const question = quiz.questions[quiz.index];
-  const sourceLabel = question.sourceTest && question.sourceQuestion
-    ? `Test ${question.sourceTest} · Soru ${question.sourceQuestion}`
-    : "Kaynak soru";
-  const questionContent = question.sourceImage ? `
-    <div class="question-field source-question-field">
-      <small>Kitaptaki özgün soru · ${sourceLabel}</small>
-      <div class="paragraph-workbench">
-        <div class="marking-tools" role="group" aria-label="Soru işaretleme araçları">
-          <button class="marking-tool is-active" id="penTool" type="button">Kalem</button>
-          <button class="marking-tool" id="eraserTool" type="button">Silgi</button>
-          <button class="marking-tool" id="clearMarks" type="button">Temizle</button>
-        </div>
-        <div class="source-question-scroll">
-          <div class="paragraph-mark-area source-question-frame">
-            <img class="source-question-image" id="sourceQuestionImage" src="${escapeHtml(question.sourceImage)}" alt="${escapeHtml(`${question.topic} - ${sourceLabel}`)}">
-            <canvas id="paragraphCanvas" aria-label="Soru üzerine işaretleme alanı"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-  ` : `
-    <div class="question-field">
+  const questionContent = `
+    ${question.text ? `<div class="question-field">
       <small>Paragraf metni</small>
       <div class="paragraph-workbench">
         <div class="marking-tools" role="group" aria-label="Paragraf işaretleme araçları">
@@ -4471,12 +4447,12 @@ function renderQuestion() {
           <button class="marking-tool" id="clearMarks" type="button">Temizle</button>
         </div>
         <div class="paragraph-mark-area">
-          <div class="paragraph-text" id="paragraphText">${question.text}</div>
+          <div class="paragraph-text" id="paragraphText">${formatQuestionText(question.text)}</div>
           <canvas id="paragraphCanvas" aria-label="Paragraf üzerine işaretleme alanı"></canvas>
         </div>
       </div>
-    </div>
-    <div class="question-field"><small>Soru kökü</small><strong>${question.stem}</strong></div>
+    </div>` : ""}
+    <div class="question-field"><small>Soru kökü</small><strong>${formatQuestionText(question.stem)}</strong></div>
   `;
   $("#quizMeta").textContent = quiz.meta;
   $("#quizTitle").textContent = `${quiz.title} · ${quiz.index + 1}/${quiz.questions.length}`;
@@ -4489,7 +4465,7 @@ function renderQuestion() {
     <div class="option-list">
       ${question.options.map((option, index) => {
         const letter = String.fromCharCode(65 + index);
-        const label = question.sourceImage ? `${letter} seçeneğini işaretle` : `${letter}) ${option}`;
+        const label = `${letter}) ${formatQuestionText(option)}`;
         return `<button class="option-button" data-answer="${letter}">${label}</button>`;
       }).join("")}
     </div>
@@ -4527,8 +4503,6 @@ function initParagraphMarker() {
     context.lineJoin = "round";
   }
 
-  const sourceImage = $("#sourceQuestionImage");
-  if (sourceImage && !sourceImage.complete) sourceImage.addEventListener("load", resizeCanvas, { once: true });
 
   function setTool(tool) {
     activeTool = tool;

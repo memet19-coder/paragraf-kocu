@@ -1007,29 +1007,6 @@ h3 {
   min-width: 0;
 }
 
-.source-question-scroll {
-  min-width: 0;
-  overflow: auto;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
-}
-
-.source-question-frame {
-  width: 100%;
-  min-width: 680px;
-  min-height: 220px;
-  background: #fff;
-}
-
-.source-question-image {
-  display: block;
-  width: 100%;
-  height: auto;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
 .paragraph-mark-area .paragraph-text {
   min-height: 128px;
   user-select: none;
@@ -1288,22 +1265,6 @@ h3 {
   border-radius: 8px;
   padding: 14px;
   line-height: 1.65;
-}
-
-.question-preview-source {
-  margin: 0;
-  padding: 12px;
-  overflow: auto;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
-}
-
-.question-preview-source img {
-  display: block;
-  width: 100%;
-  min-width: 620px;
-  height: auto;
 }
 
 .question-preview-stem {
