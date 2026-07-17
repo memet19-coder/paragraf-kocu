@@ -2389,12 +2389,13 @@ function balanceQuestionBank(baseQuestions) {
 
 questionBank = [
   ...(Array.isArray(window.DEFINE5_QUESTIONS) ? window.DEFINE5_QUESTIONS : []),
+  ...(Array.isArray(window.PARAGRAPH6_QUESTIONS) ? window.PARAGRAPH6_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH8_QUESTIONS) ? window.PARAGRAPH8_QUESTIONS : [])
 ]
   .map((question) => ({ ...question, id: makeQuestionId(question) }));
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
 
-const CONTENT_VERSION = 8;
+const CONTENT_VERSION = 9;
 let state = loadState();
 let selectedCount = 5;
 let activeTopic = topics[0];
