@@ -8,35 +8,33 @@ const topics = [
   "Örneklendirme", "Tanımlama", "Sayısal verilerden yararlanma", "Tanık gösterme",
   "Düşünceyi geliştirme yolları", "Anlatım biçimleri", "Açıklayıcı anlatım", "Öyküleyici anlatım",
   "Betimleyici anlatım", "Tartışmacı anlatım", "Metinler arası karşılaştırma",
-  "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "LGS tarzı yeni nesil paragraf soruları",
+  "LGS tarzı yeni nesil paragraf soruları",
   "MEB 6. sınıf Türkçe çalışma soruları", "MEB 7. sınıf Türkçe çalışma soruları",
   "7. sınıf paragraf ek seti - Konu, başlık ve ana düşünce", "7. sınıf paragraf ek seti - Yardımcı düşünce ve çıkarım",
   "7. sınıf paragraf ek seti - Paragraf yapısı ve tamamlama", "7. sınıf paragraf ek seti - Anlatım biçimleri ve metin türleri",
-  "7. sınıf paragraf ek seti - Görsel okuma ve sözel mantık",
-  "8. sınıf paragraf ek seti - Parçada anlam", "8. sınıf paragraf ek seti - Metin türleri",
-  "8. sınıf paragraf ek seti - Görsel ve grafik okuma", "8. sınıf paragraf ek seti - Sözel mantık"
+  "8. sınıf paragraf ek seti - Parçada anlam", "8. sınıf paragraf ek seti - Metin türleri"
 ];
 
 const gradePlan = {
   5: {
     headline: "5. sınıf için kısa ve net paragraf antrenmanı",
     subline: "Konu bulma, ana düşünce, başlık ve basit çıkarım soruları ağırlıklı gelir.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Başlık bulma", "Çıkarım yapma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Hikâye unsurları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Başlık bulma", "Çıkarım yapma", "Hikâye unsurları"]
   },
   6: {
     headline: "6. sınıf için ipucu yakalama çalışması",
     subline: "Ana fikir, yardımcı fikir, metnin amacı ve anlam bütünlüğü birlikte çalışılır.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "MEB 6. sınıf Türkçe çalışma soruları", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Metnin amacı", "MEB 6. sınıf Türkçe çalışma soruları", "Neden-sonuç", "Karşılaştırma", "Paragraf tamamlama"]
   },
   7: {
     headline: "7. sınıf için yorumlama ve akışı koruma",
     subline: "Örtülü anlam, cümle sıralama, anlatım biçimleri ve akışı bozan cümleler öne çıkar.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "MEB 7. sınıf Türkçe çalışma soruları", "7. sınıf paragraf ek seti - Konu, başlık ve ana düşünce", "7. sınıf paragraf ek seti - Yardımcı düşünce ve çıkarım", "7. sınıf paragraf ek seti - Paragraf yapısı ve tamamlama", "7. sınıf paragraf ek seti - Anlatım biçimleri ve metin türleri", "7. sınıf paragraf ek seti - Görsel okuma ve sözel mantık", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "Örtülü anlam", "MEB 7. sınıf Türkçe çalışma soruları", "7. sınıf paragraf ek seti - Konu, başlık ve ana düşünce", "7. sınıf paragraf ek seti - Yardımcı düşünce ve çıkarım", "7. sınıf paragraf ek seti - Paragraf yapısı ve tamamlama", "7. sınıf paragraf ek seti - Anlatım biçimleri ve metin türleri", "Yorumlama", "Cümle sıralama", "Düşüncenin akışını bozan cümle", "Anlatım biçimleri", "Düşünceyi geliştirme yolları"]
   },
   8: {
     headline: "8. sınıf için LGS düzeyi yeni nesil tempo",
-    subline: "Uzun paragraf, görsel okuma, sözel mantık ve güçlü çeldiricilerle çalışılır.",
-    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "LGS tarzı yeni nesil paragraf soruları", "8. sınıf paragraf ek seti - Parçada anlam", "8. sınıf paragraf ek seti - Metin türleri", "8. sınıf paragraf ek seti - Görsel ve grafik okuma", "8. sınıf paragraf ek seti - Sözel mantık", "Metinler arası karşılaştırma", "Tablo-grafik-görsel okuma", "Sözel mantık destekli paragraf soruları", "Çıkarım yapma", "Zaman yönetimi"]
+    subline: "Uzun paragraf, çok aşamalı çıkarım ve güçlü çeldiricilerle çalışılır.",
+    focus: ["Konu bulma", "Ana düşünce", "Yardımcı düşünce", "LGS tarzı yeni nesil paragraf soruları", "8. sınıf paragraf ek seti - Parçada anlam", "8. sınıf paragraf ek seti - Metin türleri", "Metinler arası karşılaştırma", "Çıkarım yapma", "Zaman yönetimi"]
   }
 };
 
@@ -4398,12 +4396,6 @@ async function bootstrapRemoteData() {
 }
 
 function startPracticeMode(mode) {
-  const newGenerationTopics = [
-    "Tablo-grafik-görsel okuma",
-    "Sözel mantık destekli paragraf soruları",
-    "LGS tarzı yeni nesil paragraf soruları"
-  ];
-
   if (mode === "mixed") {
     startQuiz(pickBalancedQuestions({ count: 10, grade: state.grade }), "Karma Test", `${state.grade}. sınıf`);
     return;
@@ -4415,8 +4407,11 @@ function startPracticeMode(mode) {
   }
 
   if (mode === "newgen") {
-    const available = availableTopicsForGrade(state.grade).filter((topic) => newGenerationTopics.includes(topic));
-    startQuiz(pickBalancedQuestions({ count: 10, grade: state.grade, topics: available }), "Yeni Nesil Test", `${state.grade}. sınıf`);
+    const unsolved = onlyUnsolvedQuestions(gradeQuestions(state.grade), state.grade);
+    const longParagraphs = [...unsolved]
+      .sort((a, b) => `${b.text || ""} ${b.stem || ""}`.length - `${a.text || ""} ${a.stem || ""}`.length)
+      .slice(0, Math.max(20, Math.ceil(unsolved.length * 0.4)));
+    startQuiz(shuffleQuestions(longParagraphs).slice(0, 10), "Yeni Nesil Test", `${state.grade}. sınıf`);
     return;
   }
 
