@@ -2393,7 +2393,8 @@ questionBank = [
   ...(Array.isArray(window.PARAGRAPH7_FINAL_QUESTIONS) ? window.PARAGRAPH7_FINAL_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH7_TURKCE_QUESTIONS) ? window.PARAGRAPH7_TURKCE_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH8_QUESTIONS) ? window.PARAGRAPH8_QUESTIONS : []),
-  ...(Array.isArray(window.PARAGRAPH8_MEB_QUESTIONS) ? window.PARAGRAPH8_MEB_QUESTIONS : [])
+  ...(Array.isArray(window.PARAGRAPH8_MEB_QUESTIONS) ? window.PARAGRAPH8_MEB_QUESTIONS : []),
+  ...(Array.isArray(window.PARAGRAPH8_SAYISAL_QUESTIONS) ? window.PARAGRAPH8_SAYISAL_QUESTIONS : [])
 ]
   .map((question) => ({ ...question, id: makeQuestionId(question) }));
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
