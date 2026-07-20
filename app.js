@@ -2388,6 +2388,7 @@ function balanceQuestionBank(baseQuestions) {
 questionBank = [
   ...(Array.isArray(window.DEFINE5_QUESTIONS) ? window.DEFINE5_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH5_SINAV_QUESTIONS) ? window.PARAGRAPH5_SINAV_QUESTIONS : []),
+  ...(Array.isArray(window.PARAGRAPH5_LIMIT_QUESTIONS) ? window.PARAGRAPH5_LIMIT_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH6_QUESTIONS) ? window.PARAGRAPH6_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH7_QUESTIONS) ? window.PARAGRAPH7_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH7_FINAL_QUESTIONS) ? window.PARAGRAPH7_FINAL_QUESTIONS : []),
