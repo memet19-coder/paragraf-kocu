@@ -2411,6 +2411,7 @@ let quiz = null;
 let syncInProgress = false;
 const QUESTION_BANK_PASSWORD = "KOCU2026";
 let questionBankUnlocked = false;
+let teacherAccessUnlocked = false;
 let editingQuestionId = null;
 
 const $ = (selector) => document.querySelector(selector);
@@ -2435,6 +2436,33 @@ function setSyncStatus(message, type = "info") {
   node.textContent = message;
   node.classList.toggle("is-ok", type === "ok");
   node.classList.toggle("is-warn", type === "warn");
+}
+
+function normalizeTeacherPassword(value = "") {
+  return String(value)
+    .trim()
+    .toLocaleUpperCase("tr-TR")
+    .replaceAll("Ç", "C");
+}
+
+function tryUnlockTeacherArea(inputSelector, messageSelector, successMessage) {
+  const input = $(inputSelector);
+  const message = $(messageSelector);
+  if (!input) return false;
+  if (normalizeTeacherPassword(input.value) !== normalizeTeacherPassword(QUESTION_BANK_PASSWORD)) {
+    if (message) message.textContent = "Şifre yanlış. Tekrar dene.";
+    input.value = "";
+    input.focus();
+    return false;
+  }
+  questionBankUnlocked = true;
+  teacherAccessUnlocked = true;
+  input.value = "";
+  if (message) message.textContent = successMessage;
+  renderQuestionBank();
+  renderTeacher();
+  window.lucide?.createIcons();
+  return true;
 }
 
 async function remoteTry(task, fallback = null) {
@@ -4208,7 +4236,16 @@ function addCustomPracticePassage() {
   setSyncStatus("Alıştırma paragrafı eklendi.", "ok");
 }
 
+function renderTeacherAccess() {
+  const lock = $("#teacherPanelLock");
+  const content = $("#teacherPanelContent");
+  if (lock) lock.hidden = teacherAccessUnlocked;
+  if (content) content.hidden = !teacherAccessUnlocked;
+}
+
 function renderTeacher() {
+  renderTeacherAccess();
+  if (!teacherAccessUnlocked) return;
   ensureTeacherDetails();
   syncCurrentStudent();
   const code = state.teacherClassCode;
@@ -4787,20 +4824,16 @@ function bindEvents() {
   $("#questionBankDifficulty").addEventListener("change", renderQuestionBank);
   $("#questionBankSearch").addEventListener("input", renderQuestionBank);
   $("#unlockQuestionBank").addEventListener("click", () => {
-    const password = ($("#questionBankPassword").value || "").trim();
-    const message = $("#questionBankLockMessage");
-    if (password !== QUESTION_BANK_PASSWORD) {
-      if (message) message.textContent = "Şifre yanlış. Tekrar dene.";
-      $("#questionBankPassword").value = "";
-      $("#questionBankPassword").focus();
-      return;
-    }
-    questionBankUnlocked = true;
-    if (message) message.textContent = "Soru havuzu açıldı.";
-    renderQuestionBank();
+    tryUnlockTeacherArea("#questionBankPassword", "#questionBankLockMessage", "Soru havuzu açıldı.");
   });
   $("#questionBankPassword").addEventListener("keydown", (event) => {
     if (event.key === "Enter") $("#unlockQuestionBank").click();
+  });
+  $("#unlockTeacher").addEventListener("click", () => {
+    tryUnlockTeacherArea("#teacherPassword", "#teacherLockMessage", "Öğretmen paneli açıldı.");
+  });
+  $("#teacherPassword").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") $("#unlockTeacher").click();
   });
   $("#questionBankList").addEventListener("click", (event) => {
     const card = event.target.closest(".question-preview-card");

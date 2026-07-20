@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=define5-text-1">
+  <link rel="stylesheet" href="./styles.css?v=teacher-password-fix-1">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -275,7 +275,7 @@
               <h3>Bu bölüm yalnız öğretmen içindir.</h3>
             </div>
             <div class="question-bank-login">
-              <input id="questionBankPassword" type="password" placeholder="Şifre">
+              <input id="questionBankPassword" type="password" placeholder="Öğretmen şifresi" aria-label="Öğretmen şifresi" autocomplete="off" autocapitalize="none" spellcheck="false">
               <button class="primary-action" id="unlockQuestionBank" type="button"><i data-lucide="lock-keyhole-open"></i><span>Aç</span></button>
             </div>
             <small id="questionBankLockMessage">Soru havuzunu görmek için öğretmen şifresini gir.</small>
@@ -311,6 +311,18 @@
 
       <section class="view" id="teacherView" aria-labelledby="viewTitle">
         <div class="section-band">
+          <div class="question-bank-lock" id="teacherPanelLock">
+            <div>
+              <p class="eyebrow">Şifreli alan</p>
+              <h2>Bu bölüm yalnız öğretmen içindir.</h2>
+            </div>
+            <div class="question-bank-login">
+              <input id="teacherPassword" type="password" placeholder="Öğretmen şifresi" aria-label="Öğretmen şifresi" autocomplete="off" autocapitalize="none" spellcheck="false">
+              <button class="primary-action" id="unlockTeacher" type="button"><i data-lucide="unlock-keyhole"></i><span>Aç</span></button>
+            </div>
+            <small id="teacherLockMessage">Öğretmen panelini açmak için öğretmen şifresini gir.</small>
+          </div>
+          <div id="teacherPanelContent" hidden>
           <div class="toolbar">
             <div>
               <p class="eyebrow">Öğretmen paneli</p>
@@ -411,6 +423,7 @@
             <label>Çözüm stratejisi<input id="customStrategy" type="text" required></label>
             <button class="primary-action" type="submit"><i data-lucide="send"></i><span>Soruyu ekle</span></button>
           </form>
+          </div>
         </div>
       </section>
 
@@ -484,7 +497,7 @@
   <script src="./paragraph8-meb-questions.js?v=paragraph-only-1"></script>
   <script src="./paragraph8-sayisal-questions.js?v=paragraph8-sayisal-text-1"></script>
   <script src="./practice-passages-extra.js?v=grade5-variety-1"></script>
-  <script src="./app.js?v=paragraph8-sayisal-text-1"></script>
+  <script src="./app.js?v=teacher-password-fix-1"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>
