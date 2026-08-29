@@ -4114,7 +4114,7 @@ function renderSetBuilderResults() {
   if (downloadZip) {
     downloadZip.hidden = !latestSplitQuestionSets.length;
     const label = downloadZip.querySelector("span");
-    if (label && latestSplitQuestionSets.length) label.textContent = `${latestSplitQuestionSets.length} paketi ZIP indir`;
+    if (label && latestSplitQuestionSets.length) label.textContent = `${latestSplitQuestionSets.length} PDF'yi ZIP indir`;
   }
   if (!results) return;
   if (!generatedQuestionSets.length) {
@@ -4272,6 +4272,70 @@ function questionSetDocumentHtml(set, autoPrint = false) {
     </style></head><body><button class="print-control" type="button" onclick="window.print()">Yazdır / PDF kaydet</button><h1>Paragraf Koçu · ${escapeHtml(set.title)}</h1><div class="meta">${escapeHtml(set.meta)}</div>${questions}${answerKey}${autoPrint ? "<script>window.onload=()=>window.print();<\/script>" : ""}</body></html>`;
 }
 
+function pdfPlainText(value = "") {
+  const container = document.createElement("div");
+  container.innerHTML = formatQuestionText(value);
+  return (container.innerText || container.textContent || "")
+    .replace(/\u00a0/g, " ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function questionSetPdfDefinition(set) {
+  const content = [
+    { text: `Paragraf Koçu · ${set.title}`, fontSize: 18, bold: true, color: "#182235", margin: [0, 0, 0, 3] },
+    { text: set.meta, fontSize: 9, color: "#647083", margin: [0, 0, 0, 12] }
+  ];
+  set.questions.forEach((question, index) => {
+    content.push(
+      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 510, y2: 0, lineWidth: 0.6, lineColor: "#d9e2df" }], margin: [0, 5, 0, 8] },
+      { text: `${index + 1}. soru · ${question.topic || "Paragraf"}`, fontSize: 9, bold: true, color: "#0b666a", margin: [0, 0, 0, 5] }
+    );
+    const paragraph = pdfPlainText(question.text);
+    if (paragraph) content.push({ text: paragraph, fontSize: 10.5, lineHeight: 1.25, color: "#182235", margin: [7, 0, 7, 7] });
+    content.push({ text: pdfPlainText(question.stem), fontSize: 10.5, lineHeight: 1.25, bold: true, margin: [0, 0, 0, 5] });
+    (question.options || []).forEach((option, optionIndex) => {
+      content.push({ text: `${"ABCD"[optionIndex]}) ${pdfPlainText(option)}`, fontSize: 10.2, lineHeight: 1.2, margin: [10, 0, 0, 3] });
+    });
+    content.push({ text: "", margin: [0, 0, 0, 7] });
+  });
+  if (set.includeAnswerKey) {
+    content.push(
+      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 510, y2: 0, lineWidth: 1.2, lineColor: "#168c8c" }], margin: [0, 10, 0, 9] },
+      { text: "Cevap anahtarı", fontSize: 13, bold: true, margin: [0, 0, 0, 5] },
+      { text: set.questions.map((question, index) => `${index + 1}-${question.answer}`).join("   ·   "), fontSize: 10.5 }
+    );
+  }
+  return {
+    pageSize: "A4",
+    pageMargins: [42, 44, 42, 42],
+    defaultStyle: { font: "Roboto", color: "#182235" },
+    content,
+    footer: (currentPage, pageCount) => ({
+      text: `${set.title} · ${currentPage}/${pageCount}`,
+      alignment: "center",
+      color: "#647083",
+      fontSize: 8,
+      margin: [0, 14, 0, 0]
+    })
+  };
+}
+
+function questionSetPdfBuffer(set) {
+  return new Promise((resolve, reject) => {
+    if (!window.pdfMake?.createPdf) {
+      reject(new Error("PDF oluşturucu yüklenemedi."));
+      return;
+    }
+    try {
+      window.pdfMake.createPdf(questionSetPdfDefinition(set)).getBuffer((buffer) => resolve(new Uint8Array(buffer)));
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 const ZIP_CRC_TABLE = Array.from({ length: 256 }, (_, value) => {
   let crc = value;
   for (let bit = 0; bit < 8; bit += 1) crc = (crc & 1) ? 0xedb88320 ^ (crc >>> 1) : crc >>> 1;
@@ -4307,7 +4371,11 @@ function createStoredZip(files) {
   let localOffset = 0;
   files.forEach((file) => {
     const name = encoder.encode(file.name);
-    const data = encoder.encode(file.content);
+    const data = typeof file.content === "string"
+      ? encoder.encode(file.content)
+      : file.content instanceof Uint8Array
+        ? file.content
+        : new Uint8Array(file.content);
     const crc = zipCrc32(data);
     const localHeader = zipChunk(30, (view) => {
       view.setUint32(0, 0x04034b50, true);
@@ -4352,14 +4420,19 @@ async function downloadSplitQuestionSetsZip() {
   const button = $("#downloadSplitZip");
   const label = button?.querySelector("span");
   if (button) button.disabled = true;
-  if (label) label.textContent = "ZIP hazırlanıyor...";
+  if (label) label.textContent = "PDF'ler hazırlanıyor...";
   await new Promise((resolve) => requestAnimationFrame(resolve));
   try {
     const width = String(latestSplitQuestionSets.length).length;
-    const files = latestSplitQuestionSets.map((set, index) => ({
-      name: `paket-${String(index + 1).padStart(width, "0")}.html`,
-      content: questionSetDocumentHtml(set)
-    }));
+    const files = [];
+    for (let index = 0; index < latestSplitQuestionSets.length; index += 1) {
+      if (label) label.textContent = `PDF hazırlanıyor (${index + 1}/${latestSplitQuestionSets.length})`;
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      files.push({
+        name: `paket-${String(index + 1).padStart(width, "0")}.pdf`,
+        content: await questionSetPdfBuffer(latestSplitQuestionSets[index])
+      });
+    }
     files.unshift({
       name: "paket-listesi.txt",
       content: latestSplitQuestionSets.map((set, index) => `${index + 1}. ${set.title} - ${set.meta}`).join("\r\n")
@@ -4378,13 +4451,13 @@ async function downloadSplitQuestionSetsZip() {
     anchor.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     const note = $("#setBuilderNote");
-    if (note) note.textContent = `${latestSplitQuestionSets.length} ayrı paket tek ZIP dosyası olarak indirildi.`;
+    if (note) note.textContent = `${latestSplitQuestionSets.length} ayrı PDF paketi tek ZIP dosyası olarak indirildi.`;
   } catch (error) {
-    console.error("Paket ZIP dosyası hazırlanamadı:", error);
-    alert("ZIP dosyası hazırlanamadı. Sayfayı yenileyip tekrar dene.");
+    console.error("PDF paketleri hazırlanamadı:", error);
+    alert("PDF paketleri hazırlanamadı. Sayfayı yenileyip tekrar dene.");
   } finally {
     if (button) button.disabled = false;
-    if (label) label.textContent = `${latestSplitQuestionSets.length} paketi ZIP indir`;
+    if (label) label.textContent = `${latestSplitQuestionSets.length} PDF'yi ZIP indir`;
   }
 }
 
