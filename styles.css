@@ -1266,7 +1266,7 @@ h3 {
 }
 
 .set-builder-check {
-  grid-column: span 2;
+  grid-column: span 1;
 }
 
 .set-builder-check > span:last-child {
