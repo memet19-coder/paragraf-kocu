@@ -2422,6 +2422,7 @@ const QUESTION_BANK_PASSWORD = "KOCU2026";
 let questionBankUnlocked = false;
 let teacherAccessUnlocked = false;
 let editingQuestionId = null;
+let generatedQuestionSets = [];
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -4062,6 +4063,213 @@ function deleteManagedQuestion(question) {
   remoteSaveDeletedQuestion(question);
 }
 
+function uniqueQuestions(questions) {
+  const seen = new Set();
+  return questions.filter((question) => {
+    const key = questionIdFor(question);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function setBuilderBasePool() {
+  const gradeValue = $("#setBuilderGrade")?.value || String(state.grade);
+  const difficultyValue = $("#setBuilderDifficulty")?.value || "all";
+  return uniqueQuestions(reviewQuestionBank().filter((question) => {
+    if (gradeValue !== "all" && question.grade !== Number(gradeValue)) return false;
+    if (difficultyValue !== "all" && question.difficulty !== difficultyValue) return false;
+    return true;
+  }));
+}
+
+function setBuilderEligibleQuestions() {
+  const mode = $("#setBuilderMode")?.value || "mixed";
+  const topicValue = $("#setBuilderTopic")?.value || "Tüm konular";
+  const pool = setBuilderBasePool();
+  if (mode !== "topic" || topicValue === "Tüm konular") return pool;
+  return pool.filter((question) => question.topic === topicValue);
+}
+
+function setBuilderGradeLabel(value) {
+  return value === "all" ? "Tüm sınıflar" : `${value}. sınıf`;
+}
+
+function updateSetBuilderTopics() {
+  const topicSelect = $("#setBuilderTopic");
+  if (!topicSelect) return;
+  const currentTopic = topicSelect.value || "Tüm konular";
+  const topicsForGrade = ["Tüm konular", ...new Set(setBuilderBasePool().map((question) => question.topic))]
+    .sort((a, b) => a === "Tüm konular" ? -1 : b === "Tüm konular" ? 1 : a.localeCompare(b, "tr"));
+  topicSelect.innerHTML = topicsForGrade.map((topic) => `<option>${escapeHtml(topic)}</option>`).join("");
+  topicSelect.value = topicsForGrade.includes(currentTopic) ? currentTopic : "Tüm konular";
+}
+
+function renderSetBuilderResults() {
+  const results = $("#setBuilderResults");
+  if (!results) return;
+  if (!generatedQuestionSets.length) {
+    results.hidden = true;
+    results.innerHTML = "";
+    return;
+  }
+  results.hidden = false;
+  results.innerHTML = generatedQuestionSets.map((set, index) => `
+    <div class="set-result-row">
+      <div class="set-result-info">
+        <strong>${escapeHtml(set.title)}</strong>
+        <span>${set.questions.length} soru · ${escapeHtml(set.meta)}</span>
+      </div>
+      <div class="set-result-actions">
+        <button class="secondary-action print-question-set" type="button" data-set-index="${index}"><i data-lucide="printer"></i><span>Yazdır / PDF</span></button>
+        <button class="icon-button remove-question-set" type="button" data-set-index="${index}" title="Seti kaldır" aria-label="Seti kaldır"><i data-lucide="x"></i></button>
+      </div>
+    </div>
+  `).join("");
+  window.lucide?.createIcons();
+}
+
+function renderSetBuilder() {
+  const builder = $("#questionSetBuilder");
+  if (!builder) return;
+  if (!questionBankUnlocked) {
+    builder.hidden = true;
+    return;
+  }
+  builder.hidden = false;
+  const gradeSelect = $("#setBuilderGrade");
+  if (gradeSelect && !gradeSelect.dataset.initialized) {
+    gradeSelect.value = String(state.grade);
+    gradeSelect.dataset.initialized = "true";
+  }
+  updateSetBuilderTopics();
+  const mode = $("#setBuilderMode")?.value || "mixed";
+  const topicField = $("#setBuilderTopicField");
+  if (topicField) topicField.hidden = mode !== "topic";
+  const pool = setBuilderEligibleQuestions();
+  const count = $("#setBuilderPoolCount");
+  if (count) count.textContent = `${pool.length} uygun soru`;
+  const note = $("#setBuilderNote");
+  if (note) {
+    note.textContent = mode === "topic"
+      ? "Seçtiğin konuya ait sorulardan bir set hazırlanır."
+      : mode === "exam"
+        ? "Denemede farklı konular olabildiğince dengeli ve sıra karışık olacak şekilde seçilir."
+        : "Karma sette konular olabildiğince dengeli dağıtılır.";
+  }
+  renderSetBuilderResults();
+}
+
+function balancedSetQuestions(pool, count) {
+  const buckets = Array.from(pool.reduce((map, question) => {
+    const topic = question.topic || "Diğer";
+    if (!map.has(topic)) map.set(topic, []);
+    map.get(topic).push(question);
+    return map;
+  }, new Map()).values()).map((bucket) => shuffleQuestions(bucket));
+  const selected = [];
+  const order = shuffleQuestions(buckets);
+  while (selected.length < count && order.some((bucket) => bucket.length)) {
+    order.forEach((bucket) => {
+      if (selected.length < count && bucket.length) selected.push(bucket.shift());
+    });
+  }
+  return selected;
+}
+
+function setBuilderRequestedCount(availablePool = setBuilderEligibleQuestions()) {
+  const input = $("#setBuilderCount");
+  const available = Math.max(1, availablePool.length);
+  const raw = Number(input?.value) || 15;
+  const count = Math.max(1, Math.min(available, Math.floor(raw)));
+  if (input) input.value = count;
+  $$(".set-count-shortcut").forEach((button) => button.classList.toggle("is-selected", Number(button.dataset.setCount) === count));
+  return count;
+}
+
+function createQuestionSet() {
+  const pool = setBuilderEligibleQuestions();
+  if (!pool.length) {
+    alert("Bu seçimlere uygun soru bulunamadı.");
+    return;
+  }
+  const mode = $("#setBuilderMode")?.value || "mixed";
+  const gradeValue = $("#setBuilderGrade")?.value || String(state.grade);
+  const topicValue = $("#setBuilderTopic")?.value || "Tüm konular";
+  const requestedCount = setBuilderRequestedCount();
+  const questions = mode === "exam"
+    ? balancedSetQuestions(pool, requestedCount)
+    : shuffleQuestions(pool).slice(0, requestedCount);
+  const modeLabel = mode === "exam" ? "Deneme" : mode === "topic" ? topicValue : "Karma set";
+  const title = `${setBuilderGradeLabel(gradeValue)} · ${modeLabel}`;
+  generatedQuestionSets.unshift({
+    id: `set-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    title,
+    meta: `${questions.length} soru${mode === "topic" ? ` · ${topicValue}` : ""}`,
+    questions,
+    includeAnswerKey: Boolean($("#setBuilderAnswerKey")?.checked)
+  });
+  renderSetBuilderResults();
+  const note = $("#setBuilderNote");
+  if (note) note.textContent = `${questions.length} soruluk set hazırlandı. Yazdır / PDF ile çıktı alabilirsin.`;
+}
+
+function splitQuestionBank() {
+  const pool = setBuilderBasePool();
+  if (!pool.length) {
+    alert("Bölünecek soru bulunamadı.");
+    return;
+  }
+  const size = setBuilderRequestedCount(setBuilderBasePool());
+  const gradeValue = $("#setBuilderGrade")?.value || String(state.grade);
+  const includeAnswerKey = Boolean($("#setBuilderAnswerKey")?.checked);
+  const chunks = [];
+  for (let start = 0; start < pool.length; start += size) {
+    const questions = pool.slice(start, start + size);
+    chunks.push({
+      id: `split-${Date.now()}-${start}`,
+      title: `${setBuilderGradeLabel(gradeValue)} · Paket ${chunks.length + 1}`,
+      meta: `${questions.length} soru · ${start + 1}-${start + questions.length} aralığı`,
+      questions,
+      includeAnswerKey
+    });
+  }
+  generatedQuestionSets = [...chunks, ...generatedQuestionSets];
+  renderSetBuilderResults();
+  const note = $("#setBuilderNote");
+  if (note) note.textContent = `${pool.length} soru, ${size} soruluk ${chunks.length} pakete bölündü. Son paket kalan soruları içerir.`;
+}
+
+function printQuestionSet(set) {
+  if (!set?.questions?.length) return;
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    alert("Çıktı penceresi açılamadı. Tarayıcıda açılır pencerelere izin ver.");
+    return;
+  }
+  const questions = set.questions.map((question, index) => `
+    <section class="print-question">
+      <div class="print-question-meta">${index + 1}. soru · ${escapeHtml(question.topic || "Paragraf")}</div>
+      ${question.text ? `<div class="print-text">${formatQuestionText(question.text)}</div>` : ""}
+      <p class="print-stem">${formatQuestionText(question.stem)}</p>
+      <ol type="A">${(question.options || []).map((option) => `<li>${formatQuestionText(option)}</li>`).join("")}</ol>
+    </section>
+  `).join("");
+  const answerKey = set.includeAnswerKey ? `
+    <section class="print-answer-key">
+      <h2>Cevap anahtarı</h2>
+      <p>${set.questions.map((question, index) => `${index + 1}-${escapeHtml(question.answer)}`).join(" · ")}</p>
+    </section>
+  ` : "";
+  printWindow.document.write(`
+    <!doctype html><html lang="tr"><head><meta charset="utf-8"><title>${escapeHtml(set.title)}</title>
+    <style>
+      @page{size:A4;margin:16mm}body{font-family:Arial,sans-serif;color:#182235;line-height:1.5;margin:0}h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:0 0 8px}.meta{color:#647083;font-size:12px;margin-bottom:18px}.print-question{break-inside:avoid;border-top:1px solid #d9e2df;padding:14px 0}.print-question-meta{font-weight:700;font-size:13px;color:#0b666a;margin-bottom:8px}.print-text{background:#f7faf9;border:1px solid #d9e2df;border-radius:6px;padding:10px 12px;margin-bottom:10px}.print-stem{font-weight:700;margin:10px 0}.print-question li{padding:4px 0}.print-answer-key{break-inside:avoid;border-top:2px solid #168c8c;margin-top:18px;padding-top:12px}
+    </style></head><body><h1>Paragraf Koçu · ${escapeHtml(set.title)}</h1><div class="meta">${escapeHtml(set.meta)}</div>${questions}${answerKey}<script>window.onload=()=>window.print();</script></body></html>
+  `);
+  printWindow.document.close();
+}
+
 function renderQuestionBank() {
   const list = $("#questionBankList");
   const count = $("#questionBankCount");
@@ -4073,6 +4281,7 @@ function renderQuestionBank() {
     if (lockPanel) lockPanel.hidden = false;
     if (controls) controls.hidden = true;
     list.hidden = true;
+    renderSetBuilder();
     return;
   }
   if (lockPanel) lockPanel.hidden = true;
@@ -4116,6 +4325,8 @@ function renderQuestionBank() {
       <p>Arama kutusunu temizleyebilir ya da sınıf/konu filtresini değiştirebilirsin.</p>
     </article>
   `;
+  renderSetBuilder();
+  window.lucide?.createIcons();
 }
 
 function mistakeToQuestion(item) {
@@ -4832,6 +5043,33 @@ function bindEvents() {
   $("#questionBankTopic").addEventListener("change", renderQuestionBank);
   $("#questionBankDifficulty").addEventListener("change", renderQuestionBank);
   $("#questionBankSearch").addEventListener("input", renderQuestionBank);
+  $("#setBuilderGrade")?.addEventListener("change", () => {
+    updateSetBuilderTopics();
+    renderSetBuilder();
+  });
+  $("#setBuilderMode")?.addEventListener("change", renderSetBuilder);
+  $("#setBuilderTopic")?.addEventListener("change", renderSetBuilder);
+  $("#setBuilderDifficulty")?.addEventListener("change", renderSetBuilder);
+  $("#setBuilderCount")?.addEventListener("change", setBuilderRequestedCount);
+  $$(".set-count-shortcut").forEach((button) => button.addEventListener("click", () => {
+    $("#setBuilderCount").value = button.dataset.setCount;
+    setBuilderRequestedCount();
+  }));
+  $("#generateQuestionSet")?.addEventListener("click", createQuestionSet);
+  $("#splitQuestionBank")?.addEventListener("click", splitQuestionBank);
+  $("#setBuilderResults")?.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-set-index]");
+    if (!button) return;
+    const index = Number(button.dataset.setIndex);
+    if (event.target.closest(".print-question-set")) {
+      printQuestionSet(generatedQuestionSets[index]);
+      return;
+    }
+    if (event.target.closest(".remove-question-set")) {
+      generatedQuestionSets.splice(index, 1);
+      renderSetBuilderResults();
+    }
+  });
   $("#unlockQuestionBank").addEventListener("click", () => {
     tryUnlockTeacherArea("#questionBankPassword", "#questionBankLockMessage", "Soru havuzu açıldı.");
   });

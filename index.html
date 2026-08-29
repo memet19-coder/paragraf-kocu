@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=mobile-layout-1">
+  <link rel="stylesheet" href="./styles.css?v=set-builder-1">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -305,6 +305,60 @@
               <input id="questionBankSearch" type="search" placeholder="Metin, soru kökü veya seçenek ara">
             </label>
           </div>
+          <section class="set-builder" id="questionSetBuilder" hidden aria-labelledby="setBuilderTitle">
+            <div class="toolbar">
+              <div>
+                <p class="eyebrow">Çıktı hazırlama</p>
+                <h3 id="setBuilderTitle">Soru seti oluştur</h3>
+              </div>
+              <strong class="set-builder-count" id="setBuilderPoolCount">0 uygun soru</strong>
+            </div>
+            <div class="set-builder-controls">
+              <label>Sınıf
+                <select id="setBuilderGrade">
+                  <option value="5">5. sınıf</option>
+                  <option value="6">6. sınıf</option>
+                  <option value="7">7. sınıf</option>
+                  <option value="8">8. sınıf</option>
+                  <option value="all">Tüm sınıflar</option>
+                </select>
+              </label>
+              <label>Çalışma biçimi
+                <select id="setBuilderMode">
+                  <option value="mixed">Karma set</option>
+                  <option value="topic">Konuya göre</option>
+                  <option value="exam">Deneme</option>
+                </select>
+              </label>
+              <label id="setBuilderTopicField">Konu
+                <select id="setBuilderTopic"></select>
+              </label>
+              <label>Zorluk
+                <select id="setBuilderDifficulty">
+                  <option value="all">Tümü</option>
+                  <option value="Kolay">Kolay</option>
+                  <option value="Orta">Orta</option>
+                  <option value="Zor">Zor</option>
+                </select>
+              </label>
+              <label>Soru sayısı
+                <input id="setBuilderCount" type="number" min="1" value="15" inputmode="numeric">
+              </label>
+              <label class="set-builder-check"><span>Çıktı seçeneği</span><span><input id="setBuilderAnswerKey" type="checkbox" checked> Cevap anahtarını ekle</span></label>
+            </div>
+            <div class="set-builder-shortcuts" aria-label="Soru sayısı kısayolları">
+              <span>Hızlı seçim</span>
+              <button class="segmented set-count-shortcut" type="button" data-set-count="10">10 soru</button>
+              <button class="segmented set-count-shortcut is-selected" type="button" data-set-count="15">15 soru</button>
+              <button class="segmented set-count-shortcut" type="button" data-set-count="20">20 soru</button>
+            </div>
+            <div class="set-builder-actions">
+              <button class="primary-action" id="generateQuestionSet" type="button"><i data-lucide="wand-sparkles"></i><span>Set oluştur</span></button>
+              <button class="secondary-action" id="splitQuestionBank" type="button"><i data-lucide="layers-3"></i><span>Tüm havuzu böl</span></button>
+            </div>
+            <p class="set-builder-note" id="setBuilderNote">Karma sette konular olabildiğince dengeli dağıtılır.</p>
+            <div class="set-builder-results" id="setBuilderResults" hidden></div>
+          </section>
           <div class="question-bank-list" id="questionBankList" hidden></div>
         </div>
       </section>
@@ -506,7 +560,7 @@
   <script src="./paragraph8-expanded-questions.js?v=grade8-expanded-1"></script>
   <script src="./paragraph8-new-questions.js?v=grade8-new-1"></script>
   <script src="./practice-passages-extra.js?v=grade5-variety-1"></script>
-  <script src="./app.js?v=grade8-new-1"></script>
+  <script src="./app.js?v=set-builder-1"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>
