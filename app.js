@@ -2403,7 +2403,8 @@ questionBank = [
   ...(Array.isArray(window.PARAGRAPH8_SAYISAL_QUESTIONS) ? window.PARAGRAPH8_SAYISAL_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH8_BATCH_QUESTIONS) ? window.PARAGRAPH8_BATCH_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH8_EXPANDED_QUESTIONS) ? window.PARAGRAPH8_EXPANDED_QUESTIONS : []),
-  ...(Array.isArray(window.PARAGRAPH8_NEW_QUESTIONS) ? window.PARAGRAPH8_NEW_QUESTIONS : [])
+  ...(Array.isArray(window.PARAGRAPH8_NEW_QUESTIONS) ? window.PARAGRAPH8_NEW_QUESTIONS : []),
+  ...(Array.isArray(window.PARAGRAPH8_DOCX_KRONOMETRE_QUESTIONS) ? window.PARAGRAPH8_DOCX_KRONOMETRE_QUESTIONS : [])
 ]
   .map((question) => ({ ...question, id: makeQuestionId(question) }));
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
