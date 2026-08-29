@@ -2424,6 +2424,8 @@ let questionBankUnlocked = false;
 let teacherAccessUnlocked = false;
 let editingQuestionId = null;
 let generatedQuestionSets = [];
+let latestSplitQuestionSets = [];
+let latestSplitSettings = null;
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -4108,6 +4110,12 @@ function updateSetBuilderTopics() {
 
 function renderSetBuilderResults() {
   const results = $("#setBuilderResults");
+  const downloadZip = $("#downloadSplitZip");
+  if (downloadZip) {
+    downloadZip.hidden = !latestSplitQuestionSets.length;
+    const label = downloadZip.querySelector("span");
+    if (label && latestSplitQuestionSets.length) label.textContent = `${latestSplitQuestionSets.length} paketi ZIP indir`;
+  }
   if (!results) return;
   if (!generatedQuestionSets.length) {
     results.hidden = true;
@@ -4235,19 +4243,15 @@ function splitQuestionBank() {
       includeAnswerKey
     });
   }
+  latestSplitQuestionSets = chunks;
+  latestSplitSettings = { gradeValue, size };
   generatedQuestionSets = [...chunks, ...generatedQuestionSets];
   renderSetBuilderResults();
   const note = $("#setBuilderNote");
   if (note) note.textContent = `${pool.length} soru, ${size} soruluk ${chunks.length} pakete bölündü. Son paket kalan soruları içerir.`;
 }
 
-function printQuestionSet(set) {
-  if (!set?.questions?.length) return;
-  const printWindow = window.open("", "_blank");
-  if (!printWindow) {
-    alert("Çıktı penceresi açılamadı. Tarayıcıda açılır pencerelere izin ver.");
-    return;
-  }
+function questionSetDocumentHtml(set, autoPrint = false) {
   const questions = set.questions.map((question, index) => `
     <section class="print-question">
       <div class="print-question-meta">${index + 1}. soru · ${escapeHtml(question.topic || "Paragraf")}</div>
@@ -4262,12 +4266,136 @@ function printQuestionSet(set) {
       <p>${set.questions.map((question, index) => `${index + 1}-${escapeHtml(question.answer)}`).join(" · ")}</p>
     </section>
   ` : "";
-  printWindow.document.write(`
-    <!doctype html><html lang="tr"><head><meta charset="utf-8"><title>${escapeHtml(set.title)}</title>
+  return `<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(set.title)}</title>
     <style>
-      @page{size:A4;margin:16mm}body{font-family:Arial,sans-serif;color:#182235;line-height:1.5;margin:0}h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:0 0 8px}.meta{color:#647083;font-size:12px;margin-bottom:18px}.print-question{break-inside:avoid;border-top:1px solid #d9e2df;padding:14px 0}.print-question-meta{font-weight:700;font-size:13px;color:#0b666a;margin-bottom:8px}.print-text{background:#f7faf9;border:1px solid #d9e2df;border-radius:6px;padding:10px 12px;margin-bottom:10px}.print-stem{font-weight:700;margin:10px 0}.print-question li{padding:4px 0}.print-answer-key{break-inside:avoid;border-top:2px solid #168c8c;margin-top:18px;padding-top:12px}
-    </style></head><body><h1>Paragraf Koçu · ${escapeHtml(set.title)}</h1><div class="meta">${escapeHtml(set.meta)}</div>${questions}${answerKey}<script>window.onload=()=>window.print();</script></body></html>
-  `);
+      @page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#182235;line-height:1.5;margin:0 auto;padding:18px;max-width:900px}h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:0 0 8px}.meta{color:#647083;font-size:12px;margin-bottom:18px}.print-control{position:fixed;right:18px;top:18px;border:0;border-radius:6px;background:#168c8c;color:#fff;font:700 14px Arial;padding:10px 14px;cursor:pointer}.print-question{break-inside:avoid;border-top:1px solid #d9e2df;padding:14px 0}.print-question-meta{font-weight:700;font-size:13px;color:#0b666a;margin-bottom:8px}.print-text{background:#f7faf9;border:1px solid #d9e2df;border-radius:6px;padding:10px 12px;margin-bottom:10px}.print-stem{font-weight:700;margin:10px 0}.print-question li{padding:4px 0}.print-answer-key{break-inside:avoid;border-top:2px solid #168c8c;margin-top:18px;padding-top:12px}@media print{body{padding:0}.print-control{display:none}}
+    </style></head><body><button class="print-control" type="button" onclick="window.print()">Yazdır / PDF kaydet</button><h1>Paragraf Koçu · ${escapeHtml(set.title)}</h1><div class="meta">${escapeHtml(set.meta)}</div>${questions}${answerKey}${autoPrint ? "<script>window.onload=()=>window.print();<\/script>" : ""}</body></html>`;
+}
+
+const ZIP_CRC_TABLE = Array.from({ length: 256 }, (_, value) => {
+  let crc = value;
+  for (let bit = 0; bit < 8; bit += 1) crc = (crc & 1) ? 0xedb88320 ^ (crc >>> 1) : crc >>> 1;
+  return crc >>> 0;
+});
+
+function zipCrc32(bytes) {
+  let crc = 0xffffffff;
+  bytes.forEach((byte) => { crc = ZIP_CRC_TABLE[(crc ^ byte) & 0xff] ^ (crc >>> 8); });
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function zipChunk(size, writer) {
+  const bytes = new Uint8Array(size);
+  writer(new DataView(bytes.buffer));
+  return bytes;
+}
+
+function concatZipChunks(chunks) {
+  const output = new Uint8Array(chunks.reduce((sum, chunk) => sum + chunk.length, 0));
+  let offset = 0;
+  chunks.forEach((chunk) => {
+    output.set(chunk, offset);
+    offset += chunk.length;
+  });
+  return output;
+}
+
+function createStoredZip(files) {
+  const encoder = new TextEncoder();
+  const localChunks = [];
+  const centralChunks = [];
+  let localOffset = 0;
+  files.forEach((file) => {
+    const name = encoder.encode(file.name);
+    const data = encoder.encode(file.content);
+    const crc = zipCrc32(data);
+    const localHeader = zipChunk(30, (view) => {
+      view.setUint32(0, 0x04034b50, true);
+      view.setUint16(4, 20, true);
+      view.setUint16(6, 0x0800, true);
+      view.setUint32(14, crc, true);
+      view.setUint32(18, data.length, true);
+      view.setUint32(22, data.length, true);
+      view.setUint16(26, name.length, true);
+    });
+    localChunks.push(localHeader, name, data);
+    const centralHeader = zipChunk(46, (view) => {
+      view.setUint32(0, 0x02014b50, true);
+      view.setUint16(4, 20, true);
+      view.setUint16(6, 20, true);
+      view.setUint16(8, 0x0800, true);
+      view.setUint32(16, crc, true);
+      view.setUint32(20, data.length, true);
+      view.setUint32(24, data.length, true);
+      view.setUint16(28, name.length, true);
+      view.setUint32(42, localOffset, true);
+    });
+    centralChunks.push(centralHeader, name);
+    localOffset += localHeader.length + name.length + data.length;
+  });
+  const centralDirectory = concatZipChunks(centralChunks);
+  const end = zipChunk(22, (view) => {
+    view.setUint32(0, 0x06054b50, true);
+    view.setUint16(8, files.length, true);
+    view.setUint16(10, files.length, true);
+    view.setUint32(12, centralDirectory.length, true);
+    view.setUint32(16, localOffset, true);
+  });
+  return new Blob([...localChunks, centralDirectory, end], { type: "application/zip" });
+}
+
+async function downloadSplitQuestionSetsZip() {
+  if (!latestSplitQuestionSets.length) {
+    alert("Önce Tüm havuzu böl düğmesiyle paketleri oluştur.");
+    return;
+  }
+  const button = $("#downloadSplitZip");
+  const label = button?.querySelector("span");
+  if (button) button.disabled = true;
+  if (label) label.textContent = "ZIP hazırlanıyor...";
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+  try {
+    const width = String(latestSplitQuestionSets.length).length;
+    const files = latestSplitQuestionSets.map((set, index) => ({
+      name: `paket-${String(index + 1).padStart(width, "0")}.html`,
+      content: questionSetDocumentHtml(set)
+    }));
+    files.unshift({
+      name: "paket-listesi.txt",
+      content: latestSplitQuestionSets.map((set, index) => `${index + 1}. ${set.title} - ${set.meta}`).join("\r\n")
+    });
+    const blob = createStoredZip(files);
+    const gradeValue = latestSplitSettings?.gradeValue || $("#setBuilderGrade")?.value || String(state.grade);
+    const size = latestSplitSettings?.size || latestSplitQuestionSets[0]?.questions?.length || setBuilderRequestedCount(setBuilderBasePool());
+    const gradeSlug = gradeValue === "all" ? "tum-siniflar" : `${gradeValue}-sinif`;
+    const fileName = `paragraf-kocu-${gradeSlug}-${size}-soruluk-${latestSplitQuestionSets.length}-paket.zip`;
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = fileName;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const note = $("#setBuilderNote");
+    if (note) note.textContent = `${latestSplitQuestionSets.length} ayrı paket tek ZIP dosyası olarak indirildi.`;
+  } catch (error) {
+    console.error("Paket ZIP dosyası hazırlanamadı:", error);
+    alert("ZIP dosyası hazırlanamadı. Sayfayı yenileyip tekrar dene.");
+  } finally {
+    if (button) button.disabled = false;
+    if (label) label.textContent = `${latestSplitQuestionSets.length} paketi ZIP indir`;
+  }
+}
+
+function printQuestionSet(set) {
+  if (!set?.questions?.length) return;
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    alert("Çıktı penceresi açılamadı. Tarayıcıda açılır pencerelere izin ver.");
+    return;
+  }
+  printWindow.document.write(questionSetDocumentHtml(set, true));
   printWindow.document.close();
 }
 
@@ -5058,6 +5186,7 @@ function bindEvents() {
   }));
   $("#generateQuestionSet")?.addEventListener("click", createQuestionSet);
   $("#splitQuestionBank")?.addEventListener("click", splitQuestionBank);
+  $("#downloadSplitZip")?.addEventListener("click", downloadSplitQuestionSetsZip);
   $("#setBuilderResults")?.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-set-index]");
     if (!button) return;
