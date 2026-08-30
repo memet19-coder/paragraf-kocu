@@ -2,6 +2,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-01",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragraf tamamlama",
     "difficulty": "Zor",
     "outcome": "Paragraf tamamlama",
@@ -24,6 +25,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-02",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragraf tamamlama",
     "difficulty": "Zor",
     "outcome": "Paragraf tamamlama",
@@ -46,6 +48,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-04",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragraf tamamlama",
     "difficulty": "Zor",
     "outcome": "Paragraf tamamlama",
@@ -68,6 +71,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-06",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Hikâye unsurları",
     "difficulty": "Zor",
     "outcome": "Hikâye unsurları",
@@ -90,6 +94,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-07",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Yardımcı düşünce",
     "difficulty": "Zor",
     "outcome": "Yardımcı düşünce",
@@ -112,6 +117,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-08",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Dil ve anlatım",
     "difficulty": "Zor",
     "outcome": "Dil ve anlatım",
@@ -134,6 +140,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-09",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Ana düşünce",
     "difficulty": "Zor",
     "outcome": "Ana düşünce",
@@ -156,6 +163,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-10",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Anlatım biçimleri",
     "difficulty": "Zor",
     "outcome": "Anlatım biçimleri",
@@ -178,6 +186,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-12",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragrafta sıralama",
     "difficulty": "Zor",
     "outcome": "Paragrafta sıralama",
@@ -200,6 +209,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-11-15",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Anlatım biçimleri",
     "difficulty": "Zor",
     "outcome": "Anlatım biçimleri",
@@ -222,6 +232,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-03",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Yardımcı düşünce",
     "difficulty": "Zor",
     "outcome": "Yardımcı düşünce",
@@ -244,6 +255,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-04",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Metin türü",
     "difficulty": "Zor",
     "outcome": "Metin türü",
@@ -266,6 +278,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-06",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Dil ve anlatım",
     "difficulty": "Zor",
     "outcome": "Dil ve anlatım",
@@ -288,6 +301,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-07",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragrafta anlam",
     "difficulty": "Zor",
     "outcome": "Paragrafta anlam",
@@ -310,6 +324,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-08",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Dil ve anlatım",
     "difficulty": "Zor",
     "outcome": "Dil ve anlatım",
@@ -332,6 +347,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-09",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Başlık bulma",
     "difficulty": "Zor",
     "outcome": "Başlık bulma",
@@ -354,6 +370,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-10",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Dil ve anlatım",
     "difficulty": "Zor",
     "outcome": "Dil ve anlatım",
@@ -376,6 +393,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-11",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragrafa bölme",
     "difficulty": "Zor",
     "outcome": "Paragrafa bölme",
@@ -398,6 +416,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-12",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Çıkarım yapma",
     "difficulty": "Zor",
     "outcome": "Çıkarım yapma",
@@ -420,6 +439,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-13",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Cümleler arası anlam",
     "difficulty": "Zor",
     "outcome": "Cümleler arası anlam",
@@ -442,6 +462,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2025-12-14",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragrafta anlam",
     "difficulty": "Zor",
     "outcome": "Paragrafta anlam",
@@ -464,6 +485,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-01-06",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Düşüncenin akışını bozan cümle",
     "difficulty": "Zor",
     "outcome": "Düşüncenin akışını bozan cümle",
@@ -486,6 +508,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-01-07",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Metin türü",
     "difficulty": "Zor",
     "outcome": "Metin türü",
@@ -508,6 +531,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-01-08",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Ana düşünce",
     "difficulty": "Zor",
     "outcome": "Ana düşünce",
@@ -530,6 +554,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-01-09",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Çıkarım yapma",
     "difficulty": "Zor",
     "outcome": "Çıkarım yapma",
@@ -552,6 +577,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-01-11",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Yardımcı düşünce",
     "difficulty": "Zor",
     "outcome": "Yardımcı düşünce",
@@ -574,6 +600,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-01-12",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Söz sanatları",
     "difficulty": "Zor",
     "outcome": "Söz sanatları",
@@ -596,6 +623,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-01-14",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Metinde yapı",
     "difficulty": "Zor",
     "outcome": "Metinde yapı",
@@ -618,6 +646,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-01-16",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragrafta anlam",
     "difficulty": "Zor",
     "outcome": "Paragrafta anlam",
@@ -640,6 +669,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-02",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragraf tamamlama",
     "difficulty": "Zor",
     "outcome": "Paragraf tamamlama",
@@ -662,6 +692,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-03",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Ana düşünce",
     "difficulty": "Zor",
     "outcome": "Ana düşünce",
@@ -684,6 +715,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-04",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Konu bulma",
     "difficulty": "Zor",
     "outcome": "Konu bulma",
@@ -706,6 +738,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-05",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Düşünceyi geliştirme yolları",
     "difficulty": "Zor",
     "outcome": "Düşünceyi geliştirme yolları",
@@ -728,6 +761,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-06",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Metin türü",
     "difficulty": "Zor",
     "outcome": "Metin türü",
@@ -750,6 +784,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-08",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Yardımcı düşünce",
     "difficulty": "Zor",
     "outcome": "Yardımcı düşünce",
@@ -772,6 +807,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-10",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragrafta anlam",
     "difficulty": "Zor",
     "outcome": "Paragrafta anlam",
@@ -794,6 +830,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-12",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Yardımcı düşünce",
     "difficulty": "Zor",
     "outcome": "Yardımcı düşünce",
@@ -816,6 +853,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-13",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragrafta sıralama",
     "difficulty": "Zor",
     "outcome": "Paragrafta sıralama",
@@ -838,6 +876,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-02-15",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Yardımcı düşünce",
     "difficulty": "Zor",
     "outcome": "Yardımcı düşünce",
@@ -860,6 +899,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-02",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragrafta anlam",
     "difficulty": "Zor",
     "outcome": "Paragrafta anlam",
@@ -882,6 +922,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-04",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Dil ve anlatım",
     "difficulty": "Zor",
     "outcome": "Dil ve anlatım",
@@ -904,6 +945,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-05",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragraf tamamlama",
     "difficulty": "Zor",
     "outcome": "Paragraf tamamlama",
@@ -926,6 +968,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-06",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Çıkarım yapma",
     "difficulty": "Zor",
     "outcome": "Çıkarım yapma",
@@ -948,6 +991,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-07",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragrafa bölme",
     "difficulty": "Zor",
     "outcome": "Paragrafa bölme",
@@ -970,6 +1014,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-08",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Ana düşünce",
     "difficulty": "Zor",
     "outcome": "Ana düşünce",
@@ -992,6 +1037,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-09",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Yardımcı düşünce",
     "difficulty": "Zor",
     "outcome": "Yardımcı düşünce",
@@ -1014,6 +1060,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-11",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Düşünceyi geliştirme yolları",
     "difficulty": "Zor",
     "outcome": "Düşünceyi geliştirme yolları",
@@ -1036,6 +1083,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-13",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Metin türü",
     "difficulty": "Zor",
     "outcome": "Metin türü",
@@ -1058,6 +1106,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-03-14",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragraf tamamlama",
     "difficulty": "Zor",
     "outcome": "Paragraf tamamlama",
@@ -1080,6 +1129,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-04-02",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Paragraf tamamlama",
     "difficulty": "Zor",
     "outcome": "Paragraf tamamlama",
@@ -1102,6 +1152,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-04-05",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Yardımcı düşünce",
     "difficulty": "Zor",
     "outcome": "Yardımcı düşünce",
@@ -1124,6 +1175,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-04-06",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Metin türü",
     "difficulty": "Zor",
     "outcome": "Metin türü",
@@ -1146,6 +1198,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-04-07",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Çıkarım yapma",
     "difficulty": "Zor",
     "outcome": "Çıkarım yapma",
@@ -1168,6 +1221,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-04-08",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Söz sanatları",
     "difficulty": "Zor",
     "outcome": "Söz sanatları",
@@ -1190,6 +1244,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-04-10",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Dil ve anlatım",
     "difficulty": "Zor",
     "outcome": "Dil ve anlatım",
@@ -1212,6 +1267,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-04-11",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Düşüncenin akışını bozan cümle",
     "difficulty": "Zor",
     "outcome": "Düşüncenin akışını bozan cümle",
@@ -1234,6 +1290,7 @@ window.PARAGRAPH8_MEBI_DENEME_QUESTIONS = [
   {
     "id": "g8-mebi-2026-04-13",
     "grade": 8,
+    "collection": "mebi-deneme",
     "topic": "Konu bulma",
     "difficulty": "Zor",
     "outcome": "Konu bulma",

@@ -2395,6 +2395,7 @@ questionBank = [
   ...(Array.isArray(window.PARAGRAPH6_PARAGRAF_QUESTIONS) ? window.PARAGRAPH6_PARAGRAF_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH6_ALL_LESSONS_QUESTIONS) ? window.PARAGRAPH6_ALL_LESSONS_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH6_MEB_WORKBOOK_QUESTIONS) ? window.PARAGRAPH6_MEB_WORKBOOK_QUESTIONS : []),
+  ...(Array.isArray(window.PARAGRAPH6_EXPANDED_QUESTIONS) ? window.PARAGRAPH6_EXPANDED_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH7_QUESTIONS) ? window.PARAGRAPH7_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH7_FINAL_QUESTIONS) ? window.PARAGRAPH7_FINAL_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH7_TURKCE_QUESTIONS) ? window.PARAGRAPH7_TURKCE_QUESTIONS : []),
@@ -4091,6 +4092,9 @@ function setBuilderEligibleQuestions() {
   const mode = $("#setBuilderMode")?.value || "mixed";
   const topicValue = $("#setBuilderTopic")?.value || "Tüm konular";
   const pool = setBuilderBasePool();
+  if (mode === "mebi-exam") {
+    return pool.filter((question) => question.collection === "mebi-deneme");
+  }
   if (mode !== "topic" || topicValue === "Tüm konular") return pool;
   return pool.filter((question) => question.topic === topicValue);
 }
@@ -4152,8 +4156,12 @@ function renderSetBuilder() {
     gradeSelect.value = String(state.grade);
     gradeSelect.dataset.initialized = "true";
   }
-  updateSetBuilderTopics();
   const mode = $("#setBuilderMode")?.value || "mixed";
+  if (gradeSelect) {
+    gradeSelect.disabled = mode === "mebi-exam";
+    if (mode === "mebi-exam") gradeSelect.value = "8";
+  }
+  updateSetBuilderTopics();
   const topicField = $("#setBuilderTopicField");
   if (topicField) topicField.hidden = mode !== "topic";
   const pool = setBuilderEligibleQuestions();
@@ -4163,6 +4171,8 @@ function renderSetBuilder() {
   if (note) {
     note.textContent = mode === "topic"
       ? "Seçtiğin konuya ait sorulardan bir set hazırlanır."
+      : mode === "mebi-exam"
+        ? "Son eklenen MEBİ sorularından konu dengeli ve sırası karışık bir deneme hazırlanır."
       : mode === "exam"
         ? "Denemede farklı konular olabildiğince dengeli ve sıra karışık olacak şekilde seçilir."
         : "Karma sette konular olabildiğince dengeli dağıtılır.";
@@ -4207,15 +4217,15 @@ function createQuestionSet() {
   const gradeValue = $("#setBuilderGrade")?.value || String(state.grade);
   const topicValue = $("#setBuilderTopic")?.value || "Tüm konular";
   const requestedCount = setBuilderRequestedCount();
-  const questions = mode === "exam"
+  const questions = mode === "exam" || mode === "mebi-exam"
     ? balancedSetQuestions(pool, requestedCount)
     : shuffleQuestions(pool).slice(0, requestedCount);
-  const modeLabel = mode === "exam" ? "Deneme" : mode === "topic" ? topicValue : "Karma set";
+  const modeLabel = mode === "mebi-exam" ? "MEBİ Karma Deneme" : mode === "exam" ? "Deneme" : mode === "topic" ? topicValue : "Karma set";
   const title = `${setBuilderGradeLabel(gradeValue)} · ${modeLabel}`;
   generatedQuestionSets.unshift({
     id: `set-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     title,
-    meta: `${questions.length} soru${mode === "topic" ? ` · ${topicValue}` : ""}`,
+    meta: `${questions.length} soru${mode === "topic" ? ` · ${topicValue}` : mode === "mebi-exam" ? " · MEBİ denemeleri" : ""}`,
     questions,
     includeAnswerKey: Boolean($("#setBuilderAnswerKey")?.checked)
   });
@@ -4225,12 +4235,13 @@ function createQuestionSet() {
 }
 
 function splitQuestionBank() {
-  const pool = setBuilderBasePool();
+  const mode = $("#setBuilderMode")?.value || "mixed";
+  const pool = mode === "mebi-exam" ? setBuilderEligibleQuestions() : setBuilderBasePool();
   if (!pool.length) {
     alert("Bölünecek soru bulunamadı.");
     return;
   }
-  const size = setBuilderRequestedCount(setBuilderBasePool());
+  const size = setBuilderRequestedCount(pool);
   const gradeValue = $("#setBuilderGrade")?.value || String(state.grade);
   const includeAnswerKey = Boolean($("#setBuilderAnswerKey")?.checked);
   const chunks = [];
