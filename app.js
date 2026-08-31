@@ -2412,6 +2412,8 @@ questionBank = [
 ]
   .map((question) => ({ ...question, id: makeQuestionId(question) }));
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
+const reviewDraftQuestions = (Array.isArray(window.PARAGRAPH8_REVIEW_QUESTIONS) ? window.PARAGRAPH8_REVIEW_QUESTIONS : [])
+  .map((question) => ({ ...question, id: question.id || makeQuestionId(question) }));
 
 const CONTENT_VERSION = 12;
 let state = loadState();
@@ -2430,6 +2432,15 @@ let editingQuestionId = null;
 let generatedQuestionSets = [];
 let latestSplitQuestionSets = [];
 let latestSplitSettings = null;
+const REVIEWED_QUESTIONS_KEY = "paragraf-kocu-reviewed-drafts-v1";
+let reviewedQuestionIds = (() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(REVIEWED_QUESTIONS_KEY) || "[]");
+    return new Set(Array.isArray(saved) ? saved : []);
+  } catch {
+    return new Set();
+  }
+})();
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -2477,6 +2488,7 @@ function tryUnlockTeacherArea(inputSelector, messageSelector, successMessage) {
   input.value = "";
   if (message) message.textContent = successMessage;
   renderQuestionBank();
+  renderReviewQuestions();
   renderTeacher();
   window.lucide?.createIcons();
   return true;
@@ -3182,6 +3194,7 @@ function setView(view) {
     mistakes: "Yanlışlarım",
     report: "Gelişim Raporum",
     questionBank: "Soru Havuzu",
+    reviewQuestions: "İnceleme Soruları",
     teacher: "Öğretmen Paneli"
   };
   $("#viewTitle").textContent = titles[view];
@@ -4590,6 +4603,90 @@ function renderQuestionBank() {
   window.lucide?.createIcons();
 }
 
+function saveReviewedQuestionIds() {
+  localStorage.setItem(REVIEWED_QUESTIONS_KEY, JSON.stringify(Array.from(reviewedQuestionIds)));
+}
+
+function updateReviewQuestionTopics() {
+  const select = $("#reviewQuestionsTopic");
+  if (!select) return;
+  const current = select.value || "all";
+  const topics = Array.from(new Set(reviewDraftQuestions.map((question) => question.topic)))
+    .sort((a, b) => a.localeCompare(b, "tr"));
+  select.innerHTML = `<option value="all">Tüm konular</option>${topics.map((topic) => `<option value="${escapeHtml(topic)}">${escapeHtml(topic)}</option>`).join("")}`;
+  select.value = topics.includes(current) ? current : "all";
+}
+
+function filteredReviewQuestions() {
+  const topic = $("#reviewQuestionsTopic")?.value || "all";
+  const status = $("#reviewQuestionsStatus")?.value || "all";
+  const search = ($("#reviewQuestionsSearch")?.value || "").trim().toLocaleLowerCase("tr-TR");
+  return reviewDraftQuestions.filter((question) => {
+    const reviewed = reviewedQuestionIds.has(question.id);
+    if (topic !== "all" && question.topic !== topic) return false;
+    if (status === "reviewed" && !reviewed) return false;
+    if (status === "pending" && reviewed) return false;
+    if (!search) return true;
+    return [question.text, question.stem, ...question.options]
+      .join(" ")
+      .toLocaleLowerCase("tr-TR")
+      .includes(search);
+  });
+}
+
+function renderReviewQuestions() {
+  const lock = $("#reviewQuestionsLock");
+  const content = $("#reviewQuestionsContent");
+  const count = $("#reviewQuestionsCount");
+  const list = $("#reviewQuestionsList");
+  if (!lock || !content || !count || !list) return;
+  lock.hidden = teacherAccessUnlocked;
+  content.hidden = !teacherAccessUnlocked;
+  if (!teacherAccessUnlocked) {
+    count.textContent = "Kilitli";
+    return;
+  }
+
+  updateReviewQuestionTopics();
+  const filtered = filteredReviewQuestions();
+  const reviewedCount = reviewDraftQuestions.filter((question) => reviewedQuestionIds.has(question.id)).length;
+  count.textContent = `${reviewDraftQuestions.length} soru · ${reviewedCount} incelendi`;
+  list.innerHTML = filtered.length ? filtered.map((question, index) => {
+    const answerIndex = "ABCD".indexOf(question.answer);
+    const answerText = answerIndex >= 0 ? question.options[answerIndex] : "";
+    const reviewed = reviewedQuestionIds.has(question.id);
+    return `
+      <article class="question-preview-card review-question-card${reviewed ? " is-reviewed" : ""}" data-review-question-id="${escapeHtml(question.id)}">
+        <div class="question-preview-head">
+          <span class="pill">8. sınıf</span>
+          <strong>${index + 1}. ${escapeHtml(question.topic)}</strong>
+          <span>${escapeHtml(question.difficulty)}</span>
+          <span class="review-status-badge">${reviewed ? "İncelendi" : "İnceleme bekliyor"}</span>
+          <button class="secondary-action toggle-review-question" type="button">
+            <i data-lucide="${reviewed ? "rotate-ccw" : "check-check"}"></i>
+            <span>${reviewed ? "Bekleyene al" : "İncelendi işaretle"}</span>
+          </button>
+        </div>
+        <div class="question-preview-text">${formatQuestionText(question.text)}</div>
+        <div class="question-preview-stem">${formatQuestionText(question.stem)}</div>
+        <ol class="question-preview-options" type="A">
+          ${question.options.map((option, optionIndex) => `<li class="${optionIndex === answerIndex ? "is-answer" : ""}">${formatQuestionText(option)}</li>`).join("")}
+        </ol>
+        <div class="question-preview-solution">
+          <strong>Doğru cevap: ${question.answer}${answerText ? ` - ${formatQuestionText(answerText)}` : ""}</strong>
+          <p>${formatQuestionText(question.solution)}</p>
+        </div>
+      </article>
+    `;
+  }).join("") : `
+    <article class="question-preview-card">
+      <strong>Bu filtrelere uygun inceleme sorusu bulunamadı.</strong>
+      <p>Arama kutusunu temizleyebilir veya durum filtresini değiştirebilirsin.</p>
+    </article>
+  `;
+  window.lucide?.createIcons();
+}
+
 function mistakeToQuestion(item) {
   return {
     ...item,
@@ -4900,6 +4997,7 @@ function renderAll() {
   renderMistakes();
   renderReport();
   renderQuestionBank();
+  renderReviewQuestions();
   renderTeacher();
 }
 
@@ -5304,6 +5402,9 @@ function bindEvents() {
   $("#questionBankTopic").addEventListener("change", renderQuestionBank);
   $("#questionBankDifficulty").addEventListener("change", renderQuestionBank);
   $("#questionBankSearch").addEventListener("input", renderQuestionBank);
+  $("#reviewQuestionsTopic")?.addEventListener("change", renderReviewQuestions);
+  $("#reviewQuestionsStatus")?.addEventListener("change", renderReviewQuestions);
+  $("#reviewQuestionsSearch")?.addEventListener("input", renderReviewQuestions);
   $("#setBuilderGrade")?.addEventListener("change", () => {
     updateSetBuilderTopics();
     renderSetBuilder();
@@ -5337,6 +5438,12 @@ function bindEvents() {
   });
   $("#questionBankPassword").addEventListener("keydown", (event) => {
     if (event.key === "Enter") $("#unlockQuestionBank").click();
+  });
+  $("#unlockReviewQuestions")?.addEventListener("click", () => {
+    tryUnlockTeacherArea("#reviewQuestionsPassword", "#reviewQuestionsLockMessage", "İnceleme soruları açıldı.");
+  });
+  $("#reviewQuestionsPassword")?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") $("#unlockReviewQuestions")?.click();
   });
   $("#unlockTeacher").addEventListener("click", () => {
     tryUnlockTeacherArea("#teacherPassword", "#teacherLockMessage", "Öğretmen paneli açıldı.");
@@ -5382,6 +5489,16 @@ function bindEvents() {
     editingQuestionId = null;
     renderAll();
     setSyncStatus("Soru düzenlendi ve kaydedildi.", "ok");
+  });
+  $("#reviewQuestionsList")?.addEventListener("click", (event) => {
+    const button = event.target.closest(".toggle-review-question");
+    const card = event.target.closest("[data-review-question-id]");
+    if (!button || !card) return;
+    const id = card.dataset.reviewQuestionId;
+    if (reviewedQuestionIds.has(id)) reviewedQuestionIds.delete(id);
+    else reviewedQuestionIds.add(id);
+    saveReviewedQuestionIds();
+    renderReviewQuestions();
   });
   $("#topicList").addEventListener("click", (event) => {
     const card = event.target.closest(".topic-card");

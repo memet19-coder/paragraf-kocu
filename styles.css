@@ -1369,6 +1369,51 @@ h3 {
   max-width: 100%;
 }
 
+.review-only-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  color: var(--teal-dark);
+}
+
+.review-only-banner svg {
+  flex: 0 0 auto;
+}
+
+.review-only-banner div {
+  display: grid;
+  gap: 3px;
+}
+
+.review-only-banner span {
+  color: var(--muted);
+}
+
+.review-question-controls {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.review-question-card.is-reviewed {
+  border-left: 5px solid var(--teal);
+}
+
+.review-status-badge {
+  color: var(--teal-dark) !important;
+  background: var(--soft-teal);
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.toggle-review-question {
+  margin-left: auto;
+}
+
 .question-preview-card {
   width: 100%;
   min-width: 0;

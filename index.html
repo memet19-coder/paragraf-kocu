@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=set-builder-1">
+  <link rel="stylesheet" href="./styles.css?v=review-questions-1">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -73,6 +73,7 @@
         <button class="nav-item" data-view="mistakes"><i data-lucide="scan-search"></i><span>Yanlışlarım</span></button>
         <button class="nav-item" data-view="report"><i data-lucide="chart-no-axes-combined"></i><span>Gelişim Raporum</span></button>
         <button class="nav-item" data-view="questionBank"><i data-lucide="library-big"></i><span>Soru Havuzu</span></button>
+        <button class="nav-item" data-view="reviewQuestions"><i data-lucide="list-checks"></i><span>İnceleme Soruları</span></button>
         <button class="nav-item" data-view="teacher"><i data-lucide="users-round"></i><span>Öğretmen Paneli</span></button>
       </nav>
     </aside>
@@ -365,6 +366,54 @@
         </div>
       </section>
 
+      <section class="view" id="reviewQuestionsView" aria-labelledby="viewTitle">
+        <div class="section-band">
+          <div class="toolbar">
+            <div>
+              <p class="eyebrow">Öğretmen taslak alanı</p>
+              <h2>İnceleme Soruları</h2>
+            </div>
+            <strong class="question-bank-count" id="reviewQuestionsCount">Kilitli</strong>
+          </div>
+          <div class="question-bank-lock" id="reviewQuestionsLock">
+            <div>
+              <p class="eyebrow">Şifreli alan</p>
+              <h3>Bu taslaklar yalnız öğretmen incelemesi içindir.</h3>
+            </div>
+            <div class="question-bank-login">
+              <input id="reviewQuestionsPassword" type="password" placeholder="Öğretmen şifresi" aria-label="İnceleme soruları öğretmen şifresi" autocomplete="off" autocapitalize="none" spellcheck="false">
+              <button class="primary-action" id="unlockReviewQuestions" type="button"><i data-lucide="lock-keyhole-open"></i><span>Aç</span></button>
+            </div>
+            <small id="reviewQuestionsLockMessage">İnceleme sorularını görmek için öğretmen şifresini gir.</small>
+          </div>
+          <div id="reviewQuestionsContent" hidden>
+            <div class="review-only-banner">
+              <i data-lucide="shield-check"></i>
+              <div>
+                <strong>Ana soru havuzundan tamamen ayrı</strong>
+                <span>Bu sorular öğrenci testlerine, karma denemelere ve PDF paketlerine eklenmez.</span>
+              </div>
+            </div>
+            <div class="question-bank-controls review-question-controls">
+              <label>Konu
+                <select id="reviewQuestionsTopic"></select>
+              </label>
+              <label>Durum
+                <select id="reviewQuestionsStatus">
+                  <option value="all">Tümü</option>
+                  <option value="pending">İnceleme bekliyor</option>
+                  <option value="reviewed">İncelendi</option>
+                </select>
+              </label>
+              <label>Arama
+                <input id="reviewQuestionsSearch" type="search" placeholder="Metin, soru kökü veya seçenek ara">
+              </label>
+            </div>
+            <div class="question-bank-list" id="reviewQuestionsList"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="view" id="teacherView" aria-labelledby="viewTitle">
         <div class="section-band">
           <div class="question-bank-lock" id="teacherPanelLock">
@@ -566,10 +615,11 @@
   <script src="./paragraph8-mebi-deneme-questions.js?v=grade8-mebi-deneme-2"></script>
   <script src="./paragraph8-lgs-deneme-questions.js?v=grade8-lgs-deneme-1"></script>
   <script src="./paragraph8-lgs-8li-questions.js?v=grade8-lgs-8li-1"></script>
+  <script src="./paragraph8-review-questions.js?v=grade8-original-review-1"></script>
   <script src="./practice-passages-extra.js?v=grade5-variety-1"></script>
   <script src="./assets/vendor/pdfmake-0.2.23.min.js"></script>
   <script src="./assets/vendor/pdfmake-vfs-fonts-0.2.23.js"></script>
-  <script src="./app.js?v=mebi-mixed-exam-1"></script>
+  <script src="./app.js?v=review-questions-1"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>
