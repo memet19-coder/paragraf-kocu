@@ -1401,6 +1401,11 @@ h3 {
   border-left: 5px solid var(--teal);
 }
 
+.review-question-card.is-promoted {
+  border-left-color: #2f7d4b;
+  background: #fcfffd;
+}
+
 .review-status-badge {
   color: var(--teal-dark) !important;
   background: var(--soft-teal);
@@ -1410,8 +1415,23 @@ h3 {
   font-weight: 800;
 }
 
-.toggle-review-question {
+.review-question-actions {
   margin-left: auto;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.review-question-actions button:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.promote-review-question:disabled {
+  color: #245f3a;
+  background: #e7f4eb;
+  border-color: #a9d1b6;
 }
 
 .question-preview-card {

@@ -4607,6 +4607,43 @@ function saveReviewedQuestionIds() {
   localStorage.setItem(REVIEWED_QUESTIONS_KEY, JSON.stringify(Array.from(reviewedQuestionIds)));
 }
 
+function reviewQuestionContentKey(question) {
+  return [question.grade, textOnly(question.text), question.stem, ...(question.options || [])]
+    .map((value) => String(value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase("tr-TR"))
+    .join("|");
+}
+
+function reviewPromotionLookup() {
+  const pool = reviewQuestionBank();
+  const ids = new Set(pool.map((question) => question.id));
+  const contentKeys = new Set(pool.map(reviewQuestionContentKey));
+  return { ids, contentKeys };
+}
+
+function reviewPromotionStatus(question, lookup = reviewPromotionLookup()) {
+  if (lookup.ids.has(question.id)) return "promoted";
+  if (lookup.contentKeys.has(reviewQuestionContentKey(question))) return "duplicate";
+  return "draft";
+}
+
+function promoteReviewQuestion(question) {
+  const promotionStatus = reviewPromotionStatus(question);
+  if (promotionStatus !== "draft") return promotionStatus;
+  const promotedQuestion = {
+    ...question,
+    reviewOnly: false,
+    collection: "grade8-approved-review",
+    outcome: question.outcome || `${question.topic} kazanımı`,
+    wrong: question.wrong || "Çeldiriciler metnin kapsamını eksik karşılar veya metinde söylenmeyen bir yargı içerir.",
+    strategy: question.strategy || "Soru kökündeki isteği belirleyip seçenekleri metnin bütünüyle karşılaştır.",
+    hint: question.hint || "Metindeki temel yargıyı ve onu destekleyen ayrıntıları birlikte değerlendir."
+  };
+  upsertManagedQuestion(promotedQuestion);
+  reviewedQuestionIds.add(question.id);
+  saveReviewedQuestionIds();
+  return "promoted";
+}
+
 function updateReviewQuestionTopics() {
   const select = $("#reviewQuestionsTopic");
   if (!select) return;
@@ -4621,11 +4658,15 @@ function filteredReviewQuestions() {
   const topic = $("#reviewQuestionsTopic")?.value || "all";
   const status = $("#reviewQuestionsStatus")?.value || "all";
   const search = ($("#reviewQuestionsSearch")?.value || "").trim().toLocaleLowerCase("tr-TR");
+  const promotionLookup = reviewPromotionLookup();
   return reviewDraftQuestions.filter((question) => {
     const reviewed = reviewedQuestionIds.has(question.id);
+    const promotionStatus = reviewPromotionStatus(question, promotionLookup);
+    const inPool = promotionStatus !== "draft";
     if (topic !== "all" && question.topic !== topic) return false;
     if (status === "reviewed" && !reviewed) return false;
     if (status === "pending" && reviewed) return false;
+    if (status === "promoted" && !inPool) return false;
     if (!search) return true;
     return [question.text, question.stem, ...question.options]
       .join(" ")
@@ -4649,23 +4690,34 @@ function renderReviewQuestions() {
 
   updateReviewQuestionTopics();
   const filtered = filteredReviewQuestions();
+  const promotionLookup = reviewPromotionLookup();
   const reviewedCount = reviewDraftQuestions.filter((question) => reviewedQuestionIds.has(question.id)).length;
-  count.textContent = `${reviewDraftQuestions.length} soru · ${reviewedCount} incelendi`;
+  const promotedCount = reviewDraftQuestions.filter((question) => reviewPromotionStatus(question, promotionLookup) !== "draft").length;
+  count.textContent = `${reviewDraftQuestions.length} soru · ${reviewedCount} incelendi · ${promotedCount} havuzda`;
   list.innerHTML = filtered.length ? filtered.map((question, index) => {
     const answerIndex = "ABCD".indexOf(question.answer);
     const answerText = answerIndex >= 0 ? question.options[answerIndex] : "";
     const reviewed = reviewedQuestionIds.has(question.id);
+    const promotionStatus = reviewPromotionStatus(question, promotionLookup);
+    const inPool = promotionStatus !== "draft";
+    const poolLabel = promotionStatus === "duplicate" ? "Havuzda mevcut" : "Havuza eklendi";
     return `
-      <article class="question-preview-card review-question-card${reviewed ? " is-reviewed" : ""}" data-review-question-id="${escapeHtml(question.id)}">
+      <article class="question-preview-card review-question-card${reviewed ? " is-reviewed" : ""}${inPool ? " is-promoted" : ""}" data-review-question-id="${escapeHtml(question.id)}">
         <div class="question-preview-head">
           <span class="pill">8. sınıf</span>
           <strong>${index + 1}. ${escapeHtml(question.topic)}</strong>
           <span>${escapeHtml(question.difficulty)}</span>
-          <span class="review-status-badge">${reviewed ? "İncelendi" : "İnceleme bekliyor"}</span>
-          <button class="secondary-action toggle-review-question" type="button">
-            <i data-lucide="${reviewed ? "rotate-ccw" : "check-check"}"></i>
-            <span>${reviewed ? "Bekleyene al" : "İncelendi işaretle"}</span>
-          </button>
+          <span class="review-status-badge">${inPool ? poolLabel : reviewed ? "İncelendi" : "İnceleme bekliyor"}</span>
+          <div class="review-question-actions">
+            <button class="secondary-action toggle-review-question" type="button">
+              <i data-lucide="${reviewed ? "rotate-ccw" : "check-check"}"></i>
+              <span>${reviewed ? "Bekleyene al" : "İncelendi işaretle"}</span>
+            </button>
+            <button class="primary-action promote-review-question" type="button" ${inPool ? "disabled" : ""}>
+              <i data-lucide="${inPool ? "circle-check" : "database-zap"}"></i>
+              <span>${inPool ? poolLabel : "Havuza ekle"}</span>
+            </button>
+          </div>
         </div>
         <div class="question-preview-text">${formatQuestionText(question.text)}</div>
         <div class="question-preview-stem">${formatQuestionText(question.stem)}</div>
@@ -5491,10 +5543,18 @@ function bindEvents() {
     setSyncStatus("Soru düzenlendi ve kaydedildi.", "ok");
   });
   $("#reviewQuestionsList")?.addEventListener("click", (event) => {
-    const button = event.target.closest(".toggle-review-question");
     const card = event.target.closest("[data-review-question-id]");
-    if (!button || !card) return;
+    if (!card) return;
     const id = card.dataset.reviewQuestionId;
+    if (event.target.closest(".promote-review-question")) {
+      const question = reviewDraftQuestions.find((item) => item.id === id);
+      if (!question) return;
+      const result = promoteReviewQuestion(question);
+      renderAll();
+      setSyncStatus(result === "duplicate" ? "Bu soru ana havuzda zaten bulunuyor; ikinci kopya eklenmedi." : "Soru ana havuza eklendi.", "ok");
+      return;
+    }
+    if (!event.target.closest(".toggle-review-question")) return;
     if (reviewedQuestionIds.has(id)) reviewedQuestionIds.delete(id);
     else reviewedQuestionIds.add(id);
     saveReviewedQuestionIds();
