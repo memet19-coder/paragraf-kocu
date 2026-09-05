@@ -2391,6 +2391,7 @@ questionBank = [
   ...(Array.isArray(window.PARAGRAPH5_LIMIT_QUESTIONS) ? window.PARAGRAPH5_LIMIT_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH5_HIZ_QUESTIONS) ? window.PARAGRAPH5_HIZ_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH5_BLOOM_QUESTIONS) ? window.PARAGRAPH5_BLOOM_QUESTIONS : []),
+  ...(Array.isArray(window.PARAGRAPH5_EXPANDED_QUESTIONS) ? window.PARAGRAPH5_EXPANDED_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH6_QUESTIONS) ? window.PARAGRAPH6_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH6_PARAGRAF_QUESTIONS) ? window.PARAGRAPH6_PARAGRAF_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH6_ALL_LESSONS_QUESTIONS) ? window.PARAGRAPH6_ALL_LESSONS_QUESTIONS : []),
