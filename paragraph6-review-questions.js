@@ -682,5 +682,720 @@ window.PARAGRAPH6_REVIEW_QUESTIONS = [
     ],
     "D",
     "Metinde bir araştırmanın sonucuna yer verilmiş, uykunun işlevi kitaplığın düzenlenmesine benzetilmiştir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-051",
+    "Ana fikir",
+    "Orta",
+    "Bir haritayı kullanmak, yalnız çizgileri ve simgeleri tanımak değildir. Haritaya bakan kişi önce nerede bulunduğunu, sonra nereye gitmek istediğini belirlemelidir. Ölçeği dikkate almadan seçilen yol, kâğıt üzerinde kısa görünse de gerçekte oldukça uzun olabilir. Bu nedenle harita, üzerindeki bilgiler amaçla ilişkilendirildiğinde yol gösteren bir araca dönüşür.",
+    "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
+    [
+      "Haritadaki bütün yollar aynı uzunlukta gösterilir.",
+      "Haritadan yararlanmak, bilgileri gidilecek amaca göre değerlendirmeyi gerektirir.",
+      "Bir yere ulaşmanın en kolay yolu başkalarına sormaktır.",
+      "Harita çiziminde yalnızca renklerin anlamını bilmek yeterlidir."
+    ],
+    "B",
+    "Metin, haritadaki bilgilerin bulunulan yer ve ulaşılmak istenen amaçla birlikte değerlendirilmesi gerektiğini vurgular."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-052",
+    "Yardımcı düşünce",
+    "Orta",
+    "Buzullar, yıllar boyunca üst üste biriken kar tabakalarının sıkışmasıyla oluşur. Kendi ağırlıklarıyla çok yavaş hareket ederken geçtikleri vadilerin biçimini değiştirebilirler. İçlerinde kalan hava kabarcıkları, geçmiş dönemlerin atmosferi hakkında araştırmacılara bilgi verir. Ancak sıcaklıkların artmasıyla birçok buzulun alanı küçülmekte ve erime hızı yükselmektedir.",
+    "Bu metinden buzullarla ilgili aşağıdakilerin hangisine ulaşılamaz?",
+    [
+      "Geçmişteki hava koşulları hakkında bilgi verebildiklerine",
+      "Hareket ederken yeryüzü şekillerini etkileyebildiklerine",
+      "Sıkışan kar katmanlarından oluştuklarına",
+      "Dünyadaki bütün tatlı suyun buzullarda bulunduğuna"
+    ],
+    "D",
+    "Metinde dünyadaki bütün tatlı suyun buzullarda bulunduğuna ilişkin bir bilgi verilmemiştir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-053",
+    "Konu ve başlık",
+    "Orta",
+    "Mahallede kurulan onarım atölyesine bozulan küçük ev aletleri, oyuncaklar ve bisikletler getiriliyor. Gönüllüler, eşyayı hemen çöpe atmak yerine arızanın kaynağını birlikte araştırıyor. Onarılabilen araçlar yeniden kullanıma kazandırılırken sahipleri de basit bakım yöntemlerini öğreniyor. Böylece hem atık miktarı azalıyor hem de kullanılabilir eşyaların ömrü uzuyor.",
+    "Bu metne getirilebilecek en uygun başlık aşağıdakilerden hangisidir?",
+    [
+      "Atmadan Önce Onar",
+      "Yeni Ev Aletleri Seçmek",
+      "Mahallede Spor Etkinlikleri",
+      "Oyuncak Üretiminin Aşamaları"
+    ],
+    "A",
+    "Metin, bozulan eşyaların atılmadan önce onarılıp yeniden kullanılması üzerinde durmaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-054",
+    "Paragraf tamamlama",
+    "Orta",
+    "Bir konuşmada yalnız kendi söyleyeceklerimizi düşünürsek karşımızdakini gerçekten dinleyemeyiz. Etkili dinleyici, konuşanın sözünü bitirmesini bekler; anlamadığı noktayı uygun bir soruyla açıklığa kavuşturur. Ayrıca yüz ifadesi ve ses tonu gibi ipuçlarını da dikkate alır. Kısacası iyi bir dinleme - - - -",
+    "Bu metin düşüncenin akışına göre aşağıdakilerden hangisiyle tamamlanmalıdır?",
+    [
+      "konuşanın kullandığı bütün sözcükleri ezberlemektir.",
+      "karşılık vermek için en uygun anı beklemektir.",
+      "söylenenleri anlamaya yönelik dikkatli ve etkin bir çabadır.",
+      "her konuşmada aynı soruları sormayı gerektirir."
+    ],
+    "C",
+    "Parçada iyi dinlemenin bekleme, soru sorma ve farklı ipuçlarını değerlendirme gerektiren etkin bir süreç olduğu anlatılır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-055",
+    "Düşüncenin akışını bozan cümle",
+    "Orta",
+    "(I) Güneş saati, bir cismin gölgesinin gün içinde yer değiştirmesinden yararlanır. (II) Güneş gökyüzünde ilerledikçe çubuğun gölgesi farklı saat çizgilerinin üzerine düşer. (III) Saatin doğru çalışması için yönünün ve bulunduğu yerin özelliklerine göre hazırlanması gerekir. (IV) Kum saatlerinde zaman, ince bir bölümden akan kumla ölçülür. (V) Kapalı ve bulutlu havalarda belirgin bir gölge oluşmadığı için güneş saati kullanılamaz.",
+    "Numaralanmış cümlelerden hangisi düşüncenin akışını bozmaktadır?",
+    ["II", "V", "IV", "III"],
+    "C",
+    "IV. cümle güneş saatinin çalışma biçiminden uzaklaşıp kum saatini açıklamaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-056",
+    "Paragrafta sıralama",
+    "Zor",
+    "I. Görüşmeler tamamlanınca kayıtlar yazıya aktarıldı ve ortak konulara göre düzenlendi. II. Öğrenciler, mahallenin geçmişini araştırmak için uzun süredir bölgede yaşayan kişilerle görüşmeye karar verdi. III. Böylece eski sokaklar, unutulan meslekler ve değişen geleneklerle ilgili bir sözlü tarih dosyası oluştu. IV. Önce sorular hazırlandı, ardından görüşülecek kişilerden izin alındı.",
+    "Numaralanmış cümlelerle anlamlı bir paragraf oluşturulduğunda sıralama nasıl olur?",
+    ["IV-II-I-III", "II-IV-I-III", "II-I-IV-III", "I-III-II-IV"],
+    "B",
+    "Önce çalışma kararı verilir (II), hazırlık yapılır (IV), kayıtlar düzenlenir (I) ve dosya ortaya çıkar (III)."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-057",
+    "Dil ve anlatım",
+    "Orta",
+    "Tren istasyonuna vardığımızda hava yeni aydınlanıyordu. Rayların üzerinde ince bir sis uzanmış, bekleme salonundaki sarı lambalar henüz sönmemişti. Uzakta duyulan düdükle birlikte perondaki güvercinler bir anda havalandı. Elimdeki sıcak bardaktan yükselen tarçın kokusu, sabahın serinliğine karıştı.",
+    "Bu metnin dil ve anlatımıyla ilgili aşağıdakilerden hangisi söylenemez?",
+    [
+      "Birinci kişi anlatımından yararlanılmıştır.",
+      "Zaman ve mekâna ilişkin ayrıntılar verilmiştir.",
+      "Birden fazla duyuya seslenen ifadeler kullanılmıştır.",
+      "Bir düşünce karşıt görüşlerle savunulmuştur."
+    ],
+    "D",
+    "Metinde bir düşünceyi savunmaya yönelik tartışma yoktur; bir an duyusal ayrıntılarla anlatılmıştır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-058",
+    "Anlatım biçimleri",
+    "Orta",
+    "Basılı kitapların yerini elektronik kitapların alacağını ve kâğıt kitapların gereksizleşeceğini söyleyenler var. Oysa okurların tercihleri tek bir biçime sığmaz. Elektronik kitap yolculukta kolaylık sağlarken basılı kitap sayfalar arasında hızlıca gezinmeyi ve kenara not almayı kolaylaştırabilir. Önemli olan birini bütünüyle reddetmek değil, okuma amacına uygun aracı seçmektir.",
+    "Bu metinde ağır basan anlatım biçimi aşağıdakilerden hangisidir?",
+    ["Tartışma", "Öyküleme", "Betimleme", "Açıklama"],
+    "A",
+    "Yazar, basılı kitabın gereksizleşeceği görüşüne karşı çıkarak kendi düşüncesini savunmuştur."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-059",
+    "Hikâye unsurları",
+    "Orta",
+    "Öğleden sonra başlayan rüzgâr, kıyıdaki küçük tekneleri sallıyordu. Burak, dedesinin kulübesinde eski ağları toplarken tahta sandığın arkasına sıkışmış bir şişe buldu. Şişenin içindeki kâğıtta, yıllar önce çizilmiş bir koy haritası vardı. Haritayı dikkatle açıp dedesine götürdü; ikisi işaretli yerin neresi olabileceğini konuşmaya başladı.",
+    "Bu metinde olayın geçtiği yer aşağıdakilerden hangisidir?",
+    ["Dağ köyündeki okul", "Kent merkezindeki müze", "Kıyıdaki kulübe", "Orman içindeki kamp"],
+    "C",
+    "Tekneler, kıyı ve dedenin kulübesiyle ilgili ifadeler olayın kıyıdaki bir kulübede geçtiğini göstermektedir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-060",
+    "Metin karşılaştırma",
+    "Zor",
+    "I. metin: Bir müzik parçasını yalnız baştan sona çalmak, zor bölümleri geliştirmeye yetmeyebilir. Müzisyen, güçlük yaşadığı ölçüleri yavaş tempoda tekrar eder ve sonra parçanın bütünüyle birleştirir.\n\nII. metin: Uzun mesafe koşucusu her antrenmanda aynı hızla koşmaz. Dayanıklılık, hız ve dinlenme çalışmalarını ayrı günlere bölerek eksik yönlerini geliştirir; yarıştan önce bunları bir bütün hâline getirir.",
+    "Bu iki metnin ortak yönü aşağıdakilerden hangisidir?",
+    [
+      "Başarı için çalışmanın bölümlere ayrılarak planlanması gerektiğini anlatmaları",
+      "Yalnızca yetenekli kişilerin başarılı olabileceğini savunmaları",
+      "Hızlı çalışmanın her durumda daha yararlı olduğunu ileri sürmeleri",
+      "Çalışma sırasında dinlenmenin gereksiz olduğunu söylemeleri"
+    ],
+    "A",
+    "Her iki metin de farklı becerilerin ayrı ayrı çalışılıp sonra bütünleştirilmesini önermektedir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-061",
+    "Çıkarım yapma",
+    "Orta",
+    "Okul yönetimi, koridorlardaki musluklara suyun ne kadar süre aktığını gösteren sayaçlar taktı. İlk hafta yapılan ölçümlerde teneffüslerden sonra tüketimin çok yükseldiği görüldü. Öğrenciler hazırladıkları afişlerle muslukların açık bırakılmamasını hatırlattı, damlatan musluklar da onarıldı. Bir ay sonraki ölçümde tüketimin belirgin biçimde azaldığı belirlendi.",
+    "Bu metinden aşağıdakilerin hangisi çıkarılabilir?",
+    [
+      "Okuldaki bütün musluklar yenileriyle değiştirilmiştir.",
+      "Sayaçlar yalnız süs amacıyla yerleştirilmiştir.",
+      "Su tüketimi her ay aynı düzeyde kalmıştır.",
+      "Ölçüm ve bilinçlendirme çalışmaları su tasarrufuna katkı sağlamıştır."
+    ],
+    "D",
+    "Tüketimin ölçülmesi, afişlerle uyarı yapılması ve arızaların giderilmesinden sonra su kullanımı azalmıştır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-062",
+    "Ana fikir",
+    "Orta",
+    "Eski yazma eserler, zamanla kırılganlaşan kâğıtları nedeniyle herkesin kullanımına açılamaz. Uzmanlar bu eserlerin sayfalarını yüksek çözünürlükte görüntüleyerek dijital ortama aktarır. Böylece araştırmacılar metinleri büyüterek inceleyebilir, farklı şehirlerdeki kişiler aynı esere ulaşabilir. Dijital kopya aslının yerini tutmasa da eserin yıpranmadan paylaşılmasını sağlar.",
+    "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
+    [
+      "Yazma eserlerin tamamı yalnızca müzelerde sergilenmelidir.",
+      "Dijitalleştirme, hassas eserleri korurken bilgiye erişimi kolaylaştırır.",
+      "Dijital kopyalar her bakımdan özgün eserlerden daha değerlidir.",
+      "Eski eserlerin kâğıtları günümüz kâğıtlarından daha sağlamdır."
+    ],
+    "B",
+    "Metin, dijital kopyaların özgün eseri yıpranmaktan koruduğunu ve erişimi artırdığını vurgulamaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-063",
+    "Yardımcı düşünce",
+    "Orta",
+    "Bir odadaki yankıyı azaltmak için yalnız duvarları kalınlaştırmak gerekmez. Halı, perde ve kumaş kaplı mobilyalar ses dalgalarının bir bölümünü soğurur. Boş ve sert yüzeylerin fazla olduğu odalarda ise ses daha çok yansır. Konser salonlarında kullanılan özel paneller, sesi bütünüyle yok etmek yerine dinleyicilere dengeli biçimde ulaşmasını sağlayacak şekilde yerleştirilir.",
+    "Bu metinden aşağıdakilerin hangisine ulaşılamaz?",
+    [
+      "Sert yüzeylerin sesi daha fazla yansıtabildiğine",
+      "Kumaş malzemelerin yankıyı azaltmaya yardım ettiğine",
+      "Konser salonlarındaki panellerin ses dağılımını düzenlediğine",
+      "Yankıyı önlemenin tek yolunun duvarları kalınlaştırmak olduğuna"
+    ],
+    "D",
+    "Metin, duvarları kalınlaştırma dışında da yankıyı azaltan yöntemler bulunduğunu belirtmektedir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-064",
+    "Konu ve başlık",
+    "Orta",
+    "Bir yemeğin tarifi kuşaktan kuşağa aktarılırken bazen ölçüler, bazen kullanılan araçlar değişir. Buna rağmen tarifteki temel yöntem ve yemeğin çevresinde oluşan gelenekler yaşamaya devam eder. Bayramda birlikte açılan hamur ya da kış için imeceyle hazırlanan yiyecekler, yalnız karın doyurmaz; aile ve mahalle hafızasını da taşır.",
+    "Bu metne getirilebilecek en uygun başlık aşağıdakilerden hangisidir?",
+    [
+      "Mutfak Araçlarının Gelişimi",
+      "Sağlıklı Beslenmenin Kuralları",
+      "Tariflerde Ölçü Kullanımı",
+      "Kültürü Yaşatan Tarifler"
+    ],
+    "D",
+    "Metin, yemek tariflerinin gelenekleri ve ortak hafızayı kuşaktan kuşağa taşımasını anlatmaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-065",
+    "Paragraf tamamlama",
+    "Orta",
+    "Bir tiyatro oyunu için kostüm hazırlayan tasarımcı, yalnız güzel görünen giysiler çizmez. Oyunun geçtiği dönemi, karakterin yaşını, mesleğini ve hareketlerini araştırır. Koşması gereken bir oyuncunun ağır bir giysi içinde rahat edemeyeceğini de hesaba katar. Bu bakımdan sahne kostümü - - - -",
+    "Bu metin düşüncenin akışına göre aşağıdakilerden hangisiyle tamamlanmalıdır?",
+    [
+      "görünüşün yanında karaktere ve oyunun koşullarına da uygun olmalıdır.",
+      "her oyunda aynı kumaş ve renklerden hazırlanmalıdır.",
+      "yalnız seyircinin dikkatini çekmek amacıyla tasarlanmalıdır.",
+      "oyuncunun hareketlerini sınırlandıracak kadar ağır olmalıdır."
+    ],
+    "A",
+    "Metin, kostümün güzel görünmesinin yanı sıra karaktere, döneme ve oyuncunun hareketlerine uygun olması gerektiğini anlatır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-066",
+    "Düşüncenin akışını bozan cümle",
+    "Orta",
+    "(I) Mağaralardaki sarkıtlar, tavandan damlayan mineralli suların bıraktığı maddelerin birikmesiyle oluşur. (II) Bu oluşum her yıl çok küçük bir miktarda gerçekleştiği için sarkıtların büyümesi uzun zaman alır. (III) Ziyaretçilerin sarkıtlara dokunması yüzeyde yağ tabakası bırakarak doğal gelişimi etkileyebilir. (IV) Dağcılıkta kullanılan ipler farklı kalınlıklarda üretilir. (V) Bu nedenle mağaralarda belirlenen yürüyüş yollarının dışına çıkılmaması önemlidir.",
+    "Numaralanmış cümlelerden hangisi metnin anlam bütünlüğünü bozmaktadır?",
+    ["II", "IV", "V", "III"],
+    "B",
+    "IV. cümle mağara oluşumlarının korunmasından uzaklaşıp dağcılık iplerine geçmektedir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-067",
+    "Paragrafta sıralama",
+    "Zor",
+    "I. Liste tamamlanınca eksik malzemeler yenilendi ve çanta kolay ulaşılacak bir yere kondu. II. Aile üyeleri, acil durum çantasında bulunması gerekenleri birlikte belirledi. III. Altı ay sonra aynı kontrolü yapmak için takvime hatırlatma eklendi. IV. Su, fener, pil, ilk yardım malzemesi ve kişisel ilaçların son kullanma tarihleri kontrol edildi.",
+    "Numaralanmış cümlelerle anlamlı bir paragraf oluşturulduğunda sıralama nasıl olur?",
+    ["IV-II-I-III", "II-I-IV-III", "I-III-II-IV", "II-IV-I-III"],
+    "D",
+    "Önce ihtiyaçlar belirlenir (II), malzemeler kontrol edilir (IV), eksikler tamamlanır (I) ve sonraki kontrol planlanır (III)."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-068",
+    "Dil ve anlatım",
+    "Orta",
+    "Gece boyunca yağan kar, köyün dar yollarını beyaz bir nehre çevirmişti. Sabah kapısını açan Hasan Amca, bacalardan yükselen dumanın gökyüzüne ağır ağır tırmandığını gördü. Ayaklarının altında kar, ince camlar kırılıyormuş gibi çıtırdıyordu. Uzak tepeler sessizce köyü seyrediyor, güneş karların üzerinde küçük kıvılcımlar yakıyordu.",
+    "Bu metnin dil ve anlatımıyla ilgili aşağıdakilerden hangisi söylenemez?",
+    [
+      "Benzetmeden yararlanılmıştır.",
+      "İşitme ve görme duyularına seslenilmiştir.",
+      "Nesnel bir tanım yapılarak teknik bilgiler verilmiştir.",
+      "İnsana ait özellikler doğadaki varlıklara aktarılmıştır."
+    ],
+    "C",
+    "Metin teknik bilgi veren nesnel bir tanım değil, sanatlı ve duyusal bir betimlemedir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-069",
+    "Anlatım biçimleri",
+    "Orta",
+    "Çiy, havadaki su buharının soğuk yüzeylerde küçük su damlalarına dönüşmesiyle oluşur. Gece hava serinlediğinde toprak, yaprak ve metal yüzeyler de soğur. Bu yüzeylere değen nemli hava yeterince soğursa içindeki su buharı yoğunlaşır. Bu nedenle çiy çoğunlukla açık ve serin gecelerin ardından sabah saatlerinde görülür.",
+    "Bu metinde ağır basan anlatım biçimi aşağıdakilerden hangisidir?",
+    ["Öyküleme", "Açıklama", "Tartışma", "Betimleme"],
+    "B",
+    "Metin, çiyin nasıl oluştuğunu nedenleriyle bilgi vererek açıkladığı için açıklayıcıdır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-070",
+    "Hikâye unsurları",
+    "Orta",
+    "Pazar sabahı okulun spor salonunda satranç turnuvası vardı. Eylül, son maçta kendisinden daha deneyimli bir oyuncuyla karşılaşacağını öğrenince heyecanlandı. Maç başlamadan önce derin bir nefes aldı, önceki karşılaşmalarda aceleyle yaptığı hamleleri düşündü. Bu kez süreyi dikkatli kullanmaya ve her hamleden önce rakibinin planını anlamaya karar verdi.",
+    "Bu metindeki kahramanın amacı aşağıdakilerden hangisidir?",
+    [
+      "Önceki hatalarından yararlanarak son maçı dikkatli oynamak",
+      "Turnuvadan ayrılıp başka bir etkinliğe katılmak",
+      "Rakibinin bütün hamlelerini ezberlemek",
+      "Satranç maçının süresini değiştirmek"
+    ],
+    "A",
+    "Eylül, önceki aceleci hamlelerini düşünüp son maçta süreyi ve rakibinin planını dikkatle değerlendirmeyi amaçlamaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-071",
+    "Metin karşılaştırma",
+    "Zor",
+    "I. metin: Kuruyan bir gölün çevresine yalnız su taşımak kalıcı çözüm olmayabilir. Gölü besleyen derelerin önü açılmalı, çevredeki aşırı su kullanımı azaltılmalı ve doğal bitki örtüsü korunmalıdır.\n\nII. metin: Zarar gören bir ormana yalnız fidan dikmek yeterli değildir. Bölgeye uygun türler seçilmeli, toprağın su tutma gücü geliştirilmeli ve genç fidanlar büyüyene kadar alan düzenli izlenmelidir.",
+    "Bu iki metnin ortak yönü aşağıdakilerden hangisidir?",
+    [
+      "Doğal alanların kendiliğinden kısa sürede yenilendiğini savunmaları",
+      "Bütün çevre sorunlarının tek bir işlemle çözülebileceğini söylemeleri",
+      "İnsanların doğal alanlara hiç yaklaşmaması gerektiğini belirtmeleri",
+      "Doğayı iyileştirmenin birbiriyle bağlantılı ve sürekli çalışmalar gerektirdiğini vurgulamaları"
+    ],
+    "D",
+    "Her iki metin de tek bir müdahalenin yetmeyeceğini, bağlantılı önlemler ve izleme gerektiğini anlatır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-072",
+    "Çıkarım yapma",
+    "Orta",
+    "Kütüphanedeki bazı kitapların sayfaları sık kullanımdan dolayı gevşemişti. Görevli, öğrencilerle bir bakım günü düzenledi. Önce küçük hasarlı kitaplar ayrıldı; uygun bant ve yapıştırıcılarla onarıldı. Çok zarar görenler ise uzman ciltçiye gönderildi. Etkinlikten sonra öğrenciler, kitapları raftan çekerken sırt kısmına zarar vermemeye daha çok dikkat etmeye başladı.",
+    "Bu metinden aşağıdakilerin hangisi çıkarılabilir?",
+    [
+      "Kütüphanedeki bütün kitaplar kullanımdan kaldırılmıştır.",
+      "Öğrencilerin kitap bakımına katılması, onları daha dikkatli kullanmaya yöneltmiştir.",
+      "Hasarlı kitapların tamamı öğrenciler tarafından onarılmıştır.",
+      "Kitapların zarar görmesinin tek nedeni rafların dar olmasıdır."
+    ],
+    "B",
+    "Bakım etkinliğinden sonra öğrencilerin kitapları daha özenli kullanması, katılımın davranışlarını etkilediğini gösterir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-073",
+    "Ana fikir",
+    "Orta",
+    "Bir resmi incelerken ilk bakışta büyük ve parlak biçimler dikkatimizi çeker. Oysa sanatçı bazen asıl ipucunu köşedeki küçük bir nesneye, karakterlerin bakış yönüne ya da arka plandaki renk değişimine yerleştirir. Resme biraz zaman ayırıp ayrıntılar arasında ilişki kuran kişi, ilk anda fark etmediği bir öyküyü keşfedebilir.",
+    "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
+    [
+      "Bir sanat eserini anlamak için ayrıntıları dikkatle incelemek gerekir.",
+      "Resimlerde yalnız parlak renkler kullanılmalıdır.",
+      "Her resim aynı öyküyü anlatır.",
+      "Küçük nesneler resmin bütününden daha önemlidir."
+    ],
+    "A",
+    "Metin, resimdeki anlamı kavramak için ilk izlenimle yetinmeyip ayrıntılar arasında ilişki kurulmasını vurgular."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-074",
+    "Yardımcı düşünce",
+    "Orta",
+    "Deniz fenerleri, kıyıya yaklaşan gemilere tehlikeli kayalıkların ve liman girişinin yerini gösterir. Her fenerin ışık yanıp sönme düzeni farklı olabilir; denizciler haritalardaki bilgilerle bu düzeni karşılaştırarak hangi feneri gördüklerini anlar. Günümüzde elektronik yön bulma sistemleri yaygınlaşsa da fenerler yedek bir işaret ve kıyı simgesi olarak önemini sürdürmektedir.",
+    "Bu metinde deniz fenerleriyle ilgili aşağıdakilerin hangisine değinilmemiştir?",
+    [
+      "Gemilere kıyıdaki tehlikeler konusunda yol gösterdiğine",
+      "Işık düzenlerinin birbirinden farklı olabildiğine",
+      "Yapımında kullanılan taşların hangi bölgeden getirildiğine",
+      "Yeni teknolojilere rağmen kullanılmaya devam ettiğine"
+    ],
+    "C",
+    "Metinde deniz fenerlerinin yapımında kullanılan taşların kaynağı hakkında bilgi yoktur."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-075",
+    "Konu ve başlık",
+    "Orta",
+    "Tohum paylaşım gününde üreticiler, yıllardır yetiştirdikleri yerel sebze ve tahılların tohumlarını birbirleriyle değiştiriyor. Her paketin üzerine bitkinin yetiştiği yer, ekim zamanı ve dikkat edilmesi gereken özellikler yazılıyor. Böylece yalnız tohumlar değil, onları yetiştirme bilgisi de el değiştiriyor; bölgeye uyum sağlamış çeşitlerin kaybolmasının önüne geçiliyor.",
+    "Bu metne verilebilecek en uygun başlık aşağıdakilerden hangisidir?",
+    [
+      "Tarlada Kullanılan Makineler",
+      "Sebzelerin Pişirilme Yöntemleri",
+      "Tohumla Birlikte Paylaşılan Bilgi",
+      "Paket Tasarımının Önemi"
+    ],
+    "C",
+    "Metin, yerel tohumlarla birlikte yetiştirme bilgisinin de paylaşılmasını anlatmaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-076",
+    "Paragraf tamamlama",
+    "Orta",
+    "Bir söyleşiye başlamadan önce konuğa sorulacak soruları hazırlamak önemlidir. Ancak konuk, verdiği bir cevapla daha önce düşünülmemiş bir ayrıntının kapısını aralayabilir. Söyleşiyi yapan kişi yalnızca listesindeki sorulara bağlı kalırsa bu ayrıntıyı gözden kaçırır. Bu nedenle ----",
+    "Bu metin düşüncenin akışına göre aşağıdakilerden hangisiyle tamamlanmalıdır?",
+    [
+      "söyleşi sırasında bütün cevaplar kısa tutulmalıdır.",
+      "konuğa yalnız önceden bilinen konular sorulmalıdır.",
+      "hazırlanan sorular görüşmeden hemen önce değiştirilmelidir.",
+      "iyi bir söyleşi, hazır sorular kadar verilen cevapların izini sürmeyi de gerektirir."
+    ],
+    "D",
+    "Metinde hazırlığın gerekli olduğu ancak cevaplardan doğan yeni ayrıntıların da izlenmesi gerektiği anlatılmaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-077",
+    "Düşüncenin akışını bozan cümle",
+    "Orta",
+    "(I) Kentteki kuş türlerini belirlemek isteyen öğrenciler, gözlem yapacakları parkları harita üzerinde işaretledi. (II) Her grup, gördüğü kuşun özelliklerini ve gözlem saatini aynı tabloya kaydetti. (III) Teleskopların mercekleri, uzak gök cisimlerini daha ayrıntılı görmemizi sağlar. (IV) Aynı kuşun iki kez sayılmaması için gruplar farklı yollar izledi. (V) Çalışmanın sonunda elde edilen veriler birleştirilerek parkta yaşayan kuşların listesi oluşturuldu.",
+    "Bu metinde numaralanmış cümlelerden hangisi düşüncenin akışını bozmaktadır?",
+    [
+      "II",
+      "III",
+      "IV",
+      "V"
+    ],
+    "B",
+    "III. cümlede teleskop merceklerinden söz edilirken diğer cümleler parktaki kuş gözlemi çalışmasını anlatmaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-078",
+    "Paragrafta sıralama",
+    "Orta",
+    "I. Bir ay boyunca aynı saatlerde yaptığı gözlemleri çizelgeye kaydetti.\nII. Elif, Ay'ın görünüşünün günler içinde nasıl değiştiğini merak etti.\nIII. Sonunda çizimlerini tarih sırasına koyarak Ay'ın evrelerini gösteren bir pano hazırladı.\nIV. Bunun için gökyüzünün açık olduğu akşamlarda Ay'ı çizdi.",
+    "Numaralanmış cümlelerle anlamlı bir metin oluşturulduğunda doğru sıralama aşağıdakilerden hangisi olur?",
+    [
+      "II - IV - I - III",
+      "IV - II - III - I",
+      "II - I - IV - III",
+      "I - III - II - IV"
+    ],
+    "A",
+    "Önce merak edilen konu belirtilir, ardından yöntem ve kayıt süreci anlatılır; pano hazırlama sonuç cümlesidir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-079",
+    "Dil ve anlatım",
+    "Zor",
+    "Araştırmacılar, okul bahçesindeki üç farklı bölgenin toprak sıcaklığını bir hafta boyunca ölçtü. Ağaçların gölgelediği alanda öğle sıcaklığı ortalama 21 dereceyken taş döşeli bölümde 29 derece olarak kaydedildi. Çimlerin bulunduğu alandaki değer ise 24 dereceydi. Bu sonuçlar, yüzey türünün çevresindeki sıcaklığı etkileyebildiğini gösterdi.",
+    "Bu metnin dil ve anlatımıyla ilgili aşağıdakilerden hangisi söylenemez?",
+    [
+      "Sayısal verilerden yararlanılmıştır.",
+      "Karşılaştırmaya başvurulmuştur.",
+      "Hayalî ögelere dayalı öznel bir anlatım kullanılmıştır.",
+      "Bir araştırmanın sonucu açıklanmıştır."
+    ],
+    "C",
+    "Metin ölçüm sonuçlarına dayanan nesnel bir anlatıma sahiptir; hayalî ve öznel bir anlatım kullanılmamıştır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-080",
+    "Anlatım biçimleri",
+    "Zor",
+    "Bazıları sesli kitap dinlemenin gerçek bir okuma deneyimi sayılamayacağını düşünüyor. Oysa bir metni anlamlandırmak yalnız gözlerle harfleri izlemekten ibaret değildir. Dinleyici de olaylar arasında bağ kurar, anlatıcının vurgularını değerlendirir ve zihninde görüntüler oluşturur. Elbette basılı kitapla sesli kitabın sunduğu deneyimler aynı değildir; fakat bu farklılık, birini değersiz kılmaz.",
+    "Bu metinde ağır basan anlatım biçimi aşağıdakilerden hangisidir?",
+    [
+      "Betimleme",
+      "Öyküleme",
+      "Açıklama",
+      "Tartışma"
+    ],
+    "D",
+    "Yazar, sesli kitapla ilgili bir görüşe karşı çıkarak kendi düşüncesini gerekçeleriyle savunmuştur."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-081",
+    "Hikâye unsurları",
+    "Orta",
+    "Cumartesi sabahı eski çarşının dar sokağına giren Duru, elindeki kırık saati avucunda sıkıca tutuyordu. Dedesi bu saati yıllar önce ona vermişti. Dükkânın önündeki ahşap tabelayı görünce hızlandı. Saat ustası, büyüteçli gözlüğünü takıp kapağı açtı ve gülümseyerek 'Sanırım onu yeniden çalıştırabiliriz.' dedi. Duru, duyduğu sözle derin bir nefes aldı.",
+    "Bu metindeki olayın gerçekleştiği yer aşağıdakilerden hangisidir?",
+    [
+      "Eski çarşıdaki saatçi dükkânı",
+      "Duru'nun dedesinin evi",
+      "Bir okulun teknoloji sınıfı",
+      "Şehir müzesinin sergi salonu"
+    ],
+    "A",
+    "Dar sokak, ahşap tabela ve saat ustası ayrıntıları olayın eski çarşıdaki saatçi dükkânında geçtiğini göstermektedir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-082",
+    "Metin karşılaştırma",
+    "Zor",
+    "I. Bir türkü, söylendiği yörenin yaşayışını, sevincini ve özlemini ezgilerle bugüne taşır. Söyleyen kişi değişse de türkünün içinde geçmiş kuşakların sesi duyulur.\n\nII. Sözlü olarak anlatılan bir halk hikâyesi, her anlatıcıyla küçük değişikliklere uğrar. Buna rağmen ait olduğu toplumun değerlerini ve ortak hatıralarını yeni kuşaklara ulaştırır.",
+    "Bu iki metnin ortak yönü aşağıdakilerden hangisidir?",
+    [
+      "Yalnızca yazılı kaynaklarla günümüze ulaşmaları",
+      "Her aktarıldıklarında bütünüyle değişmeleri",
+      "Toplumun kültürel belleğini kuşaklar arasında taşımaları",
+      "Sadece eğlence amacıyla ortaya çıkmaları"
+    ],
+    "C",
+    "Her iki metinde de kültürel değerlerin ve geçmişe ait izlerin yeni kuşaklara aktarılması vurgulanmıştır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-083",
+    "Çıkarım yapma",
+    "Orta",
+    "Okul kantininde tek kullanımlık kapların sayısını azaltmak için çorba ve içecekler yıkanabilir kaplarda sunulmaya başlandı. Öğrenciler kabı alırken küçük bir ücret ödüyor, boş kabı teslim ettiklerinde bu ücreti geri alıyordu. İlk ayın sonunda çöpe atılan bardak ve kâse sayısının önceki aya göre belirgin biçimde azaldığı görüldü.",
+    "Bu metinden aşağıdakilerin hangisi çıkarılabilir?",
+    [
+      "Öğrenciler kantinden yiyecek almayı bırakmıştır.",
+      "Geri ödeme uygulaması, yeniden kullanılabilir kapların geri getirilmesini teşvik etmiştir.",
+      "Kantindeki bütün ürünlerin fiyatı düşürülmüştür.",
+      "Tek kullanımlık kaplar okulda tamamen yasaklanmıştır."
+    ],
+    "B",
+    "Kabı teslim edene ücretin geri verilmesi ve atık miktarının azalması, uygulamanın iadeyi teşvik ettiğini gösterir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-084",
+    "Ana fikir",
+    "Orta",
+    "Bir metni hızlı bitirmek her zaman iyi okumak anlamına gelmez. Okur, anlamını bilmediği kelimeleri geçip düşünceler arasındaki bağlantıları kurmadan ilerlediğinde sayfaları tamamlar fakat metni zihninde bütünleştiremez. Gerektiğinde yavaşlamak, önemli yerlerde durup düşünmek ve önceki bölümlere dönmek okumanın doğal parçalarıdır.",
+    "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
+    [
+      "Her metin aynı hızla okunmalıdır.",
+      "Uzun metinler yalnızca birkaç kez okununca anlaşılır.",
+      "Bilinmeyen kelimeler metnin anlaşılmasını her zaman engeller.",
+      "Nitelikli okuma, hızdan çok anlamaya göre okuma sürecini düzenlemeyi gerektirir."
+    ],
+    "D",
+    "Metin, okuma hızının anlama ihtiyacına göre ayarlanması ve gerektiğinde durup düşünülmesi gerektiğini vurgulamaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-085",
+    "Yardımcı düşünce",
+    "Orta",
+    "İpek böceğinin yaşamı, dut yapraklarıyla beslenen küçük bir larva olarak başlar. Büyüdükçe birkaç kez deri değiştirir. Yeterince geliştiğinde salgıladığı ince ipliği çevresine dolayarak koza örer. Bu kozanın içinde geçirdiği değişimin ardından kelebek hâline gelir. Uygun koşullarda bir kozanın ipliği yüzlerce metre uzunluğa ulaşabilir.",
+    "Bu metinde ipek böceğiyle ilgili aşağıdakilerin hangisine değinilmemiştir?",
+    [
+      "Beslendiği yaprağa",
+      "Koza örme biçimine",
+      "Dünyada en çok yetiştirildiği bölgeye",
+      "Yaşamı boyunca geçirdiği değişime"
+    ],
+    "C",
+    "Metinde ipek böceğinin en çok yetiştirildiği bölge hakkında bilgi verilmemiştir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-086",
+    "Konu ve başlık",
+    "Zor",
+    "Arkeologlar, kıyıya yakın bir batığı incelerken önce su altındaki alanın ayrıntılı haritasını çıkarır. Buluntular hemen yerinden kaldırılmaz; konumları fotoğraflanır ve ölçülür. Sudan çıkarılan ahşap, seramik ya da metal parçalar özel yöntemlerle korunur. Çünkü yüzyıllarca su altında kalan bir nesne, havayla karşılaştığında kısa sürede zarar görebilir.",
+    "Bu metne getirilebilecek en uygun başlık aşağıdakilerden hangisidir?",
+    [
+      "Suyun Altındaki Geçmiş",
+      "Kıyıda Tatil Hazırlığı",
+      "Gemilerin Yolculuk Süresi",
+      "Deniz Canlılarını Koruma"
+    ],
+    "A",
+    "Metin, su altındaki tarihî buluntuların incelenmesi ve korunması sürecini anlatmaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-087",
+    "Paragraf tamamlama",
+    "Orta",
+    "Bilimsel bir çizimde amaç, nesneyi olduğundan daha güzel göstermek değildir. Çizer; yaprağın damarlarını, böceğin kanat yapısını ya da kayanın yüzeyindeki çatlakları dikkatle inceler. Gereksiz ayrıntıları ayıklarken araştırma için önemli özellikleri doğru oranlarla gösterir. Bu bakımdan bilimsel çizim ----",
+    "Bu metin düşüncenin akışına göre aşağıdakilerden hangisiyle tamamlanmalıdır?",
+    [
+      "yalnızca ressamların anlayabileceği işaretlerden oluşur.",
+      "gözlem ile bilgiyi anlaşılır bir görüntüde buluşturur.",
+      "fotoğraf çekmenin mümkün olduğu her durumda gereksizdir.",
+      "çizilen nesnenin bütün ayrıntılarını aynı ölçüde öne çıkarır."
+    ],
+    "B",
+    "Parçada bilimsel çizimin dikkatli gözleme dayanarak önemli bilgileri doğru ve anlaşılır biçimde gösterdiği anlatılmaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-088",
+    "Düşüncenin akışını bozan cümle",
+    "Orta",
+    "(I) Bilim insanları bir buzulun yıllar içindeki değişimini anlamak için aynı noktalardan düzenli görüntüler alır. (II) Buzulun kenarına yerleştirilen ölçüm araçları, erime ve hareket hızına ilişkin veriler toplar. (III) Uydu görüntüleri de geniş alanlardaki değişimi karşılaştırmayı kolaylaştırır. (IV) Dağ yürüyüşlerinde su geçirmeyen giysiler taşımak önemlidir. (V) Farklı yöntemlerden elde edilen bulgular bir araya getirildiğinde buzulun değişimi daha güvenilir biçimde izlenir.",
+    "Bu metinde numaralanmış cümlelerden hangisi düşüncenin akışını bozmaktadır?",
+    [
+      "I",
+      "II",
+      "III",
+      "IV"
+    ],
+    "D",
+    "IV. cümle dağ yürüyüşü giysileriyle ilgilidir; diğer cümlelerde buzulların bilimsel olarak izlenmesi anlatılmaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-089",
+    "Paragrafta sıralama",
+    "Zor",
+    "I. Seçilen çalışmaların yanına, ziyaretçiye bilgi verecek kısa açıklamalar yazıldı.\nII. Öğrenciler, dönem sonunda açacakları serginin temasını 'Mahallemizin Renkleri' olarak belirledi.\nIII. Son olarak resimler salondaki ışık ve duvarların genişliği dikkate alınarak yerleştirildi.\nIV. Ardından bu temaya uygun resimler arasından bir seçki oluşturuldu.",
+    "Numaralanmış cümlelerle anlamlı bir metin oluşturulduğunda doğru sıralama aşağıdakilerden hangisi olur?",
+    [
+      "IV - II - III - I",
+      "II - I - IV - III",
+      "II - IV - I - III",
+      "I - III - II - IV"
+    ],
+    "C",
+    "Önce tema belirlenir, sonra eserler seçilir, açıklamalar hazırlanır ve son olarak yerleştirme yapılır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-090",
+    "Dil ve anlatım",
+    "Zor",
+    "Akşam çökerken çarşının bakır dükkânları birer birer ışıklandı. Çekiçlerin düzenli sesi taş duvarlara çarpıp sokağın öbür ucuna kadar uzanıyordu. Tezgâhlardan yükselen sıcak metal kokusuna, köşedeki fırından gelen taze ekmek kokusu karıştı. Dar sokak, gün boyu sakladığı bütün sesleri ve kokuları aynı anda dışarı bırakmış gibiydi.",
+    "Bu metnin dil ve anlatımıyla ilgili aşağıdakilerden hangisi söylenemez?",
+    [
+      "Birden fazla duyuya seslenen ayrıntılara yer verilmiştir.",
+      "Bir kavram, bilimsel ve nesnel tanımlarla açıklanmıştır.",
+      "Betimleyici ögeler kullanılmıştır.",
+      "İnsan dışındaki bir varlığa insana özgü özellik verilmiştir."
+    ],
+    "B",
+    "Metin sanatsal ve betimleyici bir anlatıma sahiptir; bilimsel tanımlara yer verilmemiştir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-091",
+    "Anlatım biçimleri",
+    "Orta",
+    "Kanyonun tabanında ince bir dere, gri kayaların arasından gümüş bir şerit gibi kıvrılıyordu. Yüksek duvarların bazı yerleri yosunla kaplıydı; güneş yalnız öğle saatlerinde dar aralıktan süzülüp suyun üzerine düşüyordu. Serin hava, ıslak taş kokusunu vadinin içine yayıyordu.",
+    "Bu metinde ağır basan anlatım biçimi aşağıdakilerden hangisidir?",
+    [
+      "Betimleme",
+      "Tartışma",
+      "Açıklama",
+      "Öyküleme"
+    ],
+    "A",
+    "Kanyonun görünüşü farklı duyulara seslenen ayrıntılarla okuyucunun zihninde canlandırılmıştır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-092",
+    "Ana fikir",
+    "Zor",
+    "Müzede görme güçlüğü yaşayan ziyaretçiler için bazı eserlerin kabartmalı kopyaları hazırlandı. Eser açıklamaları sesli olarak dinlenebilir hâle getirildi, salonların zeminine yönlendirici yüzeyler eklendi. Bu düzenlemelerden çocuklar ve yaşlı ziyaretçiler de yararlandı. Böylece erişilebilirlik için yapılan bir çalışmanın, müzeyi herkes açısından daha anlaşılır ve rahat bir yere dönüştürdüğü görüldü.",
+    "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
+    [
+      "Müzelerde yalnızca tarihî eserler sergilenmelidir.",
+      "Sesli açıklamalar yazılı açıklamalardan her zaman daha etkilidir.",
+      "Müze ziyaretleri yalnız kalabalık gruplarla yapılmalıdır.",
+      "Erişilebilirlik düzenlemeleri, farklı ziyaretçilerin müze deneyimini iyileştirir."
+    ],
+    "D",
+    "Metinde farklı ihtiyaçlar için yapılan düzenlemelerin müzeyi birçok ziyaretçi açısından daha kullanışlı kıldığı vurgulanmaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-093",
+    "Yardımcı düşünce",
+    "Orta",
+    "Botanik bahçesindeki bitkilerin önünde yalnızca adlarının yazdığı levhalar bulunmaz. Bu levhalarda bitkinin doğal olarak yetiştiği bölge, su ihtiyacı ve çiçeklenme dönemi de belirtilir. Bazı levhalardaki karekodlar, bitkinin mevsimlere göre değişen görüntülerine ulaşmayı sağlar. Ziyaretçiler böylece karşılarındaki bitkiyi yılın farklı zamanlarıyla birlikte tanıyabilir.",
+    "Bu metinde botanik bahçesindeki levhalarla ilgili aşağıdakilerin hangisine değinilmemiştir?",
+    [
+      "Bitkinin yetiştiği bölge hakkında bilgi verdiğine",
+      "Levhaların hazırlanma maliyetine",
+      "Bazılarında karekod bulunduğuna",
+      "Bitkinin su ihtiyacını gösterdiğine"
+    ],
+    "B",
+    "Metinde levhaların maliyetiyle ilgili herhangi bir bilgi verilmemiştir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-094",
+    "Konu ve başlık",
+    "Zor",
+    "Bir tiyatro salonunda oyuncunun sesi yalnız yüksek çıkmasıyla her koltuğa anlaşılır biçimde ulaşmaz. Duvarların biçimi, tavanın yüksekliği ve kullanılan kaplama malzemeleri sesin yayılmasını etkiler. Sert yüzeylerin oluşturduğu fazla yankı konuşmaları anlaşılmaz kılabilir; sesi gereğinden çok emen yüzeylerse arka sıraların duymasını zorlaştırabilir. Bu nedenle salon tasarlanırken sesin dengeli dağılması amaçlanır.",
+    "Bu metne getirilebilecek en uygun başlık aşağıdakilerden hangisidir?",
+    [
+      "Tiyatroda Kostüm Seçimi",
+      "Oyuncuların Sahne Heyecanı",
+      "Salon Tasarımında Ses Dengesi",
+      "Tiyatro Biletlerinin Hazırlanması"
+    ],
+    "C",
+    "Metin, tiyatro salonunun yapısının sesin dengeli ve anlaşılır biçimde yayılmasına etkisini ele almaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-095",
+    "Paragraf tamamlama",
+    "Zor",
+    "Bir ağacın gövdesindeki halkalar yalnızca yaşını göstermez. Yağışlı ve elverişli yıllarda oluşan halkalar daha geniş, kurak yıllarda oluşanlar daha dar olabilir. Bilim insanları aynı bölgede yaşamış farklı ağaçların halkalarını karşılaştırarak geçmişteki iklim koşulları hakkında bilgi edinir. Buna göre ağaç halkaları ----",
+    "Bu metin düşüncenin akışına göre aşağıdakilerden hangisiyle tamamlanmalıdır?",
+    [
+      "geçmiş çevre koşullarını anlamaya yardım eden doğal kayıtlar gibidir.",
+      "bütün ağaçlarda aynı genişlikte oluşur.",
+      "yalnızca ağacın boyunu hesaplamak için kullanılır.",
+      "yağış miktarından etkilenmeden gelişir."
+    ],
+    "A",
+    "Halkaların genişliği geçmişteki iklim koşullarıyla ilgili bilgi taşıdığı için doğal bir kayıt niteliğindedir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-096",
+    "Düşüncenin akışını bozan cümle",
+    "Orta",
+    "(I) Okulun çatısına yerleştirilen güneş panelleri, güneş ışığını elektrik enerjisine dönüştürüyor. (II) Üretilen enerji miktarı girişteki ekrandan gün boyunca izlenebiliyor. (III) Öğrenciler, hava durumuyla üretim miktarı arasındaki ilişkiyi bu veriler üzerinden inceliyor. (IV) Spor salonunun zemini yaz tatilinde yenilenerek çizgileri tekrar boyandı. (V) Proje, enerji üretmenin yanında öğrencilerin yenilenebilir enerji konusunda gözlem yapmasına da imkân sağlıyor.",
+    "Bu metinde numaralanmış cümlelerden hangisi düşüncenin akışını bozmaktadır?",
+    [
+      "I",
+      "II",
+      "III",
+      "IV"
+    ],
+    "D",
+    "IV. cümlede spor salonunun zemini anlatılırken diğer cümlelerde güneş panelleri ve bunların eğitimde kullanımı ele alınmıştır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-097",
+    "Dil ve anlatım",
+    "Orta",
+    "Yağmurdan kaçarken kendimi küçük kütüphanenin kapısında buldum. İçeri girince eski kitapların kokusu ve kaloriferin sıcaklığı beni karşıladı. Cam kenarındaki koltuğa oturup rastgele seçtiğim kitabı açtım. Dışarıdaki damlalar cama vurdukça sayfaların sesi onlara eşlik ediyor gibiydi. Birkaç dakika geçirmek için girdiğim bu yerde zamanın nasıl ilerlediğini fark etmedim.",
+    "Bu metnin dil ve anlatımıyla ilgili aşağıdakilerden hangisi söylenemez?",
+    [
+      "Olaylar oluş sırasına göre anlatılmıştır.",
+      "Birden fazla duyuyla ilgili ayrıntıya yer verilmiştir.",
+      "Üçüncü kişi ağzıyla anlatım yapılmıştır.",
+      "Benzetmeye başvurulmuştur."
+    ],
+    "C",
+    "Metinde 'kendimi buldum, oturdum, fark etmedim' ifadeleri kullanıldığı için anlatım birinci kişi ağzındandır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-098",
+    "Ana fikir",
+    "Orta",
+    "Mahallede kurulan eşya kütüphanesinde matkap, merdiven, kamp çadırı ve dikiş makinesi gibi sık kullanılmayan araçlar ödünç veriliyor. Üyeler ihtiyaç duydukları aracı belirli bir süre kullanıp geri getiriyor. Böylece her evin yılda birkaç kez kullanacağı eşyaları ayrı ayrı satın alması gerekmiyor; hem masraf hem de gereksiz üretim azalıyor.",
+    "Bu metnin ana düşüncesi aşağıdakilerden hangisidir?",
+    [
+      "Nadiren kullanılan eşyaların ortaklaşa kullanılması ekonomik ve çevresel yarar sağlar.",
+      "Evlerde yalnızca küçük araçlar bulundurulmalıdır.",
+      "Ödünç alınan eşyalar satın alınanlardan daha dayanıklıdır.",
+      "Her mahallede aynı tür araçlara ihtiyaç duyulur."
+    ],
+    "A",
+    "Metin, seyrek kullanılan araçların paylaşılmasının satın alma ihtiyacını ve gereksiz üretimi azalttığını vurgulamaktadır."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-099",
+    "Yardımcı düşünce",
+    "Zor",
+    "Ahtapotlar, derilerindeki özel hücreler sayesinde renk ve desenlerini kısa sürede değiştirebilir. Bu özellik, çevrelerine uyum sağlayarak avcılardan saklanmalarına yardım eder. Bazı ahtapotların kabuk parçalarını barınak gibi kullandığı, kapalı bir kutunun kapağını açabildiği ve karşılaştığı basit sorunlara farklı çözümler ürettiği gözlemlenmiştir. Kollarındaki vantuzlar ise hem dokunmayı hem de nesneleri kavramayı sağlar.",
+    "Bu metinde ahtapotlarla ilgili aşağıdakilerin hangisine değinilmemiştir?",
+    [
+      "Renk ve desenlerini değiştirebildiklerine",
+      "Ortalama yaşam sürelerinin kaç yıl olduğuna",
+      "Bazı nesneleri araç olarak kullanabildiklerine",
+      "Vantuzlarının birden fazla işlev taşıdığına"
+    ],
+    "B",
+    "Metinde ahtapotların yaşam süresiyle ilgili bilgi verilmemiştir."
+  ),
+  makeGrade6ReviewQuestion(
+    "review6-100",
+    "Dil ve anlatım",
+    "Zor",
+    "Yurttaş bilimi, uzman olmayan kişilerin bilimsel araştırmalara gönüllü olarak veri sağlamasıdır. Örneğin öğrenciler, yaşadıkları çevrede gördükleri kelebekleri belirli tarihlerde kaydedip araştırmacıların oluşturduğu sisteme yükleyebilir. Çok sayıda kişinin farklı bölgelerden gönderdiği bu gözlemler, türlerin yayılışındaki değişimleri incelemeye yardımcı olur.",
+    "Bu metinde düşünceyi geliştirme yollarından hangileri kullanılmıştır?",
+    [
+      "Karşılaştırma ve tanık gösterme",
+      "Sayısal verilerden yararlanma ve benzetme",
+      "Tanımlama ve örneklendirme",
+      "Tanık gösterme ve örneklendirme"
+    ],
+    "C",
+    "İlk cümlede yurttaş biliminin tanımı yapılmış, sonraki cümlede öğrencilerin kelebek gözlemi örnek verilmiştir."
   )
 ];
