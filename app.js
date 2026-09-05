@@ -2415,7 +2415,10 @@ questionBank = [
 ]
   .map((question) => ({ ...question, id: makeQuestionId(question) }));
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
-const reviewDraftQuestions = (Array.isArray(window.PARAGRAPH8_REVIEW_QUESTIONS) ? window.PARAGRAPH8_REVIEW_QUESTIONS : [])
+const reviewDraftQuestions = [
+  ...(Array.isArray(window.PARAGRAPH6_REVIEW_QUESTIONS) ? window.PARAGRAPH6_REVIEW_QUESTIONS : []),
+  ...(Array.isArray(window.PARAGRAPH8_REVIEW_QUESTIONS) ? window.PARAGRAPH8_REVIEW_QUESTIONS : [])
+]
   .map((question) => ({ ...question, id: question.id || makeQuestionId(question) }));
 
 const CONTENT_VERSION = 12;
@@ -4635,7 +4638,7 @@ function promoteReviewQuestion(question) {
   const promotedQuestion = {
     ...question,
     reviewOnly: false,
-    collection: "grade8-approved-review",
+    collection: `grade${question.grade}-approved-review`,
     outcome: question.outcome || `${question.topic} kazanımı`,
     wrong: question.wrong || "Çeldiriciler metnin kapsamını eksik karşılar veya metinde söylenmeyen bir yargı içerir.",
     strategy: question.strategy || "Soru kökündeki isteği belirleyip seçenekleri metnin bütünüyle karşılaştır.",
@@ -4651,13 +4654,18 @@ function updateReviewQuestionTopics() {
   const select = $("#reviewQuestionsTopic");
   if (!select) return;
   const current = select.value || "all";
-  const topics = Array.from(new Set(reviewDraftQuestions.map((question) => question.topic)))
+  const grade = $("#reviewQuestionsGrade")?.value || "all";
+  const gradeQuestions = grade === "all"
+    ? reviewDraftQuestions
+    : reviewDraftQuestions.filter((question) => question.grade === Number(grade));
+  const topics = Array.from(new Set(gradeQuestions.map((question) => question.topic)))
     .sort((a, b) => a.localeCompare(b, "tr"));
   select.innerHTML = `<option value="all">Tüm konular</option>${topics.map((topic) => `<option value="${escapeHtml(topic)}">${escapeHtml(topic)}</option>`).join("")}`;
   select.value = topics.includes(current) ? current : "all";
 }
 
 function filteredReviewQuestions() {
+  const grade = $("#reviewQuestionsGrade")?.value || "all";
   const topic = $("#reviewQuestionsTopic")?.value || "all";
   const status = $("#reviewQuestionsStatus")?.value || "all";
   const search = ($("#reviewQuestionsSearch")?.value || "").trim().toLocaleLowerCase("tr-TR");
@@ -4666,6 +4674,7 @@ function filteredReviewQuestions() {
     const reviewed = reviewedQuestionIds.has(question.id);
     const promotionStatus = reviewPromotionStatus(question, promotionLookup);
     const inPool = promotionStatus !== "draft";
+    if (grade !== "all" && Number(grade) !== question.grade) return false;
     if (topic !== "all" && question.topic !== topic) return false;
     if (status === "reviewed" && !reviewed) return false;
     if (status === "pending" && reviewed) return false;
@@ -4696,7 +4705,7 @@ function renderReviewQuestions() {
   const promotionLookup = reviewPromotionLookup();
   const reviewedCount = reviewDraftQuestions.filter((question) => reviewedQuestionIds.has(question.id)).length;
   const promotedCount = reviewDraftQuestions.filter((question) => reviewPromotionStatus(question, promotionLookup) !== "draft").length;
-  count.textContent = `${reviewDraftQuestions.length} soru · ${reviewedCount} incelendi · ${promotedCount} havuzda`;
+  count.textContent = `${filtered.length} gösteriliyor · ${reviewDraftQuestions.length} taslak · ${reviewedCount} incelendi · ${promotedCount} havuzda`;
   list.innerHTML = filtered.length ? filtered.map((question, index) => {
     const answerIndex = "ABCD".indexOf(question.answer);
     const answerText = answerIndex >= 0 ? question.options[answerIndex] : "";
@@ -4707,7 +4716,7 @@ function renderReviewQuestions() {
     return `
       <article class="question-preview-card review-question-card${reviewed ? " is-reviewed" : ""}${inPool ? " is-promoted" : ""}" data-review-question-id="${escapeHtml(question.id)}">
         <div class="question-preview-head">
-          <span class="pill">8. sınıf</span>
+          <span class="pill">${question.grade}. sınıf</span>
           <strong>${index + 1}. ${escapeHtml(question.topic)}</strong>
           <span>${escapeHtml(question.difficulty)}</span>
           <span class="review-status-badge">${inPool ? poolLabel : reviewed ? "İncelendi" : "İnceleme bekliyor"}</span>
@@ -5457,6 +5466,7 @@ function bindEvents() {
   $("#questionBankTopic").addEventListener("change", renderQuestionBank);
   $("#questionBankDifficulty").addEventListener("change", renderQuestionBank);
   $("#questionBankSearch").addEventListener("input", renderQuestionBank);
+  $("#reviewQuestionsGrade")?.addEventListener("change", renderReviewQuestions);
   $("#reviewQuestionsTopic")?.addEventListener("change", renderReviewQuestions);
   $("#reviewQuestionsStatus")?.addEventListener("change", renderReviewQuestions);
   $("#reviewQuestionsSearch")?.addEventListener("input", renderReviewQuestions);
