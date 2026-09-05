@@ -1397,6 +1397,16 @@ h3 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.review-load-more {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+}
+
+.review-load-more button {
+  min-height: 44px;
+}
+
 .review-question-card.is-reviewed {
   border-left: 5px solid var(--teal);
 }

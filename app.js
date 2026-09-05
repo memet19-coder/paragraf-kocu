@@ -2435,6 +2435,7 @@ const QUESTION_BANK_PASSWORD = "KOCU2026";
 let questionBankUnlocked = false;
 let teacherAccessUnlocked = false;
 let editingQuestionId = null;
+let reviewDisplayLimit = 40;
 let generatedQuestionSets = [];
 let latestSplitQuestionSets = [];
 let latestSplitSettings = null;
@@ -4702,11 +4703,12 @@ function renderReviewQuestions() {
 
   updateReviewQuestionTopics();
   const filtered = filteredReviewQuestions();
+  const visibleQuestions = filtered.slice(0, reviewDisplayLimit);
   const promotionLookup = reviewPromotionLookup();
   const reviewedCount = reviewDraftQuestions.filter((question) => reviewedQuestionIds.has(question.id)).length;
   const promotedCount = reviewDraftQuestions.filter((question) => reviewPromotionStatus(question, promotionLookup) !== "draft").length;
-  count.textContent = `${filtered.length} gösteriliyor · ${reviewDraftQuestions.length} taslak · ${reviewedCount} incelendi · ${promotedCount} havuzda`;
-  list.innerHTML = filtered.length ? filtered.map((question, index) => {
+  count.textContent = `${filtered.length} sonuç · ${visibleQuestions.length} gösteriliyor · ${reviewDraftQuestions.length} taslak · ${reviewedCount} incelendi · ${promotedCount} havuzda`;
+  list.innerHTML = visibleQuestions.length ? visibleQuestions.map((question, index) => {
     const answerIndex = "ABCD".indexOf(question.answer);
     const answerText = answerIndex >= 0 ? question.options[answerIndex] : "";
     const reviewed = reviewedQuestionIds.has(question.id);
@@ -4748,6 +4750,12 @@ function renderReviewQuestions() {
       <p>Arama kutusunu temizleyebilir veya durum filtresini değiştirebilirsin.</p>
     </article>
   `;
+  const loadMore = $("#loadMoreReviewQuestions");
+  if (loadMore) {
+    const remaining = Math.max(0, filtered.length - visibleQuestions.length);
+    loadMore.hidden = remaining === 0;
+    loadMore.querySelector("span").textContent = `${Math.min(50, remaining)} soru daha göster (${remaining} kaldı)`;
+  }
   window.lucide?.createIcons();
 }
 
@@ -5466,10 +5474,18 @@ function bindEvents() {
   $("#questionBankTopic").addEventListener("change", renderQuestionBank);
   $("#questionBankDifficulty").addEventListener("change", renderQuestionBank);
   $("#questionBankSearch").addEventListener("input", renderQuestionBank);
-  $("#reviewQuestionsGrade")?.addEventListener("change", renderReviewQuestions);
-  $("#reviewQuestionsTopic")?.addEventListener("change", renderReviewQuestions);
-  $("#reviewQuestionsStatus")?.addEventListener("change", renderReviewQuestions);
-  $("#reviewQuestionsSearch")?.addEventListener("input", renderReviewQuestions);
+  const resetReviewList = () => {
+    reviewDisplayLimit = 40;
+    renderReviewQuestions();
+  };
+  $("#reviewQuestionsGrade")?.addEventListener("change", resetReviewList);
+  $("#reviewQuestionsTopic")?.addEventListener("change", resetReviewList);
+  $("#reviewQuestionsStatus")?.addEventListener("change", resetReviewList);
+  $("#reviewQuestionsSearch")?.addEventListener("input", resetReviewList);
+  $("#loadMoreReviewQuestions")?.addEventListener("click", () => {
+    reviewDisplayLimit += 50;
+    renderReviewQuestions();
+  });
   $("#setBuilderGrade")?.addEventListener("change", () => {
     updateSetBuilderTopics();
     renderSetBuilder();
