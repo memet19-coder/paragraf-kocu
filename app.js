@@ -4191,6 +4191,14 @@ function renderSetBuilder() {
   const pool = setBuilderEligibleQuestions();
   const count = $("#setBuilderPoolCount");
   if (count) count.textContent = `${pool.length} uygun soru`;
+  const countInput = $("#setBuilderCount");
+  const countRange = $("#setBuilderCountRange");
+  if (countInput) {
+    countInput.max = Math.max(1, pool.length);
+    if (pool.length && Number(countInput.value) > pool.length) countInput.value = pool.length;
+  }
+  if (countRange) countRange.textContent = pool.length ? `1-${pool.length} arası` : "Uygun soru yok";
+  syncSetCountShortcuts();
   const note = $("#setBuilderNote");
   if (note) {
     note.textContent = mode === "topic"
@@ -4229,6 +4237,11 @@ function setBuilderRequestedCount(availablePool = setBuilderEligibleQuestions())
   if (input) input.value = count;
   $$(".set-count-shortcut").forEach((button) => button.classList.toggle("is-selected", Number(button.dataset.setCount) === count));
   return count;
+}
+
+function syncSetCountShortcuts() {
+  const count = Math.floor(Number($("#setBuilderCount")?.value));
+  $$(".set-count-shortcut").forEach((button) => button.classList.toggle("is-selected", Number(button.dataset.setCount) === count));
 }
 
 function createQuestionSet() {
@@ -5495,7 +5508,8 @@ function bindEvents() {
   $("#setBuilderMode")?.addEventListener("change", renderSetBuilder);
   $("#setBuilderTopic")?.addEventListener("change", renderSetBuilder);
   $("#setBuilderDifficulty")?.addEventListener("change", renderSetBuilder);
-  $("#setBuilderCount")?.addEventListener("change", setBuilderRequestedCount);
+  $("#setBuilderCount")?.addEventListener("input", syncSetCountShortcuts);
+  $("#setBuilderCount")?.addEventListener("change", () => setBuilderRequestedCount());
   $$(".set-count-shortcut").forEach((button) => button.addEventListener("click", () => {
     $("#setBuilderCount").value = button.dataset.setCount;
     setBuilderRequestedCount();

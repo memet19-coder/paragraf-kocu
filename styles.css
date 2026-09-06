@@ -1251,7 +1251,7 @@ h3 {
 
 .set-builder-controls {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 10px;
   margin-top: 14px;
 }
@@ -1302,6 +1302,31 @@ h3 {
 .set-count-shortcut {
   min-height: 36px;
   padding: 0 11px;
+}
+
+.set-count-custom {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.set-count-custom input {
+  width: 92px;
+  min-height: 38px;
+  padding: 7px 9px;
+  font: inherit;
+}
+
+.set-count-custom small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .set-builder-note {

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Paragraf Koçu</title>
-  <link rel="stylesheet" href="./styles.css?v=review-promotion-1">
+  <link rel="stylesheet" href="./styles.css?v=custom-set-count-1">
   <style>
     body.quiz-open { overflow: hidden !important; }
     .quiz-drawer {
@@ -343,9 +343,6 @@
                   <option value="Zor">Zor</option>
                 </select>
               </label>
-              <label>Soru sayısı
-                <input id="setBuilderCount" type="number" min="1" value="15" inputmode="numeric">
-              </label>
               <label class="set-builder-check"><span>Çıktı seçeneği</span><span><input id="setBuilderAnswerKey" type="checkbox" checked> Cevap anahtarını ekle</span></label>
             </div>
             <div class="set-builder-shortcuts" aria-label="Soru sayısı kısayolları">
@@ -353,6 +350,11 @@
               <button class="segmented set-count-shortcut" type="button" data-set-count="10">10 soru</button>
               <button class="segmented set-count-shortcut is-selected" type="button" data-set-count="15">15 soru</button>
               <button class="segmented set-count-shortcut" type="button" data-set-count="20">20 soru</button>
+              <label class="set-count-custom">
+                <span>Özel sayı</span>
+                <input id="setBuilderCount" type="number" min="1" value="15" inputmode="numeric" aria-label="İstediğin soru sayısı">
+                <small id="setBuilderCountRange">1 veya daha fazla</small>
+              </label>
             </div>
             <div class="set-builder-actions">
               <button class="primary-action" id="generateQuestionSet" type="button"><i data-lucide="wand-sparkles"></i><span>Set oluştur</span></button>
@@ -644,7 +646,7 @@
   <script src="./practice-passages-extra.js?v=grade5-variety-1"></script>
   <script src="./assets/vendor/pdfmake-0.2.23.min.js"></script>
   <script src="./assets/vendor/pdfmake-vfs-fonts-0.2.23.js"></script>
-  <script src="./app.js?v=grade5-8-original-review-1600"></script>
+  <script src="./app.js?v=custom-set-count-1"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="window.paragrafKocuRemoteReady && window.paragrafKocuRemoteReady()"></script>
 </body>
 </html>
