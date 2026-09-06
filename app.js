@@ -2416,7 +2416,9 @@ questionBank = [
   .map((question) => ({ ...question, id: makeQuestionId(question) }));
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
 const reviewDraftQuestions = [
+  ...(Array.isArray(window.PARAGRAPH5_REVIEW_QUESTIONS) ? window.PARAGRAPH5_REVIEW_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH6_REVIEW_QUESTIONS) ? window.PARAGRAPH6_REVIEW_QUESTIONS : []),
+  ...(Array.isArray(window.PARAGRAPH7_REVIEW_QUESTIONS) ? window.PARAGRAPH7_REVIEW_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH8_REVIEW_QUESTIONS) ? window.PARAGRAPH8_REVIEW_QUESTIONS : [])
 ]
   .map((question) => ({ ...question, id: question.id || makeQuestionId(question) }));
