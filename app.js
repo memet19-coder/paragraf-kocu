@@ -4300,27 +4300,52 @@ function splitQuestionBank() {
   if (note) note.textContent = `${pool.length} soru, ${size} soruluk ${chunks.length} pakete bölündü. Son paket kalan soruları içerir.`;
 }
 
+function questionSetGradeText(set) {
+  const grades = [...new Set((set.questions || []).map((question) => Number(question.grade)).filter(Boolean))].sort();
+  return grades.length === 1 ? `${grades[0]}. SINIF` : grades.length ? `${grades.join("-")}. SINIFLAR` : "5-8. SINIF";
+}
+
+function questionSetDisplayName(set) {
+  const raw = String(set.title || "Karma Paragraf Seti");
+  const parts = raw.split("·").map((part) => part.trim()).filter(Boolean);
+  return parts.at(-1) || "Karma Paragraf Seti";
+}
+
+function questionSetDuration(set) {
+  return Math.max(10, Math.ceil((set.questions?.length || 0) * 2));
+}
+
 function questionSetDocumentHtml(set, autoPrint = false, testNumber = 1) {
   const testTitle = `Paragraf Koçu Test ${testNumber}`;
   const logoUrl = new URL("./assets/mg-logo-print.png", document.baseURI).href;
-  const questions = set.questions.map((question, index) => `
-    <section class="print-question">
-      <div class="print-question-meta">${index + 1}. soru · ${escapeHtml(question.topic || "Paragraf")}</div>
-      ${question.text ? `<div class="print-text">${formatQuestionText(question.text)}</div>` : ""}
-      <p class="print-stem">${formatQuestionText(question.stem)}</p>
-      <ol type="A">${(question.options || []).map((option) => `<li>${formatQuestionText(option)}</li>`).join("")}</ol>
-    </section>
-  `).join("");
+  const gradeText = questionSetGradeText(set);
+  const setName = questionSetDisplayName(set);
+  const duration = questionSetDuration(set);
+  const questions = set.questions.map((question, index) => {
+    const compactOptions = (question.options || []).every((option) => pdfPlainText(option).length < 74);
+    return `
+      <section class="print-question">
+        <div class="print-question-number">${index + 1}.</div>
+        <div class="print-question-body">
+          ${question.text ? `<div class="print-text">${formatQuestionText(question.text)}</div>` : ""}
+          <p class="print-stem">${formatQuestionText(question.stem)}</p>
+          <ol class="print-options${compactOptions ? " is-compact" : ""}" type="A">${(question.options || []).map((option) => `<li>${formatQuestionText(option)}</li>`).join("")}</ol>
+        </div>
+      </section>
+    `;
+  }).join("");
+  const answers = set.questions.map((question, index) => `<span><small>${index + 1}</small><b>${escapeHtml(question.answer)}</b></span>`).join("");
   const answerKey = set.includeAnswerKey ? `
     <section class="print-answer-key">
-      <h2>Cevap anahtarı</h2>
-      <p>${set.questions.map((question, index) => `${index + 1}-${escapeHtml(question.answer)}`).join(" · ")}</p>
+      <div class="answer-heading"><h2>Cevap Anahtarı</h2><span>${escapeHtml(testTitle)}</span></div>
+      <div class="answer-box"><div class="answer-box-title"><strong>Test ${testNumber}</strong><span>${escapeHtml(setName)}</span></div><div class="answer-grid">${answers}</div></div>
     </section>
   ` : "";
   return `<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(testTitle)}</title>
     <style>
-      @page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#182235;line-height:1.5;margin:0 auto;padding:18px;max-width:900px}h1{font-size:22px;margin:0}h2{font-size:17px;margin:0 0 8px}.print-header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #b5121b;padding-bottom:8px;margin-bottom:14px}.print-logo{display:block;width:54px;height:auto}.print-control{position:fixed;right:18px;top:18px;border:0;border-radius:6px;background:#168c8c;color:#fff;font:700 14px Arial;padding:10px 14px;cursor:pointer}.print-question{break-inside:avoid;border-top:1px solid #d9e2df;padding:14px 0}.print-question-meta{font-weight:700;font-size:13px;color:#0b666a;margin-bottom:8px}.print-text{background:#f7faf9;border:1px solid #d9e2df;border-radius:6px;padding:10px 12px;margin-bottom:10px}.print-stem{font-weight:700;margin:10px 0}.print-question li{padding:4px 0}.print-answer-key{break-inside:avoid;border-top:2px solid #168c8c;margin-top:18px;padding-top:12px}@media print{body{padding:0}.print-control{display:none}}
-    </style></head><body><button class="print-control" type="button" onclick="window.print()">Yazdır / PDF kaydet</button><header class="print-header"><h1>${escapeHtml(testTitle)}</h1><img class="print-logo" src="${escapeHtml(logoUrl)}" alt="MG"></header>${questions}${answerKey}${autoPrint ? "<script>window.onload=()=>window.print();<\/script>" : ""}</body></html>`;
+      @media print{@page{size:A4;margin:36mm 13mm 16mm}.print-topline{position:fixed;left:0;right:0;top:-31mm}.print-band{position:fixed;left:0;right:0;top:-26mm;margin-top:0}.print-meta{position:fixed;left:0;right:0;top:-10mm}.print-columns{padding-top:0}}
+      :root{--navy:#15223d;--blue:#2d5b9e;--orange:#ff7f32;--paper:#fff;--ink:#172238;--muted:#5c6674}*{box-sizing:border-box}@page{size:A4;margin:15mm 13mm 16mm}body{font-family:Arial,sans-serif;color:var(--ink);line-height:1.38;margin:0 auto;padding:18px;max-width:980px;background:#eef1f5}.print-sheet{background:var(--paper);padding:0 0 18px;min-height:100vh}.print-control{position:fixed;right:18px;top:18px;z-index:10;border:0;border-radius:6px;background:#168c8c;color:#fff;font:700 14px Arial;padding:10px 14px;cursor:pointer}.print-topline{display:flex;justify-content:space-between;gap:16px;padding:0 0 8px;border-bottom:1px solid #cbd2dc;color:#4e5969;font-size:10px;font-weight:700;letter-spacing:.04em}.print-band{display:grid;grid-template-columns:92px minmax(0,1fr) 58px;min-height:54px;margin-top:10px;background:var(--navy);color:#fff;border-radius:7px 0 0 7px;overflow:hidden}.print-test-tab{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--orange);font-size:10px;font-weight:800;letter-spacing:.12em}.print-test-tab b{font-size:28px;line-height:1}.print-band-title{display:flex;align-items:center;padding:0 20px;font-size:20px;font-style:italic;font-weight:800}.print-band-title em{color:#ffd54f;font-style:normal;margin-left:5px}.print-logo-wrap{display:flex;align-items:center;justify-content:center;background:#fff}.print-logo{display:block;width:46px;height:46px;object-fit:contain}.print-meta{display:flex;justify-content:flex-end;gap:12px;border-top:4px solid var(--orange);padding:6px 2px 11px;color:#4e5969;font-size:9px}.print-columns{column-count:2;column-gap:34px;column-rule:1px solid var(--orange);padding-top:4px}.print-question{display:grid;grid-template-columns:25px minmax(0,1fr);gap:5px;break-inside:avoid-column;margin:0 0 18px}.print-question-number{color:var(--blue);font-size:16px;font-weight:800;line-height:1.35}.print-text{font-size:11.2px;line-height:1.42;margin:0 0 8px}.print-stem{font-size:11.1px;line-height:1.4;font-weight:800;margin:7px 0}.print-options{margin:0;padding-left:23px;font-size:10.8px;line-height:1.35}.print-options.is-compact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:14px}.print-options li{padding:2px 4px}.print-options li::marker{color:var(--blue);font-weight:800}.print-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--orange);margin-top:8px;padding-top:7px;color:#505967;font-size:9px}.print-footer b{color:var(--orange);font-size:11px}.print-answer-key{break-before:page;background:#fff;min-height:90vh;padding-top:4px}.answer-heading{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:2px solid var(--orange);padding:0 0 10px;margin-bottom:18px}.answer-heading h2{font-size:28px;margin:0;color:var(--navy)}.answer-heading span{color:var(--orange);font-size:11px;font-weight:800}.answer-box{border:1px solid var(--blue);border-radius:8px;overflow:hidden}.answer-box-title{display:flex;justify-content:space-between;gap:12px;background:var(--blue);color:#fff;padding:7px 10px;font-size:11px}.answer-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr))}.answer-grid span{display:grid;text-align:center;border-right:1px solid #d9e0e9}.answer-grid small{padding:4px 2px;color:#687384;background:#f2f5f8}.answer-grid b{padding:6px 2px;color:var(--navy);font-size:12px}.answer-grid span:nth-child(10n){border-right:0}.answer-grid span:nth-child(n+11){border-top:1px solid #d9e0e9}@media print{body{padding:0;background:#fff}.print-sheet{padding:0}.print-control{display:none}.print-columns{column-gap:28px}.print-footer{position:fixed;left:0;right:0;bottom:-8mm}}
+    </style></head><body><button class="print-control" type="button" onclick="window.print()">Yazdır / PDF kaydet</button><main class="print-sheet"><div class="print-topline"><span>TÜRKÇE · ${escapeHtml(gradeText)}</span><span>PARAGRAF KOÇU · TEST ${testNumber}</span></div><header class="print-band"><div class="print-test-tab"><span>TEST</span><b>${testNumber}</b></div><div class="print-band-title">Paragraf Koçu <em>${escapeHtml(setName)}</em></div><div class="print-logo-wrap"><img class="print-logo" src="${escapeHtml(logoUrl)}" alt="MG"></div></header><div class="print-meta"><span>${set.questions.length} SORU</span><span>${duration} DK</span><span>${escapeHtml(set.meta || "Karma paragraf çalışması")}</span></div><div class="print-columns">${questions}</div><footer class="print-footer"><span>MG · Paragraf Koçu</span><b>${testNumber}</b><span>${escapeHtml(testTitle)}</span></footer></main>${answerKey}${autoPrint ? "<script>window.onload=()=>window.print();<\/script>" : ""}</body></html>`;
 }
 
 function pdfPlainText(value = "") {
@@ -4353,67 +4378,201 @@ function pdfLogoDataUrl() {
   return pdfLogoDataUrlPromise;
 }
 
-function questionSetPdfDefinition(set, logoDataUrl, testNumber = 1) {
-  const testTitle = `Paragraf Koçu Test ${testNumber}`;
-  const content = [];
-  set.questions.forEach((question, index) => {
-    const questionContent = [
-      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 510, y2: 0, lineWidth: 0.6, lineColor: "#d9e2df" }], margin: [0, 5, 0, 8] },
-      { text: `${index + 1}. soru · ${question.topic || "Paragraf"}`, fontSize: 9, bold: true, color: "#0b666a", margin: [0, 0, 0, 5] }
-    ];
-    const paragraph = pdfPlainText(question.text);
-    if (paragraph) questionContent.push({ text: paragraph, fontSize: 10.5, lineHeight: 1.25, color: "#182235", margin: [7, 0, 7, 7] });
-    questionContent.push({ text: pdfPlainText(question.stem), fontSize: 10.5, lineHeight: 1.25, bold: true, margin: [0, 0, 0, 5] });
-    (question.options || []).forEach((option, optionIndex) => {
-      questionContent.push({ text: `${"ABCD"[optionIndex]}) ${pdfPlainText(option)}`, fontSize: 10.2, lineHeight: 1.2, margin: [10, 0, 0, 3] });
+function questionPdfWeight(question) {
+  return pdfPlainText(question.text).length
+    + pdfPlainText(question.stem).length
+    + (question.options || []).reduce((sum, option) => sum + pdfPlainText(option).length, 0)
+    + 180;
+}
+
+function questionPdfPages(questions) {
+  const capacity = 2350;
+  const pages = [];
+  let page = [];
+  let pageWeight = 0;
+  for (let index = 0; index < questions.length; index += 2) {
+    const row = [{ question: questions[index], index }];
+    if (index + 1 < questions.length) row.push({ question: questions[index + 1], index: index + 1 });
+    const rowWeight = Math.max(...row.map((item) => questionPdfWeight(item.question)));
+    if (page.length && pageWeight + rowWeight > capacity) {
+      pages.push(page);
+      page = [];
+      pageWeight = 0;
+    }
+    page.push(row);
+    pageWeight += rowWeight;
+  }
+  if (page.length) pages.push(page);
+  return pages;
+}
+
+function questionPdfBlock(question, index) {
+  const paragraph = pdfPlainText(question.text);
+  const optionRows = [];
+  const options = question.options || [];
+  const compact = options.every((option) => pdfPlainText(option).length < 74);
+  if (compact) {
+    for (let optionIndex = 0; optionIndex < options.length; optionIndex += 2) {
+      optionRows.push({
+        columns: [0, 1].map((offset) => {
+          const current = optionIndex + offset;
+          return current < options.length
+            ? { text: [{ text: `${"ABCD"[current]}) `, bold: true, color: "#2d5b9e" }, pdfPlainText(options[current])], width: "*", margin: [0, 0, offset ? 0 : 5, 3] }
+            : { text: "", width: "*" };
+        }),
+        columnGap: 4
+      });
+    }
+  } else {
+    options.forEach((option, optionIndex) => {
+      optionRows.push({ text: [{ text: `${"ABCD"[optionIndex]}) `, bold: true, color: "#2d5b9e" }, pdfPlainText(option)], margin: [0, 0, 0, 3] });
     });
-    questionContent.push({ text: "", margin: [0, 0, 0, 7] });
+  }
+  const body = [];
+  if (paragraph) body.push({ text: paragraph, fontSize: 8.8, lineHeight: 1.18, margin: [0, 0, 0, 5] });
+  body.push({ text: pdfPlainText(question.stem), fontSize: 8.8, lineHeight: 1.18, bold: true, margin: [0, 0, 0, 5] }, ...optionRows);
+  return {
+    unbreakable: true,
+    margin: [0, 0, 0, 10],
+    columns: [
+      { text: `${index + 1}.`, width: 22, fontSize: 11.5, bold: true, color: "#2d5b9e", margin: [0, -1, 0, 0] },
+      { stack: body, width: "*", fontSize: 8.6, lineHeight: 1.15 }
+    ],
+    columnGap: 1
+  };
+}
+
+function answerKeyPdfContent(set, testNumber) {
+  const chunks = [];
+  for (let start = 0; start < set.questions.length; start += 10) chunks.push(set.questions.slice(start, start + 10));
+  const content = [
+    {
+      columns: [
+        { text: "Cevap Anahtarı", fontSize: 25, bold: true, color: "#15223d" },
+        { text: `PARAGRAF KOÇU · TEST ${testNumber}`, alignment: "right", fontSize: 9, bold: true, color: "#ff7f32", margin: [0, 13, 0, 0] }
+      ],
+      margin: [0, 0, 0, 8]
+    },
+    { canvas: [{ type: "line", x1: 0, y1: 0, x2: 510, y2: 0, lineWidth: 1.2, lineColor: "#ff7f32" }], margin: [0, 0, 0, 15] }
+  ];
+  chunks.forEach((chunk, chunkIndex) => {
+    const numberCells = chunk.map((question, index) => ({ text: String(chunkIndex * 10 + index + 1), alignment: "center", color: "#687384", fillColor: "#f2f5f8", fontSize: 8, margin: [0, 3, 0, 3] }));
+    const answerCells = chunk.map((question) => ({ text: question.answer, alignment: "center", bold: true, color: "#15223d", fontSize: 10, margin: [0, 4, 0, 4] }));
+    while (numberCells.length < 10) {
+      numberCells.push({ text: "", fillColor: "#f2f5f8" });
+      answerCells.push({ text: "" });
+    }
     content.push({
       table: {
-        widths: ["*"],
-        dontBreakRows: true,
-        body: [[{ stack: questionContent }]]
+        headerRows: 1,
+        widths: Array(10).fill("*"),
+        body: [
+          [{ text: `TEST ${testNumber}`, colSpan: 3, bold: true, color: "#ffffff", fillColor: "#2d5b9e", margin: [5, 4, 0, 4] }, {}, {}, { text: questionSetDisplayName(set), colSpan: 7, alignment: "right", color: "#ffffff", fillColor: "#2d5b9e", margin: [0, 4, 5, 4] }, {}, {}, {}, {}, {}, {}],
+          numberCells,
+          answerCells
+        ]
       },
       layout: {
-        hLineWidth: () => 0,
-        vLineWidth: () => 0,
+        hLineColor: () => "#cdd6e2",
+        vLineColor: () => "#cdd6e2",
+        hLineWidth: (i) => i === 0 || i === 3 ? 0.8 : 0.4,
+        vLineWidth: () => 0.4,
         paddingLeft: () => 0,
         paddingRight: () => 0,
         paddingTop: () => 0,
         paddingBottom: () => 0
-      }
+      },
+      margin: [0, 0, 0, 10]
+    });
+  });
+  return content;
+}
+
+function questionSetPdfPageHeader(set, logoDataUrl, testNumber) {
+  const gradeText = questionSetGradeText(set);
+  const setName = questionSetDisplayName(set);
+  const duration = questionSetDuration(set);
+  return [
+    {
+      columns: [
+        { text: `TÜRKÇE · ${gradeText}`, fontSize: 8, bold: true, color: "#505b6a" },
+        { text: `PARAGRAF KOÇU · TEST ${testNumber}`, fontSize: 8, bold: true, color: "#2d5b9e", alignment: "right" }
+      ],
+      margin: [0, 0, 0, 6]
+    },
+    {
+      table: {
+        widths: [82, "*", 50],
+        body: [[
+          { text: [{ text: "TEST  ", fontSize: 8, bold: true }, { text: String(testNumber), fontSize: 20, bold: true }], color: "#ffffff", fillColor: "#ff7f32", alignment: "center", margin: [0, 7, 0, 7] },
+          { text: [{ text: "Paragraf Koçu ", italics: true }, { text: setName, color: "#ffd54f" }], color: "#ffffff", fillColor: "#15223d", bold: true, fontSize: 15, margin: [12, 11, 0, 0] },
+          { image: logoDataUrl, fit: [39, 39], alignment: "center", fillColor: "#ffffff", margin: [0, 2, 0, 2] }
+        ]]
+      },
+      layout: "noBorders"
+    },
+    { canvas: [{ type: "line", x1: 82, y1: 0, x2: 510, y2: 0, lineWidth: 2, lineColor: "#ff7f32" }], margin: [0, 2, 0, 2] },
+    { text: `${set.questions.length} SORU · ${duration} DK · ${set.meta || "Karma paragraf çalışması"}`, alignment: "right", fontSize: 7.5, color: "#5c6674", margin: [0, 0, 0, 12] }
+  ];
+}
+
+function questionSetPdfDefinition(set, logoDataUrl, testNumber = 1) {
+  const testTitle = `Paragraf Koçu Test ${testNumber}`;
+  const content = [];
+  const questions = set.questions || [];
+  const pages = questionPdfPages(questions);
+  pages.forEach((page, pageIndex) => {
+    const questionRows = page.map((row) => [
+      { stack: [questionPdfBlock(row[0].question, row[0].index)], margin: [0, 0, 12, 0] },
+      row[1]
+        ? { stack: [questionPdfBlock(row[1].question, row[1].index)], margin: [12, 0, 0, 0] }
+        : { text: "" }
+    ]);
+    content.push({
+      stack: [
+        ...questionSetPdfPageHeader(set, logoDataUrl, testNumber),
+        {
+          table: { widths: ["*", "*"], body: questionRows, dontBreakRows: true },
+          layout: {
+            hLineWidth: () => 0,
+            vLineWidth: (i) => i === 1 ? 0.7 : 0,
+            vLineColor: () => "#ff7f32",
+            paddingLeft: () => 0,
+            paddingRight: () => 0,
+            paddingTop: () => 0,
+            paddingBottom: () => 0
+          }
+        }
+      ],
+      pageBreak: pageIndex < pages.length - 1 ? "after" : undefined
     });
   });
   if (set.includeAnswerKey) {
-    content.push(
-      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 510, y2: 0, lineWidth: 1.2, lineColor: "#168c8c" }], margin: [0, 10, 0, 9] },
-      { text: "Cevap anahtarı", fontSize: 13, bold: true, margin: [0, 0, 0, 5] },
-      { text: set.questions.map((question, index) => `${index + 1}-${question.answer}`).join("   ·   "), fontSize: 10.5 }
-    );
+    content.push({
+      pageBreak: "before",
+      stack: [
+        ...questionSetPdfPageHeader(set, logoDataUrl, testNumber),
+        ...answerKeyPdfContent(set, testNumber)
+      ]
+    });
   }
   return {
     pageSize: "A4",
-    pageMargins: [42, 76, 42, 42],
+    pageMargins: [42, 13, 42, 38],
     defaultStyle: { font: "Roboto", color: "#182235" },
     content,
-    header: () => ({
-      margin: [42, 14, 42, 0],
+    footer: (currentPage, pageCount) => ({
+      margin: [42, 5, 42, 0],
       stack: [
+        { canvas: [{ type: "line", x1: 0, y1: 0, x2: 510, y2: 0, lineWidth: 0.7, lineColor: "#ff7f32" }] },
         {
           columns: [
-            { text: testTitle, fontSize: 18, bold: true, color: "#182235", margin: [0, 9, 0, 0] },
-            { image: logoDataUrl, fit: [48, 40], alignment: "right" }
+            { text: "MG · Paragraf Koçu", fontSize: 7.5, color: "#505967", margin: [0, 5, 0, 0] },
+            { text: String(currentPage), fontSize: 9, bold: true, color: "#ff7f32", alignment: "center", margin: [0, 4, 0, 0] },
+            { text: `${testTitle} · ${currentPage}/${pageCount}`, fontSize: 7.5, color: "#505967", alignment: "right", margin: [0, 5, 0, 0] }
           ]
-        },
-        { canvas: [{ type: "line", x1: 0, y1: 0, x2: 510, y2: 0, lineWidth: 1, lineColor: "#b5121b" }], margin: [0, 5, 0, 0] }
+        }
       ]
-    }),
-    footer: (currentPage, pageCount) => ({
-      text: `${currentPage}/${pageCount}`,
-      alignment: "center",
-      color: "#647083",
-      fontSize: 8,
-      margin: [0, 14, 0, 0]
     })
   };
 }
