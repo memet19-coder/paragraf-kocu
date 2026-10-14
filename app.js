@@ -4102,13 +4102,48 @@ function uniqueQuestions(questions) {
   });
 }
 
+function isQuestionReadyForPrint(question) {
+  const options = Array.isArray(question?.options) ? question.options : [];
+  if (!question?.text || !question?.stem || options.length !== 4 || !/^[A-D]$/.test(question.answer || "")) return false;
+  if (options.some((option) => String(option || "").trim().length < 2)) return false;
+
+  const text = String(question.text || "");
+  const allText = [text, question.stem, ...options].join(" ").replace(/\s+/g, " ");
+  const obviousOcrNoise = [
+    /\*{1,}/,
+    /©/,
+    /vecrcr|Vazıvordi|ritirm\s+tiitrm|Be a ak|Yaıp Ge|Semsivenin/iu,
+    /hafÖğret|Öğretköy|Köyokuluna|öğrenatanması|Öğretöğretmenin/iu,
+    /^\s*\(\d{1,3}\s/,
+    /(?:^|\s)\(m(?:\s+İ[mnw]){3,}/iu
+  ];
+  if (obviousOcrNoise.some((pattern) => pattern.test(allText))) return false;
+
+  const embeddedChoices = text.match(/\b[A-D]\)\s/g) || [];
+  if (embeddedChoices.length >= 3) return false;
+  const repeatedRoots = allText.match(/aşağıdakilerden\s+hangisi/giu) || [];
+  if (repeatedRoots.length > 1) return false;
+
+  const brokenWordJoins = allText.match(/\p{L}{1,4}-\s+\p{L}/gu) || [];
+  const floatingSeparators = allText.match(/(?:\s[-:;]\s|\s[-:;](?=\p{L}))/gu) || [];
+  const mergedWords = allText.match(/\p{Ll}\p{Lu}/gu) || [];
+  if (brokenWordJoins.length > 1 || floatingSeparators.length > 2 || mergedWords.length > 2) return false;
+
+  const romanItems = text.match(/(?:^|\s)(?:I|II|III|IV)\./g) || [];
+  if (romanItems.length >= 3) {
+    const uniqueRomanItems = new Set(romanItems.map((item) => item.trim()));
+    if (uniqueRomanItems.size !== romanItems.length) return false;
+  }
+  return allText.length <= 4200;
+}
+
 function setBuilderBasePool() {
   const gradeValue = $("#setBuilderGrade")?.value || String(state.grade);
   const difficultyValue = $("#setBuilderDifficulty")?.value || "all";
   return uniqueQuestions(reviewQuestionBank().filter((question) => {
     if (gradeValue !== "all" && question.grade !== Number(gradeValue)) return false;
     if (difficultyValue !== "all" && question.difficulty !== difficultyValue) return false;
-    return true;
+    return isQuestionReadyForPrint(question);
   }));
 }
 
@@ -4159,7 +4194,7 @@ function renderSetBuilderResults() {
         <span>${set.questions.length} soru · ${escapeHtml(set.meta)}</span>
       </div>
       <div class="set-result-actions">
-        <button class="secondary-action print-question-set" type="button" data-set-index="${index}"><i data-lucide="printer"></i><span>Yazdır / PDF</span></button>
+        <button class="secondary-action print-question-set" type="button" data-set-index="${index}"><i data-lucide="file-down"></i><span>PDF indir</span></button>
         <button class="icon-button remove-question-set" type="button" data-set-index="${index}" title="Seti kaldır" aria-label="Seti kaldır"><i data-lucide="x"></i></button>
       </div>
     </div>
@@ -4268,7 +4303,7 @@ function createQuestionSet() {
   });
   renderSetBuilderResults();
   const note = $("#setBuilderNote");
-  if (note) note.textContent = `${questions.length} soruluk set hazırlandı. Yazdır / PDF ile çıktı alabilirsin.`;
+  if (note) note.textContent = `${questions.length} soruluk set hazırlandı. PDF indir düğmesiyle çıktıyı alabilirsin.`;
 }
 
 function splitQuestionBank() {
@@ -4378,46 +4413,82 @@ function pdfLogoDataUrl() {
   return pdfLogoDataUrlPromise;
 }
 
-function questionPdfWeight(question) {
-  return pdfPlainText(question.text).length
-    + pdfPlainText(question.stem).length
-    + (question.options || []).reduce((sum, option) => sum + pdfPlainText(option).length, 0)
-    + 180;
+function estimatedPdfLines(value, lineWidth) {
+  return pdfPlainText(value)
+    .split(/\n+/)
+    .reduce((total, line) => total + Math.max(1, Math.ceil(line.trim().length / lineWidth)), 0);
+}
+
+function questionPdfEstimatedHeight(question) {
+  const options = question.options || [];
+  const compact = options.every((option) => pdfPlainText(option).length <= 34);
+  const paragraphLines = estimatedPdfLines(question.text, 46);
+  const stemLines = estimatedPdfLines(question.stem, 43);
+  let optionLines = 0;
+  if (compact) {
+    for (let index = 0; index < options.length; index += 2) {
+      optionLines += Math.max(
+        estimatedPdfLines(options[index], 19),
+        index + 1 < options.length ? estimatedPdfLines(options[index + 1], 19) : 1
+      );
+    }
+  } else {
+    optionLines = options.reduce((sum, option) => sum + estimatedPdfLines(option, 42), 0);
+  }
+  return 24 + (paragraphLines + stemLines + optionLines) * 11.8 + Math.ceil(options.length / (compact ? 2 : 1)) * 4;
 }
 
 function questionPdfPages(questions) {
-  const capacity = 2350;
   const pages = [];
-  let page = [];
-  let pageWeight = 0;
-  for (let index = 0; index < questions.length; index += 2) {
-    const row = [{ question: questions[index], index }];
-    if (index + 1 < questions.length) row.push({ question: questions[index + 1], index: index + 1 });
-    const rowWeight = Math.max(...row.map((item) => questionPdfWeight(item.question)));
-    if (page.length && pageWeight + rowWeight > capacity) {
-      pages.push(page);
-      page = [];
-      pageWeight = 0;
+  let page = { left: [], right: [], leftHeight: 0, rightHeight: 0 };
+  let side = "left";
+
+  const pageCapacity = () => pages.length === 0 ? 590 : 660;
+  const flushPage = () => {
+    if (page.left.length || page.right.length) pages.push(page);
+    page = { left: [], right: [], leftHeight: 0, rightHeight: 0 };
+    side = "left";
+  };
+
+  questions.forEach((question, index) => {
+    const item = { question, index };
+    const estimatedHeight = questionPdfEstimatedHeight(question);
+    const capacity = pageCapacity();
+    if (estimatedHeight > capacity - 18) {
+      flushPage();
+      pages.push({ left: [], right: [], full: [item] });
+      return;
     }
-    page.push(row);
-    pageWeight += rowWeight;
-  }
-  if (page.length) pages.push(page);
+
+    const sideItems = () => page[side];
+    const sideHeight = () => page[`${side}Height`];
+    const fitsCurrentSide = () => sideItems().length < 3 && sideHeight() + estimatedHeight <= capacity;
+    if (!fitsCurrentSide() && side === "left") side = "right";
+    if (!fitsCurrentSide() && side === "right") {
+      flushPage();
+    }
+
+    page[side].push(item);
+    page[`${side}Height`] += estimatedHeight;
+  });
+
+  flushPage();
   return pages;
 }
 
-function questionPdfBlock(question, index) {
+function questionPdfBlock(question, index, fullWidth = false) {
   const paragraph = pdfPlainText(question.text);
   const optionRows = [];
   const options = question.options || [];
-  const compact = options.every((option) => pdfPlainText(option).length < 74);
+  const compactLimit = fullWidth ? 100 : 34;
+  const compact = options.every((option) => pdfPlainText(option).length < compactLimit);
   if (compact) {
     for (let optionIndex = 0; optionIndex < options.length; optionIndex += 2) {
       optionRows.push({
         columns: [0, 1].map((offset) => {
           const current = optionIndex + offset;
           return current < options.length
-            ? { text: [{ text: `${"ABCD"[current]}) `, bold: true, color: "#2d5b9e" }, pdfPlainText(options[current])], width: "*", margin: [0, 0, offset ? 0 : 5, 3] }
+            ? { text: [{ text: `${"ABCD"[current]}) `, bold: true, color: "#2d5b9e" }, pdfPlainText(options[current])], width: "*", margin: [0, 0, offset ? 0 : 7, 4] }
             : { text: "", width: "*" };
         }),
         columnGap: 4
@@ -4425,20 +4496,21 @@ function questionPdfBlock(question, index) {
     }
   } else {
     options.forEach((option, optionIndex) => {
-      optionRows.push({ text: [{ text: `${"ABCD"[optionIndex]}) `, bold: true, color: "#2d5b9e" }, pdfPlainText(option)], margin: [0, 0, 0, 3] });
+      optionRows.push({ text: [{ text: `${"ABCD"[optionIndex]}) `, bold: true, color: "#2d5b9e" }, pdfPlainText(option)], margin: [0, 0, 0, 4] });
     });
   }
   const body = [];
-  if (paragraph) body.push({ text: paragraph, fontSize: 8.8, lineHeight: 1.18, margin: [0, 0, 0, 5] });
-  body.push({ text: pdfPlainText(question.stem), fontSize: 8.8, lineHeight: 1.18, bold: true, margin: [0, 0, 0, 5] }, ...optionRows);
+  const bodyFontSize = fullWidth ? 10.2 : 9.6;
+  if (paragraph) body.push({ text: paragraph, fontSize: bodyFontSize, lineHeight: 1.2, margin: [0, 0, 0, 7] });
+  body.push({ text: pdfPlainText(question.stem), fontSize: bodyFontSize, lineHeight: 1.19, bold: true, margin: [0, 0, 0, 7] }, ...optionRows);
   return {
+    margin: [0, 0, 0, 13],
     unbreakable: true,
-    margin: [0, 0, 0, 10],
     columns: [
-      { text: `${index + 1}.`, width: 22, fontSize: 11.5, bold: true, color: "#2d5b9e", margin: [0, -1, 0, 0] },
-      { stack: body, width: "*", fontSize: 8.6, lineHeight: 1.15 }
+      { text: `${index + 1}.`, width: fullWidth ? 24 : 20, fontSize: 12, bold: true, color: "#2d5b9e", margin: [0, -1, 0, 0] },
+      { stack: body, width: "*", fontSize: fullWidth ? 10 : 9.3, lineHeight: 1.17 }
     ],
-    columnGap: 1
+    columnGap: 2
   };
 }
 
@@ -4502,69 +4574,114 @@ function questionSetPdfPageHeader(set, logoDataUrl, testNumber) {
     },
     {
       table: {
-        widths: [82, "*", 50],
+        widths: [78, "*", 48],
         body: [[
-          { text: [{ text: "TEST  ", fontSize: 8, bold: true }, { text: String(testNumber), fontSize: 20, bold: true }], color: "#ffffff", fillColor: "#ff7f32", alignment: "center", margin: [0, 7, 0, 7] },
-          { text: [{ text: "Paragraf Koçu ", italics: true }, { text: setName, color: "#ffd54f" }], color: "#ffffff", fillColor: "#15223d", bold: true, fontSize: 15, margin: [12, 11, 0, 0] },
-          { image: logoDataUrl, fit: [39, 39], alignment: "center", fillColor: "#ffffff", margin: [0, 2, 0, 2] }
+          { text: [{ text: "TEST  ", fontSize: 8, bold: true }, { text: String(testNumber), fontSize: 19, bold: true }], color: "#ffffff", fillColor: "#ff7f32", alignment: "center", margin: [0, 6, 0, 6] },
+          { text: [{ text: "Paragraf Koçu ", italics: true }, { text: setName, color: "#ffd54f" }], color: "#ffffff", fillColor: "#15223d", bold: true, fontSize: 14, margin: [11, 10, 0, 0] },
+          { image: logoDataUrl, fit: [36, 36], alignment: "center", fillColor: "#ffffff", margin: [0, 2, 0, 2] }
         ]]
       },
       layout: "noBorders"
     },
-    { canvas: [{ type: "line", x1: 82, y1: 0, x2: 510, y2: 0, lineWidth: 2, lineColor: "#ff7f32" }], margin: [0, 2, 0, 2] },
-    { text: `${set.questions.length} SORU · ${duration} DK · ${set.meta || "Karma paragraf çalışması"}`, alignment: "right", fontSize: 7.5, color: "#5c6674", margin: [0, 0, 0, 12] }
+    { canvas: [{ type: "line", x1: 78, y1: 0, x2: 523, y2: 0, lineWidth: 2, lineColor: "#ff7f32" }], margin: [0, 2, 0, 2] },
+    { text: `${set.questions.length} SORU · ${duration} DK · ${set.meta || "Karma paragraf çalışması"}`, alignment: "right", fontSize: 7.3, color: "#5c6674", margin: [0, 0, 0, 9] }
   ];
+}
+
+function questionSetPdfCompactHeader(set, logoDataUrl, testNumber) {
+  return [
+    {
+      columns: [
+        { text: `TÜRKÇE · ${questionSetGradeText(set)}`, fontSize: 8, bold: true, color: "#505b6a", margin: [0, 4, 0, 0] },
+        { text: `PARAGRAF KOÇU · TEST ${testNumber}`, fontSize: 8, bold: true, color: "#2d5b9e", alignment: "right", margin: [0, 4, 7, 0] },
+        { image: logoDataUrl, fit: [20, 20], width: 22, alignment: "right" }
+      ],
+      margin: [0, 0, 0, 3]
+    },
+    { canvas: [{ type: "line", x1: 0, y1: 0, x2: 523, y2: 0, lineWidth: 0.8, lineColor: "#2d5b9e" }], margin: [0, 0, 0, 9] }
+  ];
+}
+
+function questionSetPdfPageBody(page) {
+  if (page.full?.length) return questionPdfBlock(page.full[0].question, page.full[0].index, true);
+  const left = page.left.map((item) => questionPdfBlock(item.question, item.index));
+  const right = page.right.map((item) => questionPdfBlock(item.question, item.index));
+  return {
+    columns: [
+      { stack: left, width: "*" },
+      {
+        width: 17,
+        canvas: [{ type: "line", x1: 8, y1: 0, x2: 8, y2: 650, lineWidth: 0.6, lineColor: "#ff7f32" }]
+      },
+      { stack: right, width: "*" }
+    ],
+    columnGap: 0
+  };
+}
+
+function questionSetPdfPageBackground(set, logoDataUrl, testNumber) {
+  const gradeText = questionSetGradeText(set);
+  const setName = questionSetDisplayName(set);
+  const duration = questionSetDuration(set);
+  return {
+    stack: [
+      { text: `TÜRKÇE · ${gradeText}`, fontSize: 8, bold: true, color: "#505b6a", absolutePosition: { x: 42, y: 13 } },
+      { text: `PARAGRAF KOÇU · TEST ${testNumber}`, fontSize: 8, bold: true, color: "#2d5b9e", alignment: "right", width: 220, absolutePosition: { x: 332, y: 13 } },
+      {
+        canvas: [
+          { type: "rect", x: 0, y: 0, w: 82, h: 48, color: "#ff7f32" },
+          { type: "rect", x: 82, y: 0, w: 378, h: 48, color: "#15223d" },
+          { type: "line", x1: 82, y1: 50, x2: 510, y2: 50, lineWidth: 2, lineColor: "#ff7f32" }
+        ],
+        absolutePosition: { x: 42, y: 32 }
+      },
+      { text: "TEST", fontSize: 8, bold: true, color: "#ffffff", absolutePosition: { x: 55, y: 51 } },
+      { text: String(testNumber), fontSize: 20, bold: true, color: "#ffffff", absolutePosition: { x: 92, y: 42 } },
+      {
+        text: [{ text: "Paragraf Koçu ", italics: true }, { text: setName, color: "#ffd54f" }],
+        fontSize: 15,
+        bold: true,
+        color: "#ffffff",
+        width: 350,
+        absolutePosition: { x: 136, y: 47 }
+      },
+      { image: logoDataUrl, fit: [39, 39], absolutePosition: { x: 508, y: 36 } },
+      {
+        text: `${set.questions.length} SORU · ${duration} DK · ${set.meta || "Karma paragraf çalışması"}`,
+        alignment: "right",
+        width: 260,
+        fontSize: 7.5,
+        color: "#5c6674",
+        absolutePosition: { x: 292, y: 87 }
+      }
+    ]
+  };
 }
 
 function questionSetPdfDefinition(set, logoDataUrl, testNumber = 1) {
   const testTitle = `Paragraf Koçu Test ${testNumber}`;
   const content = [];
-  const questions = set.questions || [];
-  const pages = questionPdfPages(questions);
+  const pages = questionPdfPages(set.questions || []);
   pages.forEach((page, pageIndex) => {
-    const questionRows = page.map((row) => [
-      { stack: [questionPdfBlock(row[0].question, row[0].index)], margin: [0, 0, 12, 0] },
-      row[1]
-        ? { stack: [questionPdfBlock(row[1].question, row[1].index)], margin: [12, 0, 0, 0] }
-        : { text: "" }
-    ]);
-    content.push({
-      stack: [
-        ...questionSetPdfPageHeader(set, logoDataUrl, testNumber),
-        {
-          table: { widths: ["*", "*"], body: questionRows, dontBreakRows: true },
-          layout: {
-            hLineWidth: () => 0,
-            vLineWidth: (i) => i === 1 ? 0.7 : 0,
-            vLineColor: () => "#ff7f32",
-            paddingLeft: () => 0,
-            paddingRight: () => 0,
-            paddingTop: () => 0,
-            paddingBottom: () => 0
-          }
-        }
-      ],
-      pageBreak: pageIndex < pages.length - 1 ? "after" : undefined
-    });
+    const pageHeader = pageIndex === 0
+      ? questionSetPdfPageHeader(set, logoDataUrl, testNumber)
+      : questionSetPdfCompactHeader(set, logoDataUrl, testNumber);
+    const body = questionSetPdfPageBody(page);
+    if (pageIndex < pages.length - 1 || set.includeAnswerKey) body.pageBreak = "after";
+    content.push(...pageHeader, body);
   });
   if (set.includeAnswerKey) {
-    content.push({
-      pageBreak: "before",
-      stack: [
-        ...questionSetPdfPageHeader(set, logoDataUrl, testNumber),
-        ...answerKeyPdfContent(set, testNumber)
-      ]
-    });
+    content.push(...questionSetPdfCompactHeader(set, logoDataUrl, testNumber), ...answerKeyPdfContent(set, testNumber));
   }
   return {
     pageSize: "A4",
-    pageMargins: [42, 13, 42, 38],
+    pageMargins: [36, 14, 36, 34],
     defaultStyle: { font: "Roboto", color: "#182235" },
     content,
     footer: (currentPage, pageCount) => ({
-      margin: [42, 5, 42, 0],
+      margin: [36, 5, 36, 0],
       stack: [
-        { canvas: [{ type: "line", x1: 0, y1: 0, x2: 510, y2: 0, lineWidth: 0.7, lineColor: "#ff7f32" }] },
+        { canvas: [{ type: "line", x1: 0, y1: 0, x2: 523, y2: 0, lineWidth: 0.7, lineColor: "#ff7f32" }] },
         {
           columns: [
             { text: "MG · Paragraf Koçu", fontSize: 7.5, color: "#505967", margin: [0, 5, 0, 0] },
@@ -4714,15 +4831,35 @@ async function downloadSplitQuestionSetsZip() {
   }
 }
 
-function printQuestionSet(set, testNumber = 1) {
+async function printQuestionSet(set, testNumber = 1, button = null) {
   if (!set?.questions?.length) return;
-  const printWindow = window.open("", "_blank");
-  if (!printWindow) {
-    alert("Çıktı penceresi açılamadı. Tarayıcıda açılır pencerelere izin ver.");
-    return;
+  const label = button?.querySelector("span");
+  const originalLabel = label?.textContent || "PDF indir";
+  if (button) button.disabled = true;
+  if (label) label.textContent = "PDF hazırlanıyor...";
+  try {
+    const buffer = await questionSetPdfBuffer(set, testNumber);
+    const blob = new Blob([buffer], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const previousAnchor = $("#lastQuestionSetPdf");
+    if (previousAnchor) {
+      URL.revokeObjectURL(previousAnchor.href);
+      previousAnchor.remove();
+    }
+    const anchor = document.createElement("a");
+    anchor.id = "lastQuestionSetPdf";
+    anchor.hidden = true;
+    anchor.href = url;
+    anchor.download = `paragraf-kocu-test-${testNumber}.pdf`;
+    document.body.appendChild(anchor);
+    anchor.click();
+  } catch (error) {
+    console.error(error);
+    alert("PDF hazırlanamadı. Sayfayı yenileyip yeniden dene.");
+  } finally {
+    if (button) button.disabled = false;
+    if (label) label.textContent = originalLabel;
   }
-  printWindow.document.write(questionSetDocumentHtml(set, true, testNumber));
-  printWindow.document.close();
 }
 
 function renderQuestionBank() {
@@ -5681,7 +5818,7 @@ function bindEvents() {
     if (!button) return;
     const index = Number(button.dataset.setIndex);
     if (event.target.closest(".print-question-set")) {
-      printQuestionSet(generatedQuestionSets[index], index + 1);
+      printQuestionSet(generatedQuestionSets[index], index + 1, button);
       return;
     }
     if (event.target.closest(".remove-question-set")) {
