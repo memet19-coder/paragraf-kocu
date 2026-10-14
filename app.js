@@ -2385,6 +2385,30 @@ function balanceQuestionBank(baseQuestions) {
   return balanced;
 }
 
+function isQuestionContentUsable(question) {
+  const options = Array.isArray(question?.options) ? question.options : [];
+  if ((!question?.text && !question?.stem) || !question?.stem || options.length !== 4) return false;
+  if (!/^[A-D]$/.test(String(question.answer || ""))) return false;
+  if (options.some((option) => String(option || "").trim().length < 2)) return false;
+
+  const text = String(question.text || "").trim();
+  const stem = String(question.stem || "").trim();
+  const allText = [text, stem, ...options].join(" ").replace(/\s+/g, " ");
+  const obviousOcrNoise = [
+    /[©€£�]/u,
+    /CCCC|ĞCL[Iİ]L|ŞŞÜHÜ|SARN{4,}|Z\s+Z\s+NA\s+EB/iu,
+    /yuçıaııçı|usaşskukak|»b[0oO]O?|\b9050\b/iu,
+    /[A-ZÇĞİÖŞÜ]{14,}/u,
+    /(?:^|\s)[»«](?=\p{L}|\d)/u
+  ];
+  if (obviousOcrNoise.some((pattern) => pattern.test(allText))) return false;
+
+  // Sayfanın ortasından başlayan metinler genellikle önceki soruyla birleşmiş OCR kayıtlarıdır.
+  if (text && /^\p{Ll}/u.test(text)) return false;
+
+  return true;
+}
+
 questionBank = [
   ...(Array.isArray(window.DEFINE5_QUESTIONS) ? window.DEFINE5_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH5_SINAV_QUESTIONS) ? window.PARAGRAPH5_SINAV_QUESTIONS : []),
@@ -2413,7 +2437,8 @@ questionBank = [
   ...(Array.isArray(window.PARAGRAPH8_LGS_DENEME_QUESTIONS) ? window.PARAGRAPH8_LGS_DENEME_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH8_LGS_8LI_QUESTIONS) ? window.PARAGRAPH8_LGS_8LI_QUESTIONS : [])
 ]
-  .map((question) => ({ ...question, id: makeQuestionId(question) }));
+  .map((question) => ({ ...question, id: makeQuestionId(question) }))
+  .filter(isQuestionContentUsable);
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
 const reviewDraftQuestions = [
   ...(Array.isArray(window.PARAGRAPH5_REVIEW_QUESTIONS) ? window.PARAGRAPH5_REVIEW_QUESTIONS : []),
@@ -2421,7 +2446,8 @@ const reviewDraftQuestions = [
   ...(Array.isArray(window.PARAGRAPH7_REVIEW_QUESTIONS) ? window.PARAGRAPH7_REVIEW_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH8_REVIEW_QUESTIONS) ? window.PARAGRAPH8_REVIEW_QUESTIONS : [])
 ]
-  .map((question) => ({ ...question, id: question.id || makeQuestionId(question) }));
+  .map((question) => ({ ...question, id: question.id || makeQuestionId(question) }))
+  .filter(isQuestionContentUsable);
 
 const CONTENT_VERSION = 12;
 let state = loadState();
@@ -2980,7 +3006,9 @@ function saveState() {
 }
 
 function gradeQuestions(grade = state.grade) {
-  return [...questionBank, ...(state.customQuestions || [])].filter((question) => question.grade === Number(grade));
+  return [...questionBank, ...(state.customQuestions || [])]
+    .filter(isQuestionContentUsable)
+    .filter((question) => question.grade === Number(grade));
 }
 
 function normalizePracticeFocus(focus = "") {
@@ -3942,7 +3970,7 @@ function reviewQuestionBank() {
       return edited ? { ...edited, source: "Düzenlendi" } : { ...question, source: "Hazır" };
     });
   const teacherQuestions = (state.customQuestions || [])
-    .filter((question) => question?.id && !deleted.has(question.id) && !baseQuestionIds.has(question.id))
+    .filter((question) => question?.id && !deleted.has(question.id) && !baseQuestionIds.has(question.id) && isQuestionContentUsable(question))
     .map((question) => ({ ...question, source: "Öğretmen" }));
   return [...builtInQuestions, ...teacherQuestions];
 }
@@ -4103,6 +4131,7 @@ function uniqueQuestions(questions) {
 }
 
 function isQuestionReadyForPrint(question) {
+  if (!isQuestionContentUsable(question)) return false;
   const options = Array.isArray(question?.options) ? question.options : [];
   if (!question?.text || !question?.stem || options.length !== 4 || !/^[A-D]$/.test(question.answer || "")) return false;
   if (options.some((option) => String(option || "").trim().length < 2)) return false;
