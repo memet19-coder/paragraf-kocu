@@ -4491,7 +4491,7 @@ function questionPdfPages(questions) {
 
     const sideItems = () => page[side];
     const sideHeight = () => page[`${side}Height`];
-    const fitsCurrentSide = () => sideItems().length < 3 && sideHeight() + estimatedHeight <= capacity;
+    const fitsCurrentSide = () => sideHeight() + estimatedHeight <= capacity;
     if (!fitsCurrentSide() && side === "left") side = "right";
     if (!fitsCurrentSide() && side === "right") {
       flushPage();
