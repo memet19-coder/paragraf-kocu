@@ -2403,6 +2403,10 @@ function isQuestionContentUsable(question) {
   ];
   if (obviousOcrNoise.some((pattern) => pattern.test(allText))) return false;
 
+  // Birden fazla soru OCR sırasında birleştiğinde sonraki sorunun seçenekleri metnin içine taşınır.
+  const embeddedChoices = text.match(/(?:^|\s)[A-D]\)\s*/gu) || [];
+  if (embeddedChoices.length >= 2) return false;
+
   // Sayfanın ortasından başlayan metinler genellikle önceki soruyla birleşmiş OCR kayıtlarıdır.
   if (text && /^\p{Ll}/u.test(text)) return false;
 
@@ -4148,8 +4152,8 @@ function isQuestionReadyForPrint(question) {
   ];
   if (obviousOcrNoise.some((pattern) => pattern.test(allText))) return false;
 
-  const embeddedChoices = text.match(/\b[A-D]\)\s/g) || [];
-  if (embeddedChoices.length >= 3) return false;
+  const embeddedChoices = text.match(/(?:^|\s)[A-D]\)\s*/gu) || [];
+  if (embeddedChoices.length >= 2) return false;
   const repeatedRoots = allText.match(/aşağıdakilerden\s+hangisi/giu) || [];
   if (repeatedRoots.length > 1) return false;
 
