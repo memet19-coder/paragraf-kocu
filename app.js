@@ -2413,6 +2413,69 @@ function isQuestionContentUsable(question) {
   return true;
 }
 
+const QUESTION_SOURCE_NOTE_PATTERN = /\s*\((?:LGS|MEBİ?|MEB|TYT|AYT)\s*(?:[-–—]\s*)?\d{4}\s*\)\s*$/iu;
+const QUESTION_JOINED_WORDS = new Set([
+  "bu",
+  "metin",
+  "metinde",
+  "metnin",
+  "metne",
+  "parça",
+  "parçada",
+  "parçaya",
+  "paragraf",
+  "paragrafta",
+  "paragrafın",
+  "aşağıdaki",
+  "aşağıdakilerden",
+  "aşağıdakilerin",
+  "hangisi",
+  "hangisine",
+  "söylenemez",
+  "getirilmelidir"
+]);
+
+function joinQuestionRootParts(prefix, continuation) {
+  const left = String(prefix || "").trimEnd();
+  const right = String(continuation || "").trimStart();
+  const leftWord = left.match(/\p{L}+$/u)?.[0] || "";
+  const rightWord = right.match(/^\p{L}+/u)?.[0] || "";
+  const joinedWord = `${leftWord}${rightWord}`.toLocaleLowerCase("tr-TR");
+  return `${left}${QUESTION_JOINED_WORDS.has(joinedWord) ? "" : " "}${right}`.trim();
+}
+
+function normalizeQuestionPresentation(question) {
+  const normalized = {
+    ...question,
+    options: (Array.isArray(question?.options) ? question.options : [])
+      .map((option) => String(option || "").replace(QUESTION_SOURCE_NOTE_PATTERN, "").trim())
+  };
+  let text = String(normalized.text || "").trim();
+  let stem = String(normalized.stem || "").trim();
+
+  if (/^\p{Ll}/u.test(stem)) {
+    const tailStart = Math.max(0, text.length - 360);
+    const tail = text.slice(tailStart);
+    const starterPattern = /(?:Buna göre|Bunlara göre|Bu\s+(?:(?:iki\s+)?(?:metin(?:de|den)?|metnin|metne|parça(?:da|dan|nın|ya)?|paragraf(?:ta|tan|ın|a)?)|konuşma(?:da)?|dörtlük(?:te|ün)?|şiir(?:de|in)?|açıklama(?:ya)?|bilgi(?:lere|lerden)?|yargı(?:lardan)?|cümle(?:lerden)?|söz(?:lere|lerden)?|görsel(?:e|de)?|afiş(?:e|te)?|durum(?:da)?|dize(?:lerde)?)|Bu\s+(?:m|me|met|meti|metin|metind|p|pa|par|parç|parça)(?=$)|Bu(?=$)|Aşağıdaki(?=\s|$)|Numaralanm(?:ış|is)(?=\s|$)|Cümleleri(?=\s|$)|Verilen(?=\s|$)|Yukarıdaki(?=\s|$)|Parçada(?=\s|$)|Paragrafta(?=\s|$)|Paragrafın(?=\s|$)|B(?=$))/gu;
+    let match;
+    let lastMatch = null;
+    while ((match = starterPattern.exec(tail))) lastMatch = match;
+
+    if (lastMatch) {
+      const questionStart = tailStart + lastMatch.index;
+      const rootPrefix = text.slice(questionStart).trim();
+      const completeRoot = joinQuestionRootParts(rootPrefix, stem);
+      const looksLikeQuestion = /(?:aşağıdaki|hangis|söylen|ulaş|çıkar|getiril|cevab|doğru|yanlış|olamaz|değildir|olmalıdır|nedir|vurgulan|örnek|destekler|kullanılmış|ilişkilendir)/iu.test(completeRoot);
+      if (rootPrefix.length <= 320 && looksLikeQuestion) {
+        text = text.slice(0, questionStart).trimEnd();
+        stem = completeRoot;
+      }
+    }
+  }
+
+  return { ...normalized, text, stem };
+}
+
 questionBank = [
   ...(Array.isArray(window.DEFINE5_QUESTIONS) ? window.DEFINE5_QUESTIONS : []),
   ...(Array.isArray(window.PARAGRAPH5_SINAV_QUESTIONS) ? window.PARAGRAPH5_SINAV_QUESTIONS : []),
@@ -2442,6 +2505,7 @@ questionBank = [
   ...(Array.isArray(window.PARAGRAPH8_LGS_8LI_QUESTIONS) ? window.PARAGRAPH8_LGS_8LI_QUESTIONS : [])
 ]
   .map((question) => ({ ...question, id: makeQuestionId(question) }))
+  .map(normalizeQuestionPresentation)
   .filter(isQuestionContentUsable);
 const baseQuestionIds = new Set(questionBank.map((question) => question.id));
 const reviewDraftQuestions = [
@@ -2451,6 +2515,7 @@ const reviewDraftQuestions = [
   ...(Array.isArray(window.PARAGRAPH8_REVIEW_QUESTIONS) ? window.PARAGRAPH8_REVIEW_QUESTIONS : [])
 ]
   .map((question) => ({ ...question, id: question.id || makeQuestionId(question) }))
+  .map(normalizeQuestionPresentation)
   .filter(isQuestionContentUsable);
 
 const CONTENT_VERSION = 12;
@@ -3011,6 +3076,7 @@ function saveState() {
 
 function gradeQuestions(grade = state.grade) {
   return [...questionBank, ...(state.customQuestions || [])]
+    .map(normalizeQuestionPresentation)
     .filter(isQuestionContentUsable)
     .filter((question) => question.grade === Number(grade));
 }
@@ -3971,9 +4037,10 @@ function reviewQuestionBank() {
     .filter((question) => !deleted.has(question.id))
     .map((question) => {
       const edited = customById.get(question.id);
-      return edited ? { ...edited, source: "Düzenlendi" } : { ...question, source: "Hazır" };
+      return edited ? { ...normalizeQuestionPresentation(edited), source: "Düzenlendi" } : { ...question, source: "Hazır" };
     });
   const teacherQuestions = (state.customQuestions || [])
+    .map(normalizeQuestionPresentation)
     .filter((question) => question?.id && !deleted.has(question.id) && !baseQuestionIds.has(question.id) && isQuestionContentUsable(question))
     .map((question) => ({ ...question, source: "Öğretmen" }));
   return [...builtInQuestions, ...teacherQuestions];
